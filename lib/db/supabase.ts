@@ -9,11 +9,14 @@ function env(name: string): string {
   return value;
 }
 
+let publicClient: Db | null = null;
+
 /** Public client: anon key, row-level security applies. Safe for server components and the browser. */
 export function getSupabase(): Db {
-  return createClient<Database>(env("NEXT_PUBLIC_SUPABASE_URL"), env("NEXT_PUBLIC_SUPABASE_ANON_KEY"), {
+  publicClient ??= createClient<Database>(env("NEXT_PUBLIC_SUPABASE_URL"), env("NEXT_PUBLIC_SUPABASE_ANON_KEY"), {
     auth: { persistSession: false },
   });
+  return publicClient;
 }
 
 /**

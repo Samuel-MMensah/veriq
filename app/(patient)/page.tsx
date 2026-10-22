@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { ScreenPlaceholder } from "@/components/ui/ScreenPlaceholder";
+import { Welcome } from "@/components/welcome/Welcome";
 
-export const metadata: Metadata = { title: "First open" };
+export const metadata: Metadata = { title: "Know before you go" };
 
-export default function Page() {
-  return <ScreenPlaceholder title="First open" screen={7} prompt={4} />;
+// Screen 7, first open. Shown once (remembered on the phone), then "/" goes to /find.
+export default function FirstOpenPage() {
+  return <Welcome />;
 }

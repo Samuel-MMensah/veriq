@@ -1,4 +1,4 @@
-import { sortEmergency, sortResults, type EmergencyItem, type ResultItem } from "./sort";
+import { sortEmergency, sortNoCard, sortResults, type EmergencyItem, type ResultItem } from "./sort";
 import { HOUR_MS, MINUTE_MS } from "./time";
 
 const now = new Date("2026-10-22T12:00:00Z");
@@ -115,5 +115,23 @@ describe("rule S2: emergency order", () => {
     const carded = sortEmergency(withCards, { origin: DANSOMAN, now }).map((r) => r.id);
     expect(carded).toEqual(plain);
     expect(carded).toHaveLength(3); // B2x and B5 are not hidden here
+  });
+});
+
+describe("No card/cash order (rule S1 without the badge step)", () => {
+  const plain = (id: string, km: number, status: ResultItem["status"]) => ({
+    id,
+    ...north(km),
+    status,
+    statusUpdatedAt: status ? fresh : null,
+  });
+
+  it("keeps every facility in the radius, sorted by status then distance", () => {
+    const sorted = sortNoCard([plain("closed", 1, "closed"), plain("open-far", 3, "open"), plain("unknown", 2, null), plain("open-near", 2.5, "open"), plain("far", 6, "open")], {
+      origin: DANSOMAN,
+      radiusKm: 5,
+      now,
+    });
+    expect(sorted.map((r) => r.id)).toEqual(["open-near", "open-far", "unknown", "closed"]);
   });
 });

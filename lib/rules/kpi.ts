@@ -1,7 +1,7 @@
 // Rule K: insurer figures for the last 30 days. Callers pass one insurer's rows.
 import type { HospitalSays, ListedBy, ReportOutcome, ReportState } from "@/lib/db/types";
 import { cellCentre, haversineKm } from "@/lib/geo";
-import { badge } from "./badge";
+import { badge, type BadgeId } from "./badge";
 import { DAY_MS, withinDays } from "./time";
 
 export type KpiFacility = { id: string; name: string; area: string; lat: number; lng: number };
@@ -112,6 +112,13 @@ export function insurerFigures({
     turnedAway,
     gaps,
   };
+}
+
+/** rule K: a search "found a confirmed hospital" when a B2 or B3 facility is within 5 km. */
+export const CONFIRMED_WITHIN_KM = 5;
+
+export function hadConfirmedResult(results: { badge: BadgeId; distanceKm: number }[]): boolean {
+  return results.some((r) => (r.badge === "B2" || r.badge === "B3") && r.distanceKm <= CONFIRMED_WITHIN_KM);
 }
 
 function nearestArea(cell: string, facilities: KpiFacility[]): string | null {

@@ -2,10 +2,10 @@
 // Docker or a Supabase project. The shim stands in for the parts of Supabase the migrations use.
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
 import { PGlite } from "@electric-sql/pglite";
 
-const root = fileURLToPath(new URL("..", import.meta.url));
+// The project root: vitest and `next start` both run from it, and a server bundle has no source path.
+const root = join(process.cwd(), "supabase");
 
 const SUPABASE_SHIM = `
   create schema auth;

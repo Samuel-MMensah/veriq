@@ -1,0 +1,147 @@
+// @vitest-environment node
+import type { PGlite } from "@electric-sql/pglite";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { fakeDb } from "@/lib/db/fake-postgrest";
+import { createDb } from "@/lib/db/pglite";
+import { getFacilityDetail, getSearchCandidates, listInsurers } from "@/lib/db/queries";
+import { HOUR_MS } from "@/lib/rules/time";
+import { DEFAULT_AREA, parseSearch } from "./catalog";
+import { buildFacilityView, directionsUrl } from "./facility";
+import { buildResults } from "./results";
+import { clockFromTime, statusView } from "./status";
+
+const NHIS = "a0000000-0000-4000-8000-000000000001";
+const AKOMA = "f0000000-0000-4000-8000-000000000001";
+const DANSOMAN = { lat: 5.545, lng: -0.265 };
+let pg: PGlite;
+// Taken after seeding: the seed's times are relative to the moment it runs.
+let now = new Date();
+beforeAll(async () => {
+  pg = await createDb();
+  now = new Date();
+}, 60_000);
+afterAll(async () => {
+  await pg?.close();
+});
+
+describe("parseSearch (results URL)", () => {
+  it("reads service, card, point and radius", () => {
+    expect(parseSearch({ service: "antenatal", card: "nhis", lat: "5.545", lng: "-0.265", r: "10", area: "dansoman" })).toEqual({
+      serviceId: "antenatal",
+      card: "nhis",
+      origin: DANSOMAN,
+      areaName: "Dansoman",
+      radiusKm: 10,
+    });
+  });
+
+  it("falls back to the named area when there is no point, and to 5 km", () => {
+    expect(parseSearch({ service: "gp", card: "cash", area: "dansoman" })).toMatchObject({
+      origin: { lat: DEFAULT_AREA.lat, lng: DEFAULT_AREA.lng },
+      radiusKm: 5,
+    });
+  });
+
+  it("returns null for a broken link", () => {
+    expect(parseSearch({ card: "nhis", area: "dansoman" })).toBeNull();
+    expect(parseSearch({ service: "antenatal", card: "nhis" })).toBeNull();
+    expect(parseSearch({ service: "x'; drop", card: "nhis", area: "dansoman" })).toBeNull();
+  });
+});
+
+describe("statusView (rules F and 4)", () => {
+  it("reads the note, the source and the age", () => {
+    const v = statusView(
+      { status: "open", from_time: null, note: "Open till 4 pm", source: "hospital", created_at: new Date(now.getTime() - 40 * 60_000).toISOString() },
+      now,
+    );
+    expect(v).toMatchObject({ word: "Open till 4 pm", tone: "good", sourceText: "updated by hospital 40 min ago" });
+  });
+
+  it("reads 'From 2 pm' for a specialist time", () => {
+    expect(clockFromTime("14:00:00")).toBe("2 pm");
+    expect(clockFromTime("09:30:00")).toBe("9:30 am");
+    expect(clockFromTime("00:00:00")).toBe("12 am");
+  });
+
+  it("greys a status over 72 hours old", () => {
+    const v = statusView({ status: "open", from_time: null, note: null, source: "hospital", created_at: new Date(now.getTime() - 80 * HOUR_MS).toISOString() }, now);
+    expect(v).toMatchObject({ tone: "unknown", freshness: { state: "stale", warning: "not updated recently" } });
+  });
+
+  it("says 'No update yet' when there has never been one", () => {
+    expect(statusView(null, now)).toMatchObject({ word: "No update yet", sourceText: null });
+  });
+});
+
+describe("buildResults (screen 2)", () => {
+  it("demo: 4 hospitals in the right order, 2 left out, a confirmed result found", async () => {
+    const candidates = await getSearchCandidates(fakeDb(pg, "anon"), {
+      serviceId: "antenatal",
+      insurerId: NHIS,
+      ...DANSOMAN,
+      radiusKm: 5,
+      now,
+    });
+    const results = buildResults({ candidates, withCard: true, origin: DANSOMAN, radiusKm: 5, now });
+    expect(results.cards.map((c) => [c.name, c.badge?.id, c.distanceKm])).toEqual([
+      ["Akoma Mission Hospital", "B2", 1.8],
+      ["Lakeside Family Clinic", "B3", 2.6],
+      ["Gbawe Community Clinic", "B4", 3.1],
+      ["Pinecrest Specialist Hospital", "B1", 3.4],
+    ]);
+    expect(results.hiddenCount).toBe(2);
+    expect(results.hadConfirmedResult).toBe(true);
+    expect(results.cards[0]!.status.word).toBe("Open till 4 pm");
+    expect(results.cards[0]!.topUps).toEqual(["Scan top-up about GH¢ 80 (3 patients, last 60 days)"]);
+    expect(results.cards[1]!.usualHours).toBe("Tue and Thu");
+    expect(results.cards[2]!.status.word).toBe("No update yet");
+  });
+
+  it("No card/cash: every antenatal facility in 5 km, no badges", async () => {
+    const candidates = await getSearchCandidates(fakeDb(pg, "anon"), {
+      serviceId: "antenatal",
+      insurerId: null,
+      ...DANSOMAN,
+      radiusKm: 5,
+      now,
+    });
+    const results = buildResults({ candidates, withCard: false, origin: DANSOMAN, radiusKm: 5, now });
+    expect(results.cards).toHaveLength(6);
+    expect(results.cards.every((c) => c.badge === null && c.topUps.length === 0)).toBe(true);
+    expect(results.hadConfirmedResult).toBe(false);
+  });
+});
+
+describe("buildFacilityView (screen 3)", () => {
+  it("Akoma: type, area and distance; today's grid; cards with sources, searched card first", async () => {
+    const db = fakeDb(pg, "anon");
+    const detail = (await getFacilityDetail(db, AKOMA, now))!;
+    const view = buildFacilityView({ detail, insurers: await listInsurers(db), origin: DANSOMAN, cardSlug: "nhis", now });
+
+    expect(view.subtitle).toBe("Mission · Kaneshie · 1.8 km");
+    expect(view.directionsUrl).toBe(directionsUrl(detail.facility));
+    expect(view.todayUpdated).toMatch(/^Updated by hospital \d{1,2}:\d{2} (am|pm)$/);
+    const words = Object.fromEntries(view.today.map((t) => [t.label, t.status.word]));
+    expect(words).toMatchObject({
+      "Antenatal clinic": "Open till 4 pm",
+      "Emergency unit": "Accepting",
+      "Ultrasound scan": "Available",
+      Obstetrician: "From 2 pm",
+    });
+    expect(view.cards.map((c) => [c.insurer.name, c.answer])).toEqual([
+      ["NHIS", "Yes"],
+      ["Cosmopolitan Health", "Yes"],
+      ["Prudential", "Unsure"],
+    ]);
+    expect(view.cards[0]!.badge.text).toBe("Confirmed by hospital 2 days ago");
+    expect(view.cards[0]!.badge.history.month).toEqual({ accepted: 9, refused: 0 });
+    expect(view.cards[0]!.topUps).toEqual(["Scan top-up about GH¢ 80 (3 patients, last 60 days)"]);
+  });
+
+  it("leaves out the distance when the page wasn't opened from a search", async () => {
+    const db = fakeDb(pg, "anon");
+    const detail = (await getFacilityDetail(db, AKOMA, now))!;
+    expect(buildFacilityView({ detail, insurers: [], origin: null, cardSlug: null, now }).subtitle).toBe("Mission · Kaneshie");
+  });
+});

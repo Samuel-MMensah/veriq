@@ -353,3 +353,18 @@ export async function getInsurerNetwork(db: Db, insurerId: string, now: Date): P
     : [];
   return { insurer, links, facilities, reports, searches };
 }
+
+// Search log (rule K) ---------------------------------------------------------------------------
+
+/** Count one search: the card (null for "No card/cash"), the ~2 km area cell, and whether it found B2 or B3. */
+export async function logSearch(
+  db: Db,
+  input: { insurerId: string | null; areaCell: string; hadConfirmedResult: boolean },
+): Promise<void> {
+  const { error } = await db.rpc("log_search", {
+    p_insurer_id: input.insurerId,
+    p_area_cell: input.areaCell,
+    p_had_confirmed: input.hadConfirmedResult,
+  });
+  if (error) throw new Error(`Could not log the search: ${error.message}`);
+}

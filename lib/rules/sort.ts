@@ -58,6 +58,22 @@ export function sortResults<T extends ResultItem>(
     .map((r) => ({ ...r, distanceKm: roundKm(r.distanceKm) }));
 }
 
+/**
+ * "No card/cash" results (rule S1 without the badge step): every facility in the radius that offers
+ * the service, sorted by today's status, then distance. Badges don't apply without a card.
+ */
+export function sortNoCard<T extends EmergencyItem>(
+  items: T[],
+  { origin, radiusKm, now }: { origin: LatLng; radiusKm: number; now: Date },
+): Sorted<T>[] {
+  return items
+    .map((item) => ({ item, km: haversineKm(origin, item) }))
+    .filter(({ km }) => km <= radiusKm)
+    .map(({ item, km }) => ({ ...item, distanceKm: km, statusRank: statusRank(item.status, item.statusUpdatedAt, now) }))
+    .sort(byRankThenDistance(() => 0))
+    .map((r) => ({ ...r, distanceKm: roundKm(r.distanceKm) }));
+}
+
 export const EMERGENCY_RADIUS_KM = 15;
 
 /**

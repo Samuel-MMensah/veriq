@@ -2,8 +2,8 @@
 // The typed reads, run against the real migrations and seed in PGlite, as the anon role.
 import type { PGlite } from "@electric-sql/pglite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { fakeDb } from "@/supabase/tests/fake-postgrest";
-import { as, createDb } from "@/supabase/tests/pglite";
+import { fakeDb } from "@/lib/db/fake-postgrest";
+import { as, createDb } from "@/lib/db/pglite";
 import {
   boundingBox,
   getEmergencyCandidates,
@@ -14,6 +14,7 @@ import {
   getSearchCandidates,
   listInsurers,
   listServices,
+  logSearch,
 } from "./queries";
 
 const AKOMA = "f0000000-0000-4000-8000-000000000001";
@@ -145,6 +146,24 @@ describe("getMorningCheck (screen 16)", () => {
     // Reach is staff-only; read it with the table owner here. Prompt 7 adds the hospital login.
     const check = await getMorningCheck(db, AKOMA, now);
     expect(check?.reach.reduce((sum, d) => sum + d.views, 0)).toBe(214);
+  });
+});
+
+describe("logSearch (rule K)", () => {
+  it("counts a search through the server's service access", async () => {
+    await logSearch(fakeDb(pg, "owner"), { insurerId: NHIS, areaCell: "9.40,-0.86", hadConfirmedResult: false });
+    await logSearch(fakeDb(pg, "owner"), { insurerId: NHIS, areaCell: "9.40,-0.86", hadConfirmedResult: false });
+    const r = await pg.query<{ searches: number }>(
+      "select searches from public.search_daily where insurer_id = $1 and area_cell = '9.40,-0.86'",
+      [NHIS],
+    );
+    expect(r.rows[0]?.searches).toBe(2);
+  });
+
+  it("is refused for the public key", async () => {
+    await expect(
+      logSearch(fakeDb(pg, "anon"), { insurerId: null, areaCell: "9.40,-0.86", hadConfirmedResult: false }),
+    ).rejects.toThrow(/Could not log the search/);
   });
 });
 

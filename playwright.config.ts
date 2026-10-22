@@ -19,7 +19,9 @@ export default defineConfig({
     },
   ],
   webServer: {
+    // Local data mode: fresh sample data in memory on every start, no Supabase needed (see lib/db/server.ts).
     command: `npm run build && npx next start -p ${port}`,
+    env: { VERIQ_DATA: "local" },
     url: `http://localhost:${port}`,
     reuseExistingServer: !process.env.CI,
     timeout: 300_000,

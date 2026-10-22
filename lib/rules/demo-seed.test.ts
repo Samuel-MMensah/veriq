@@ -3,8 +3,8 @@
 import type { PGlite } from "@electric-sql/pglite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { getEmergencyCandidates, getInsurerNetwork, getSearchCandidates } from "@/lib/db/queries";
-import { fakeDb } from "@/supabase/tests/fake-postgrest";
-import { createDb } from "@/supabase/tests/pglite";
+import { fakeDb } from "@/lib/db/fake-postgrest";
+import { createDb } from "@/lib/db/pglite";
 import { badge } from "./badge";
 import { freshness } from "./freshness";
 import { insurerFigures } from "./kpi";

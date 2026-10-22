@@ -1,6 +1,7 @@
 // A small stand-in for the supabase-js query builder, backed by PGlite. It supports only the
-// calls lib/db/queries.ts makes (select *, eq, in, gte, lte, order, maybeSingle) and returns
+// calls the app makes (select *, eq, in, gte, lte, order, maybeSingle, and rpc) and returns
 // values the way PostgREST does: timestamps as ISO strings, numerics as numbers.
+// Used by tests and by local data mode (VERIQ_DATA=local).
 import type { PGlite } from "@electric-sql/pglite";
 import type { Db } from "@/lib/db/supabase";
 
@@ -9,14 +10,30 @@ const DATE = 1082;
 const TIMESTAMPTZ = 1184;
 
 type Filter = { sql: string; values: unknown[] };
+type Result = { data: unknown; error: { message: string } | null };
 
-class Query implements PromiseLike<{ data: unknown; error: { message: string } | null }> {
+/**
+ * "owner" runs as the table owner, like the service role (row-level security does not apply).
+ * "anon" runs each statement as the anon role, like the public API key.
+ */
+export type FakeRole = "owner" | "anon";
+
+async function run(db: PGlite, role: FakeRole, sql: string, values: unknown[]) {
+  if (role === "owner") return db.query<Record<string, unknown>>(sql, values);
+  return db.transaction(async (tx) => {
+    await tx.exec("set local role anon");
+    return tx.query<Record<string, unknown>>(sql, values);
+  });
+}
+
+class Query implements PromiseLike<Result> {
   private filters: Filter[] = [];
   private orderBy: string | null = null;
   private single = false;
 
   constructor(
     private db: PGlite,
+    private role: FakeRole,
     private table: string,
   ) {}
 
@@ -66,7 +83,7 @@ class Query implements PromiseLike<{ data: unknown; error: { message: string } |
       this.orderBy ? ` order by ${this.orderBy}` : ""
     }`;
     try {
-      const res = await this.db.query<Record<string, unknown>>(sql, values);
+      const res = await run(this.db, this.role, sql, values);
       const rows = res.rows.map((row) => {
         const out: Record<string, unknown> = {};
         for (const field of res.fields) {
@@ -90,7 +107,7 @@ class Query implements PromiseLike<{ data: unknown; error: { message: string } |
   }
 
   then<A, B>(
-    onfulfilled?: ((v: { data: unknown; error: { message: string } | null }) => A | PromiseLike<A>) | null,
+    onfulfilled?: ((v: Result) => A | PromiseLike<A>) | null,
     onrejected?: ((reason: unknown) => B | PromiseLike<B>) | null,
   ): PromiseLike<A | B> {
     return this.run().then(onfulfilled, onrejected);
@@ -102,6 +119,20 @@ function ident(name: string): string {
   return `"${name}"`;
 }
 
-export function fakeDb(db: PGlite): Db {
-  return { from: (table: string) => new Query(db, table) } as unknown as Db;
+async function rpc(db: PGlite, role: FakeRole, fn: string, args: Record<string, unknown> = {}): Promise<Result> {
+  const names = Object.keys(args);
+  const sql = `select public.${ident(fn)}(${names.map((n, i) => `${ident(n)} => $${i + 1}`).join(", ")}) as result`;
+  try {
+    const res = await run(db, role, sql, names.map((n) => args[n]));
+    return { data: res.rows[0]?.result ?? null, error: null };
+  } catch (e) {
+    return { data: null, error: { message: (e as Error).message } };
+  }
+}
+
+export function fakeDb(db: PGlite, role: FakeRole = "owner"): Db {
+  return {
+    from: (table: string) => new Query(db, role, table),
+    rpc: (fn: string, args?: Record<string, unknown>) => rpc(db, role, fn, args),
+  } as unknown as Db;
 }

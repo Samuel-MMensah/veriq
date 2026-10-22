@@ -1,4 +1,4 @@
-import { insurerFigures, type KpiFacility, type KpiLink, type KpiReport, type KpiSearch } from "./kpi";
+import { hadConfirmedResult, insurerFigures, type KpiFacility, type KpiLink, type KpiReport, type KpiSearch } from "./kpi";
 import { DAY_MS } from "./time";
 
 const now = new Date("2026-10-22T12:00:00Z");
@@ -84,5 +84,16 @@ describe("rule K: insurer figures, last 30 days", () => {
     const f = insurerFigures({ facilities: [], links: [], reports: [], searches: [], now });
     expect(f).toMatchObject({ onList: 0, confirmed: 0, confirmedShareOfList: 0, refused: { count: 0, facilities: 0 } });
     expect(f.searches).toEqual({ total: 0, confirmedShare: 0 });
+  });
+});
+
+describe("rule K: did a search find a confirmed hospital?", () => {
+  it("is true when a B2 or B3 hospital is within 5 km", () => {
+    expect(hadConfirmedResult([{ badge: "B4", distanceKm: 1 }, { badge: "B3", distanceKm: 5 }])).toBe(true);
+  });
+
+  it("is false when the only B2 or B3 is further than 5 km, or there are none", () => {
+    expect(hadConfirmedResult([{ badge: "B2", distanceKm: 5.1 }, { badge: "B1", distanceKm: 1 }])).toBe(false);
+    expect(hadConfirmedResult([])).toBe(false);
   });
 });

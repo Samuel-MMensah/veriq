@@ -10,14 +10,19 @@ const tabs = [
   { href: "/help", label: "Help", icon: "M3 12h4l3-8 4 16 3-8h4" },
 ] as const;
 
+const HIDDEN_UNDER = ["/facility", "/how-we-check", "/emergency", "/report"];
+
 export function BottomBar() {
   const pathname = usePathname();
 
-  // First open (screen 7) is a full-screen welcome with no bottom bar.
-  if (pathname === "/") return null;
+  // First open (screen 7) is full screen, and sub-pages with a back arrow have no bar (screens 3, 6, 14).
+  if (pathname === "/" || HIDDEN_UNDER.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return null;
 
   return (
-    <nav
+    <>
+      {/* Keeps page content clear of the fixed bar. */}
+      <div aria-hidden="true" className="h-[calc(3.5rem+env(safe-area-inset-bottom))]" />
+      <nav
       aria-label="Main"
       className="fixed inset-x-0 bottom-0 z-10 border-t border-ink/10 bg-white pb-[env(safe-area-inset-bottom)]"
     >
@@ -51,6 +56,7 @@ export function BottomBar() {
           );
         })}
       </ul>
-    </nav>
+      </nav>
+    </>
   );
 }

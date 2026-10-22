@@ -28,3 +28,17 @@ describe("BottomBar", () => {
     expect(screen.queryByRole("navigation")).toBeNull();
   });
 });
+
+describe("BottomBar on sub-pages", () => {
+  it.each(["/facility/abc", "/facility/abc/report", "/how-we-check", "/emergency", "/report/thanks"])("is hidden on %s", (p) => {
+    pathname = p;
+    render(<BottomBar />);
+    expect(screen.queryByRole("navigation")).toBeNull();
+  });
+
+  it("is shown on results", () => {
+    pathname = "/results";
+    render(<BottomBar />);
+    expect(screen.getByRole("navigation")).toBeTruthy();
+  });
+});

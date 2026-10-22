@@ -3,7 +3,7 @@
 // here we check that the seed holds the facts each badge, freshness state and figure needs.
 import type { PGlite } from "@electric-sql/pglite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { as, createDb, seedSql } from "./pglite";
+import { as, createDb, seedSql } from "@/lib/db/pglite";
 
 const id = (n: number) => `f0000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
 const F = {
@@ -425,6 +425,32 @@ describe("access rules (section 3)", () => {
     await as(db, "anon", null, async () => {
       const r = await one<{ n: number }>("select count(*)::int n from public.search_daily");
       expect(r.n).toBe(0);
+    });
+  });
+
+  it("log_search adds one count per search, for a card or for cash (rule K)", async () => {
+    const before = await rows<{ searches: number }>(
+      "select searches from public.search_daily where insurer_id is null and area_cell = '9.40,-0.86' and day = (now() at time zone 'utc')::date",
+    );
+    expect(before).toEqual([]);
+    await db.query("select public.log_search(null, '9.40,-0.86', false)");
+    await db.query("select public.log_search(null, '9.40,-0.86', false)");
+    const after = await one<{ searches: number }>(
+      "select searches from public.search_daily where insurer_id is null and area_cell = '9.40,-0.86' and day = (now() at time zone 'utc')::date",
+    );
+    expect(after.searches).toBe(2);
+  });
+
+  it("log_search refuses anything that isn't an area cell", async () => {
+    await expect(db.query("select public.log_search(null, 'Ama Mensah', false)")).rejects.toThrow(/Not an area cell/);
+  });
+
+  it("anon and signed-in users cannot call log_search", async () => {
+    await as(db, "anon", null, async () => {
+      await expect(db.query("select public.log_search(null, '5.54,-0.28', true)")).rejects.toThrow();
+    });
+    await as(db, "authenticated", INSURER_USER, async () => {
+      await expect(db.query("select public.log_search(null, '5.54,-0.28', true)")).rejects.toThrow();
     });
   });
 

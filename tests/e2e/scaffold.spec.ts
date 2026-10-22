@@ -1,14 +1,14 @@
 import { expect, test } from "@playwright/test";
 
-// Every Phase 1 route from SPEC section 2 renders its screen title.
+// Every Phase 1 route from SPEC section 2 renders its screen title (built screens show their real heading).
 const routes = [
-  { path: "/", title: "First open", sample: false },
+  { path: "/", title: "Know before you go.", sample: false },
   { path: "/find", title: "Find care", sample: true },
-  { path: "/results?service=antenatal&card=nhis&lat=5.55&lng=-0.25", title: "Results", sample: true },
-  { path: "/facility/sample-id", title: "Hospital detail", sample: true },
+  { path: "/results?service=antenatal&card=nhis&lat=5.545&lng=-0.265&area=dansoman", title: "4 hospitals near Dansoman", sample: true },
+  { path: "/facility/f0000000-0000-4000-8000-000000000001", title: "Akoma Mission Hospital", sample: true },
   { path: "/facility/sample-id/report", title: "Was your card accepted?", sample: true },
   { path: "/report/thanks", title: "After a report", sample: true },
-  { path: "/how-we-check", title: "How Veriq checks", sample: false },
+  { path: "/how-we-check", title: "Every badge tells you who said so, and when.", sample: false },
   { path: "/cards", title: "My cards", sample: false },
   { path: "/emergency", title: "Emergency mode", sample: true },
   { path: "/help", title: "Help: USSD and SMS", sample: false },

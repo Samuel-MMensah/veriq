@@ -9,6 +9,10 @@
   --color-refused: #c2570c;
   --color-refused-bg: #fdf0e6;
   --color-patient: #5fae8e;
+  /* Darker text shades on the pale badge backgrounds, for readable contrast (WCAG AA). */
+  --color-refused-ink: #8f3d07;
+  --color-patient-ink: #2c6b52;
+  --color-emergency-bg: #fdecea;
 
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 }

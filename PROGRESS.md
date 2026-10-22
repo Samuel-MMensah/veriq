@@ -1,5 +1,5 @@
 # Veriq Health progress
-Last updated: 2026-10-22, session 2026-10-22-07
+Last updated: 2026-10-22, session 2026-10-22-08
 Current phase: 1. Gate status: not met
 
 ## Prompts
@@ -8,7 +8,7 @@ Current phase: 1. Gate status: not met
 - [x] Prompt 1: Scaffold (2026-10-22-02, fix-up 2026-10-22-03)
 - [x] Prompt 2: Database and sample data (2026-10-22-04, live on Supabase 2026-10-22-05)
 - [x] Prompt 3: Rules engine, tests first (2026-10-22-06, fix-up 2026-10-22-07)
-- [ ] Prompt 4: Find, results, hospital page
+- [x] Prompt 4: Find, results, hospital page (2026-10-22-08)
 - [ ] Prompt 5: The report loop
 - [ ] Prompt 6: Cards, emergency, help
 - [ ] Prompt 7: Hospital and insurer views
@@ -27,20 +27,20 @@ Current phase: 1. Gate status: not met
 ## Screens
 | # | Screen | Route | Phase | Status (not started, in progress, done) | Notes |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Find care | `/find` | 1 | in progress | placeholder page (Prompt 1) |
-| 2 | Results | `/results` | 1 | in progress | Map button is Phase 2; placeholder page (Prompt 1) |
-| 3 | Hospital detail | `/facility/[id]` | 1 | in progress | placeholder page (Prompt 1) |
+| 1 | Find care | `/find` | 1 | done | saved cards in the picker come with Prompt 6 |
+| 2 | Results | `/results` | 1 | done | Map button shows "Map soon" (Phase 2) |
+| 3 | Hospital detail | `/facility/[id]` | 1 | done | Share and Save are Phase 2 |
 | 4 | Was your card accepted? | `/facility/[id]/report` | 1 | in progress | placeholder page (Prompt 1) |
 | 5 | My cards | `/cards` | 1 | in progress | placeholder page (Prompt 1) |
 | 6 | Emergency mode | `/emergency` | 1 | in progress | placeholder page (Prompt 1) |
-| 7 | First open | `/` | 1 | in progress | placeholder page (Prompt 1) |
+| 7 | First open | `/` | 1 | done | other languages "coming soon" until Phase 2 |
 | 8 | Map view | `/results/map` | 2 | not started | |
 | 9 | Saved and alerts | `/saved` | 2 | not started | |
 | 10 | Share with family | `/facility/[id]/share` | 2 | not started | |
 | 11 | After a report | `/report/thanks` | 1 | in progress | placeholder page (Prompt 1) |
 | 12 | Offline | global state | 2 | not started | |
 | 13 | Help: USSD and SMS | `/help` | 1 static, 2 live | in progress | Phase 1 also needs tested `/api/ussd`; placeholder page (Prompt 1) |
-| 14 | How Veriq checks | `/how-we-check` | 1 | in progress | placeholder page (Prompt 1) |
+| 14 | How Veriq checks | `/how-we-check` | 1 | done | |
 | 15 | Hospital: claim your page | `/h/onboard` | 2 | not started | |
 | 16 | Hospital morning check | `/h/check` | 1 | in progress | placeholder page (Prompt 1) |
 | 17 | Link to national bed system | `/h/national` | 3 | not started | Only after a signed agreement |
@@ -53,6 +53,7 @@ Current phase: 1. Gate status: not met
 
 ## Open questions for the team
 - SPEC.md section 4 still has the old badge wording ("were refused", "confirmed this month"). The team chose period-named wording on 2026-10-22 (see docs/DECISIONS.md); please update SPEC.md so the two agree.
+- Should the "Specialist" chip cover more than obstetricians, and "Scan / X-ray" cover X-ray and CT too? (Each chip searches one service for now.)
 
 ## Next prompt
-Prompt 4: Find, results, hospital page
+Prompt 5: The report loop
