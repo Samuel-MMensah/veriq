@@ -16,8 +16,9 @@ import type {
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/** Reports and replies are fetched for 60 days: rule T looks back 60 days, rule B 30. */
-export const REPORT_WINDOW_DAYS = 60;
+/** Reports and replies are fetched for 12 months: rules B and T look back 30 and 60 days, and the report
+ * history covers 7 days, 30 days and 12 months (team decision 2026-10-22). */
+export const REPORT_WINDOW_DAYS = 365;
 /** Rule K looks back 30 days. */
 export const INSURER_WINDOW_DAYS = 30;
 /** Rule S2: emergency units within 15 km. */
@@ -161,9 +162,9 @@ export type SearchCandidate = {
   status: CurrentStatusRow | null;
   /** The facility's row for the chosen card, or null (B5). Always null for "No card/cash". */
   link: FacilityInsurerRow | null;
-  /** Live reports for the chosen card, last 60 days, newest first. */
+  /** Live reports for the chosen card, last 12 months, newest first. */
   reports: PublicReportRow[];
-  /** Hospital replies for the chosen card, last 60 days, newest first. */
+  /** Hospital replies for the chosen card, last 12 months, newest first. */
   responses: HospitalResponseRow[];
 };
 
@@ -222,7 +223,7 @@ export type FacilityDetail = {
   /** Newest status per service (rule F). */
   statuses: CurrentStatusRow[];
   links: (FacilityInsurerRow & { insurer: InsurerRow | null })[];
-  /** Live reports for every card, last 60 days, newest first. */
+  /** Live reports for every card, last 12 months, newest first. */
   reports: PublicReportRow[];
   responses: HospitalResponseRow[];
 };

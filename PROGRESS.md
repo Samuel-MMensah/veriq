@@ -1,5 +1,5 @@
 # Veriq Health progress
-Last updated: 2026-10-22, session 2026-10-22-05
+Last updated: 2026-10-22, session 2026-10-22-07
 Current phase: 1. Gate status: not met
 
 ## Prompts
@@ -7,7 +7,7 @@ Current phase: 1. Gate status: not met
 - [x] Prompt 0: Rules and progress files (2026-10-22-01)
 - [x] Prompt 1: Scaffold (2026-10-22-02, fix-up 2026-10-22-03)
 - [x] Prompt 2: Database and sample data (2026-10-22-04, live on Supabase 2026-10-22-05)
-- [ ] Prompt 3: Rules engine, tests first
+- [x] Prompt 3: Rules engine, tests first (2026-10-22-06, fix-up 2026-10-22-07)
 - [ ] Prompt 4: Find, results, hospital page
 - [ ] Prompt 5: The report loop
 - [ ] Prompt 6: Cards, emergency, help
@@ -52,7 +52,7 @@ Current phase: 1. Gate status: not met
 - none
 
 ## Open questions for the team
-- none (answered 2026-10-22: the demo insurer login for screen 18 is NHIS)
+- SPEC.md section 4 still has the old badge wording ("were refused", "confirmed this month"). The team chose period-named wording on 2026-10-22 (see docs/DECISIONS.md); please update SPEC.md so the two agree.
 
 ## Next prompt
-Prompt 3: Rules engine, tests first
+Prompt 4: Find, results, hospital page

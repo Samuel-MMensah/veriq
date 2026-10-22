@@ -78,7 +78,7 @@ describe("getSearchCandidates (input to rules B, F, T and S1)", () => {
     expect(akoma.link?.hospital_says).toBe("accepts");
     expect(akoma.status?.status).toBe("open");
     expect(akoma.usualHours).toBe("Mon to Fri, 8 am to 4 pm");
-    // 60-day window (rule T): 9 accepted this month plus one older refusal.
+    // 12-month window (report history): 9 accepted in the last 30 days plus one older refusal.
     expect(akoma.reports).toHaveLength(10);
     expect(akoma.reports.every((r) => r.insurer_id === NHIS)).toBe(true);
     expect(akoma.reports.filter((r) => r.item === "scan").map((r) => r.amount_ghs)).toEqual([80, 80, 80]);
