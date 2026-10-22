@@ -1,5 +1,5 @@
 // A small stand-in for the supabase-js query builder, backed by PGlite. It supports only the
-// calls the app makes (select *, eq, in, gte, lte, order, maybeSingle, and rpc) and returns
+// calls the app makes (select *, insert, eq, in, gte, lte, order, maybeSingle, single, and rpc) and returns
 // values the way PostgREST does: timestamps as ISO strings, numerics as numbers.
 // Used by tests and by local data mode (VERIQ_DATA=local).
 import type { PGlite } from "@electric-sql/pglite";
@@ -29,7 +29,9 @@ async function run(db: PGlite, role: FakeRole, sql: string, values: unknown[]) {
 class Query implements PromiseLike<Result> {
   private filters: Filter[] = [];
   private orderBy: string | null = null;
-  private single = false;
+  private oneRow = false;
+  private strictSingle = false;
+  private row: Record<string, unknown> | null = null;
 
   constructor(
     private db: PGlite,
@@ -59,7 +61,16 @@ class Query implements PromiseLike<Result> {
     return this;
   }
   maybeSingle() {
-    this.single = true;
+    this.oneRow = true;
+    return this;
+  }
+  single() {
+    this.oneRow = true;
+    this.strictSingle = true;
+    return this;
+  }
+  insert(row: Record<string, unknown>) {
+    this.row = row;
     return this;
   }
 
@@ -79,9 +90,16 @@ class Query implements PromiseLike<Result> {
         });
       })
       .join(" and ");
-    const sql = `select * from public.${ident(this.table)}${where ? ` where ${where}` : ""}${
+    let sql = `select * from public.${ident(this.table)}${where ? ` where ${where}` : ""}${
       this.orderBy ? ` order by ${this.orderBy}` : ""
     }`;
+    if (this.row) {
+      const cols = Object.keys(this.row);
+      values.push(...cols.map((c) => this.row![c]));
+      sql = `insert into public.${ident(this.table)} (${cols.map(ident).join(", ")}) values (${cols
+        .map((_, i) => `$${i + 1}`)
+        .join(", ")}) returning *`;
+    }
     try {
       const res = await run(this.db, this.role, sql, values);
       const rows = res.rows.map((row) => {
@@ -96,8 +114,9 @@ class Query implements PromiseLike<Result> {
         }
         return out;
       });
-      if (this.single) {
+      if (this.oneRow) {
         if (rows.length > 1) return { data: null, error: { message: "More than one row" } };
+        if (this.strictSingle && rows.length === 0) return { data: null, error: { message: "No row" } };
         return { data: rows[0] ?? null, error: null };
       }
       return { data: rows, error: null };

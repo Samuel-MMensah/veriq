@@ -7,7 +7,9 @@ import { getFacilityDetail, getSearchCandidates, listInsurers, listServices } fr
 import { HOUR_MS } from "@/lib/rules/time";
 import { DEFAULT_AREA, parseSearch } from "./catalog";
 import { buildFacilityView, directionsUrl } from "./facility";
+import { submitReport } from "@/lib/reports/submit";
 import { buildResults } from "./results";
+import { whatChanged } from "./thanks";
 import { clockFromTime, statusView } from "./status";
 
 const NHIS = "a0000000-0000-4000-8000-000000000001";
@@ -189,5 +191,51 @@ describe("buildFacilityView (screen 3)", () => {
     const db = fakeDb(pg, "anon");
     const detail = (await getFacilityDetail(db, AKOMA, now))!;
     expect(buildFacilityView({ detail, insurers: [], origin: null, cardSlug: null, now }).subtitle).toBe("Mission · Kaneshie");
+  });
+});
+
+describe("whatChanged (screen 11, recalculated with rules B and T)", () => {
+  const send = (body: Record<string, unknown>) =>
+    submitReport({ db: fakeDb(pg, "owner"), body, secret: "s", now: new Date() });
+  const changedAt = async (facilityId: string, reportId: string) => {
+    const t = new Date();
+    const detail = (await getFacilityDetail(fakeDb(pg, "anon"), facilityId, t))!;
+    return whatChanged({ detail, insurerId: NHIS, cardName: "NHIS", reportId, now: t });
+  };
+
+  it("a new scan top-up at Akoma: the top-up line now counts 4 patients", async () => {
+    const r = await send({ deviceId: "thanks-phone-1", facilityId: AKOMA, insurerId: NHIS, outcome: "topup", amountGhs: 80, item: "scan" });
+    const change = await changedAt(AKOMA, r.status === "counted" ? r.reportId : "");
+    expect(change).toMatchObject({
+      kind: "topup",
+      headline: "Scan top-up about GH¢ 80 (4 patients, last 60 days)",
+      before: "Scan top-up about GH¢ 80 (3 patients, last 60 days)",
+    });
+  });
+
+  it("a third refusal: the badge changes, and says what it was", async () => {
+    const GBAWE = "f0000000-0000-4000-8000-000000000003";
+    const ids: string[] = [];
+    for (let i = 0; i < 3; i++) {
+      const r = await send({ deviceId: `thanks-phone-refuse-${i}`, facilityId: GBAWE, insurerId: NHIS, outcome: "refused" });
+      if (r.status === "counted") ids.push(r.reportId);
+    }
+    const change = await changedAt(GBAWE, ids[2]!);
+    expect(change).toMatchObject({
+      kind: "badge",
+      headline: "NHIS · Listed, but 3 patients were refused in the last 30 days",
+      before: "NHIS · On NHIA list, not checked yet. Call first",
+    });
+  });
+
+  it("no visible change: the report is added to the history, and says so", async () => {
+    const LAKESIDE = "f0000000-0000-4000-8000-000000000002";
+    const r = await send({ deviceId: "thanks-phone-3", facilityId: LAKESIDE, insurerId: NHIS, outcome: "covered" });
+    const change = await changedAt(LAKESIDE, r.status === "counted" ? r.reportId : "");
+    expect(change).toMatchObject({ kind: "history", headline: "NHIS · 15 patients confirmed in the last 30 days" });
+  });
+
+  it("a report that isn't showing (held, or not found) changes nothing yet", async () => {
+    expect(await changedAt(AKOMA, "00000000-0000-4000-8000-000000000000")).toEqual({ kind: "none" });
   });
 });

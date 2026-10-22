@@ -75,7 +75,7 @@ export default async function FacilityPage({
         <TodayGrid tiles={view.today} updated={view.todayUpdated} />
         <CardsAccepted cards={view.cards} />
         <Link
-          href={`/facility/${view.id}/report`}
+          href={`/facility/${view.id}/report${first(sp.card) ? `?card=${first(sp.card)}` : ""}`}
           className="flex min-h-14 items-center justify-between gap-3 rounded-2xl border-2 border-dashed border-brand/50 px-4 py-3 font-bold text-brand"
         >
           Been here? Tell others if your card worked

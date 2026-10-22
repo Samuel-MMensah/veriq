@@ -1,5 +1,5 @@
 # Veriq Health progress
-Last updated: 2026-10-22, session 2026-10-22-09
+Last updated: 2026-10-22, session 2026-10-22-10
 Current phase: 1. Gate status: not met
 
 ## Prompts
@@ -9,7 +9,7 @@ Current phase: 1. Gate status: not met
 - [x] Prompt 2: Database and sample data (2026-10-22-04, live on Supabase 2026-10-22-05)
 - [x] Prompt 3: Rules engine, tests first (2026-10-22-06, fix-up 2026-10-22-07)
 - [x] Prompt 4: Find, results, hospital page (2026-10-22-08, fix-up 2026-10-22-09)
-- [ ] Prompt 5: The report loop
+- [x] Prompt 5: The report loop (2026-10-22-10)
 - [ ] Prompt 6: Cards, emergency, help
 - [ ] Prompt 7: Hospital and insurer views
 - [ ] Prompt 8: Demo mode, polish, deploy
@@ -30,14 +30,14 @@ Current phase: 1. Gate status: not met
 | 1 | Find care | `/find` | 1 | done | saved cards in the picker come with Prompt 6 |
 | 2 | Results | `/results` | 1 | done | Map button shows "Map soon" (Phase 2) |
 | 3 | Hospital detail | `/facility/[id]` | 1 | done | Share and Save are Phase 2 |
-| 4 | Was your card accepted? | `/facility/[id]/report` | 1 | in progress | placeholder page (Prompt 1) |
+| 4 | Was your card accepted? | `/facility/[id]/report` | 1 | done | works offline (queued on the phone) |
 | 5 | My cards | `/cards` | 1 | in progress | placeholder page (Prompt 1) |
 | 6 | Emergency mode | `/emergency` | 1 | in progress | placeholder page (Prompt 1) |
 | 7 | First open | `/` | 1 | done | other languages "coming soon" until Phase 2 |
 | 8 | Map view | `/results/map` | 2 | not started | |
 | 9 | Saved and alerts | `/saved` | 2 | not started | |
 | 10 | Share with family | `/facility/[id]/share` | 2 | not started | |
-| 11 | After a report | `/report/thanks` | 1 | in progress | placeholder page (Prompt 1) |
+| 11 | After a report | `/report/thanks` | 1 | done | hospital-confirm line waits for Prompt 7 |
 | 12 | Offline | global state | 2 | not started | |
 | 13 | Help: USSD and SMS | `/help` | 1 static, 2 live | in progress | Phase 1 also needs tested `/api/ussd`; placeholder page (Prompt 1) |
 | 14 | How Veriq checks | `/how-we-check` | 1 | done | |
@@ -54,4 +54,4 @@ Current phase: 1. Gate status: not met
 ## Open questions for the team
 - SPEC.md section 4 still has the old badge wording ("were refused", "confirmed this month"). The team chose period-named wording on 2026-10-22 (see docs/DECISIONS.md); please update SPEC.md so the two agree.
 ## Next prompt
-Prompt 5: The report loop
+Prompt 6: Cards, emergency, help

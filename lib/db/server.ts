@@ -10,11 +10,13 @@ export function isLocalData(): boolean {
   return process.env.VERIQ_DATA === "local";
 }
 
-let local: Promise<PGlite> | null = null;
+// Kept on globalThis: Next.js bundles route handlers and pages separately, and each bundle would
+// otherwise get its own in-memory database (a report saved by /api/reports would not show on pages).
+const store = globalThis as typeof globalThis & { __veriqLocalDb?: Promise<PGlite> };
 
 async function localDb(): Promise<PGlite> {
-  local ??= import("./pglite").then((m) => m.createDb());
-  return local;
+  store.__veriqLocalDb ??= import("./pglite").then((m) => m.createDb());
+  return store.__veriqLocalDb;
 }
 
 /** Public reads: row-level security applies (the anon key, or the anon role locally). */

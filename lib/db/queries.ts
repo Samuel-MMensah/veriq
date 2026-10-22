@@ -380,3 +380,8 @@ export async function logSearch(
   });
   if (error) throw new Error(`Could not log the search: ${error.message}`);
 }
+
+// Screen 4: the report page only needs the facility itself.
+export async function getFacility(db: Db, facilityId: string): Promise<FacilityRow | null> {
+  return maybe<FacilityRow>(await db.from("facilities").select("*").eq("id", facilityId).maybeSingle(), "facility");
+}
