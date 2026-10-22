@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+/* Section 2 colours as theme tokens: bg-brand, text-ink, bg-page, etc. */
+@theme {
+  --color-brand: #0b6e4f;
+  --color-ink: #16201c;
+  --color-page: #f4f6f5;
+  --color-emergency: #8a1c12;
+  --color-refused: #c2570c;
+  --color-refused-bg: #fdf0e6;
+  --color-patient: #5fae8e;
+
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  background: var(--color-page);
+  color: var(--color-ink);
+}
+
+body {
+  min-height: 100dvh;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-brand);
+  outline-offset: 2px;
+}
