@@ -1,12 +1,12 @@
 # Veriq Health progress
-Last updated: 2026-10-22, session 2026-10-22-03
+Last updated: 2026-10-22, session 2026-10-22-04
 Current phase: 1. Gate status: not met
 
 ## Prompts
 ### Phase 1: pitch demo
 - [x] Prompt 0: Rules and progress files (2026-10-22-01)
 - [x] Prompt 1: Scaffold (2026-10-22-02, fix-up 2026-10-22-03)
-- [ ] Prompt 2: Database and sample data
+- [x] Prompt 2: Database and sample data (2026-10-22-04)
 - [ ] Prompt 3: Rules engine, tests first
 - [ ] Prompt 4: Find, results, hospital page
 - [ ] Prompt 5: The report loop
@@ -49,10 +49,10 @@ Current phase: 1. Gate status: not met
 | – | Admin | `/admin` | 2 | not started | Phase 1 only needs the demo reset (Prompt 8) |
 
 ## Known bugs
-- none
+- none known. The SQL is tested in PGlite but hasn't run on a real Supabase project yet (medium risk, 2026-10-22-04)
 
 ## Open questions for the team
-- none
+- none (answered 2026-10-22: the demo insurer login for screen 18 is NHIS)
 
 ## Next prompt
-Prompt 2: Database and sample data
+Prompt 3: Rules engine, tests first

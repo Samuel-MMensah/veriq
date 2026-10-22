@@ -1,0 +1,107 @@
+// A small stand-in for the supabase-js query builder, backed by PGlite. It supports only the
+// calls lib/db/queries.ts makes (select *, eq, in, gte, lte, order, maybeSingle) and returns
+// values the way PostgREST does: timestamps as ISO strings, numerics as numbers.
+import type { PGlite } from "@electric-sql/pglite";
+import type { Db } from "@/lib/db/supabase";
+
+const NUMERIC = 1700;
+const DATE = 1082;
+const TIMESTAMPTZ = 1184;
+
+type Filter = { sql: string; values: unknown[] };
+
+class Query implements PromiseLike<{ data: unknown; error: { message: string } | null }> {
+  private filters: Filter[] = [];
+  private orderBy: string | null = null;
+  private single = false;
+
+  constructor(
+    private db: PGlite,
+    private table: string,
+  ) {}
+
+  select(columns: string) {
+    if (columns !== "*") throw new Error("fake-postgrest supports select('*') only");
+    return this;
+  }
+  eq(column: string, value: unknown) {
+    return this.add(`${ident(column)} = $?`, [value]);
+  }
+  gte(column: string, value: unknown) {
+    return this.add(`${ident(column)} >= $?`, [value]);
+  }
+  lte(column: string, value: unknown) {
+    return this.add(`${ident(column)} <= $?`, [value]);
+  }
+  in(column: string, values: unknown[]) {
+    if (values.length === 0) return this.add("false", []);
+    return this.add(`${ident(column)} in (${values.map(() => "$?").join(", ")})`, values);
+  }
+  order(column: string, opts?: { ascending?: boolean }) {
+    this.orderBy = `${ident(column)} ${opts?.ascending === false ? "desc" : "asc"}`;
+    return this;
+  }
+  maybeSingle() {
+    this.single = true;
+    return this;
+  }
+
+  private add(sql: string, values: unknown[]) {
+    this.filters.push({ sql, values });
+    return this;
+  }
+
+  private async run() {
+    const values: unknown[] = [];
+    const where = this.filters
+      .map((f) => {
+        let i = 0;
+        return f.sql.replace(/\$\?/g, () => {
+          values.push(f.values[i++]);
+          return `$${values.length}`;
+        });
+      })
+      .join(" and ");
+    const sql = `select * from public.${ident(this.table)}${where ? ` where ${where}` : ""}${
+      this.orderBy ? ` order by ${this.orderBy}` : ""
+    }`;
+    try {
+      const res = await this.db.query<Record<string, unknown>>(sql, values);
+      const rows = res.rows.map((row) => {
+        const out: Record<string, unknown> = {};
+        for (const field of res.fields) {
+          const v = row[field.name];
+          if (v === null || v === undefined) out[field.name] = null;
+          else if (field.dataTypeID === NUMERIC) out[field.name] = Number(v);
+          else if (field.dataTypeID === DATE) out[field.name] = v instanceof Date ? v.toISOString().slice(0, 10) : v;
+          else if (field.dataTypeID === TIMESTAMPTZ) out[field.name] = v instanceof Date ? v.toISOString() : v;
+          else out[field.name] = v;
+        }
+        return out;
+      });
+      if (this.single) {
+        if (rows.length > 1) return { data: null, error: { message: "More than one row" } };
+        return { data: rows[0] ?? null, error: null };
+      }
+      return { data: rows, error: null };
+    } catch (e) {
+      return { data: null, error: { message: (e as Error).message } };
+    }
+  }
+
+  then<A, B>(
+    onfulfilled?: ((v: { data: unknown; error: { message: string } | null }) => A | PromiseLike<A>) | null,
+    onrejected?: ((reason: unknown) => B | PromiseLike<B>) | null,
+  ): PromiseLike<A | B> {
+    return this.run().then(onfulfilled, onrejected);
+  }
+}
+
+function ident(name: string): string {
+  if (!/^[a-z_]+$/.test(name)) throw new Error(`Bad identifier: ${name}`);
+  return `"${name}"`;
+}
+
+export function fakeDb(db: PGlite): Db {
+  return { from: (table: string) => new Query(db, table) } as unknown as Db;
+}
