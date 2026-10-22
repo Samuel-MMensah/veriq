@@ -1,5 +1,5 @@
 # Veriq Health progress
-Last updated: 2026-10-22, session 2026-10-22-08
+Last updated: 2026-10-22, session 2026-10-22-09
 Current phase: 1. Gate status: not met
 
 ## Prompts
@@ -8,7 +8,7 @@ Current phase: 1. Gate status: not met
 - [x] Prompt 1: Scaffold (2026-10-22-02, fix-up 2026-10-22-03)
 - [x] Prompt 2: Database and sample data (2026-10-22-04, live on Supabase 2026-10-22-05)
 - [x] Prompt 3: Rules engine, tests first (2026-10-22-06, fix-up 2026-10-22-07)
-- [x] Prompt 4: Find, results, hospital page (2026-10-22-08)
+- [x] Prompt 4: Find, results, hospital page (2026-10-22-08, fix-up 2026-10-22-09)
 - [ ] Prompt 5: The report loop
 - [ ] Prompt 6: Cards, emergency, help
 - [ ] Prompt 7: Hospital and insurer views
@@ -53,7 +53,5 @@ Current phase: 1. Gate status: not met
 
 ## Open questions for the team
 - SPEC.md section 4 still has the old badge wording ("were refused", "confirmed this month"). The team chose period-named wording on 2026-10-22 (see docs/DECISIONS.md); please update SPEC.md so the two agree.
-- Should the "Specialist" chip cover more than obstetricians, and "Scan / X-ray" cover X-ray and CT too? (Each chip searches one service for now.)
-
 ## Next prompt
 Prompt 5: The report loop

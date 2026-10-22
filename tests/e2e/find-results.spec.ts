@@ -75,3 +75,14 @@ test("a broken results link explains itself", async ({ page }) => {
   await page.goto("/results?card=nhis");
   await expect(page.getByText("We couldn't read this search.")).toBeVisible();
 });
+
+test("Scan / X-ray searches ultrasound, X-ray and CT, and names the service shown", async ({ page }) => {
+  await page.goto("/find");
+  await page.getByText("Scan / X-ray").click();
+  await page.getByText("No card / cash").click();
+  await page.getByRole("button", { name: "Show hospitals near you" }).click();
+  await expect(page).toHaveURL(/service=scan/);
+  await expect(page.getByText("Scan / X-ray · No card / cash · within 5 km")).toBeVisible();
+  await expect(page.getByRole("link", { name: /Unity Diagnostic Centre/ })).toContainText("Ultrasound scan: Available");
+  await expect(page.getByRole("link", { name: /Westhills District Hospital/ })).toContainText("X-ray:");
+});

@@ -33,6 +33,18 @@ function statusRank(status: ServiceStatus | null, updatedAt: string | null, now:
   return 1;
 }
 
+export type ServiceStatusEntry = { serviceId: string; status: ServiceStatus | null; statusUpdatedAt: string | null };
+
+/**
+ * rule S1 for a search across several services (e.g. Scan / X-ray): today's status is the best of
+ * them (open or accepting, then unknown, then closed or full), the newest among equals.
+ */
+export function bestStatus<T extends ServiceStatusEntry>(entries: T[], now: Date): T | null {
+  const ranked = entries.map((e) => ({ e, rank: statusRank(e.status, e.statusUpdatedAt, now) }));
+  ranked.sort((a, b) => a.rank - b.rank || (b.e.statusUpdatedAt ?? "").localeCompare(a.e.statusUpdatedAt ?? ""));
+  return ranked[0]?.e ?? null;
+}
+
 function byRankThenDistance<T extends { id: string; distanceKm: number; statusRank: number }>(
   first: (t: T) => number,
 ) {

@@ -87,8 +87,8 @@ export function FindForm() {
         <legend className="text-xl font-bold">What do you need?</legend>
         <div className="mt-3 flex flex-wrap gap-2">
           {SERVICE_CHIPS.map((s, i) => (
-            <label key={s.serviceId} className={chip}>
-              <input type="radio" name="service" value={s.serviceId} defaultChecked={i === 0} className="sr-only" />
+            <label key={s.slug} className={chip}>
+              <input type="radio" name="service" value={s.slug} defaultChecked={i === 0} className="sr-only" />
               {s.label}
             </label>
           ))}

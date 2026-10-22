@@ -28,7 +28,7 @@ afterAll(async () => {
 describe("demo step 3: antenatal + NHIS near Dansoman (rules B, F, T, S1)", () => {
   it("shows Akoma, Lakeside, Gbawe, then Pinecrest last", async () => {
     const candidates = await getSearchCandidates(fakeDb(pg), {
-      serviceId: "antenatal",
+      serviceIds: ["antenatal"],
       insurerId: NHIS,
       ...DANSOMAN,
       radiusKm: 5,
@@ -41,10 +41,10 @@ describe("demo step 3: antenatal + NHIS near Dansoman (rules B, F, T, S1)", () =
       lng: c.facility.lng,
       badge: badge({ link: c.link, reports: c.reports, now }).id,
       badgeText: badge({ link: c.link, reports: c.reports, now }).text,
-      status: c.status?.status ?? null,
-      statusUpdatedAt: c.status?.created_at ?? null,
+      status: c.services[0]!.status?.status ?? null,
+      statusUpdatedAt: c.services[0]!.status?.created_at ?? null,
       topUps: topUps({ reports: c.reports, responses: c.responses, now }),
-      fresh: freshness(c.status, now).state,
+      fresh: freshness(c.services[0]!.status, now).state,
     }));
     const sorted = sortResults(items, { origin: DANSOMAN, radiusKm: 5, now });
 

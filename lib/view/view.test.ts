@@ -3,7 +3,7 @@ import type { PGlite } from "@electric-sql/pglite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { fakeDb } from "@/lib/db/fake-postgrest";
 import { createDb } from "@/lib/db/pglite";
-import { getFacilityDetail, getSearchCandidates, listInsurers } from "@/lib/db/queries";
+import { getFacilityDetail, getSearchCandidates, listInsurers, listServices } from "@/lib/db/queries";
 import { HOUR_MS } from "@/lib/rules/time";
 import { DEFAULT_AREA, parseSearch } from "./catalog";
 import { buildFacilityView, directionsUrl } from "./facility";
@@ -14,10 +14,12 @@ const NHIS = "a0000000-0000-4000-8000-000000000001";
 const AKOMA = "f0000000-0000-4000-8000-000000000001";
 const DANSOMAN = { lat: 5.545, lng: -0.265 };
 let pg: PGlite;
+let serviceNames = new Map<string, string>();
 // Taken after seeding: the seed's times are relative to the moment it runs.
 let now = new Date();
 beforeAll(async () => {
   pg = await createDb();
+  serviceNames = new Map((await listServices(fakeDb(pg))).map((x) => [x.id, x.name]));
   now = new Date();
 }, 60_000);
 afterAll(async () => {
@@ -27,7 +29,9 @@ afterAll(async () => {
 describe("parseSearch (results URL)", () => {
   it("reads service, card, point and radius", () => {
     expect(parseSearch({ service: "antenatal", card: "nhis", lat: "5.545", lng: "-0.265", r: "10", area: "dansoman" })).toEqual({
-      serviceId: "antenatal",
+      service: "antenatal",
+      serviceIds: ["antenatal", "delivery", "c_section"],
+      serviceLabel: "Antenatal / maternity",
       card: "nhis",
       origin: DANSOMAN,
       areaName: "Dansoman",
@@ -77,13 +81,13 @@ describe("statusView (rules F and 4)", () => {
 describe("buildResults (screen 2)", () => {
   it("demo: 4 hospitals in the right order, 2 left out, a confirmed result found", async () => {
     const candidates = await getSearchCandidates(fakeDb(pg, "anon"), {
-      serviceId: "antenatal",
+      serviceIds: ["antenatal"],
       insurerId: NHIS,
       ...DANSOMAN,
       radiusKm: 5,
       now,
     });
-    const results = buildResults({ candidates, withCard: true, origin: DANSOMAN, radiusKm: 5, now });
+    const results = buildResults({ candidates, serviceNames, withCard: true, origin: DANSOMAN, radiusKm: 5, now });
     expect(results.cards.map((c) => [c.name, c.badge?.id, c.distanceKm])).toEqual([
       ["Akoma Mission Hospital", "B2", 1.8],
       ["Lakeside Family Clinic", "B3", 2.6],
@@ -100,16 +104,58 @@ describe("buildResults (screen 2)", () => {
 
   it("No card/cash: every antenatal facility in 5 km, no badges", async () => {
     const candidates = await getSearchCandidates(fakeDb(pg, "anon"), {
-      serviceId: "antenatal",
+      serviceIds: ["antenatal"],
       insurerId: null,
       ...DANSOMAN,
       radiusKm: 5,
       now,
     });
-    const results = buildResults({ candidates, withCard: false, origin: DANSOMAN, radiusKm: 5, now });
+    const results = buildResults({ candidates, serviceNames, withCard: false, origin: DANSOMAN, radiusKm: 5, now });
     expect(results.cards).toHaveLength(6);
     expect(results.cards.every((c) => c.badge === null && c.topUps.length === 0)).toBe(true);
     expect(results.hadConfirmedResult).toBe(false);
+  });
+});
+
+describe("buildResults with a chip that covers several services", () => {
+  const search = async (serviceIds: string[], insurerId: string | null) =>
+    buildResults({
+      candidates: await getSearchCandidates(fakeDb(pg, "anon"), { serviceIds, insurerId, ...DANSOMAN, radiusKm: 5, now }),
+      serviceNames,
+      withCard: insurerId !== null,
+      origin: DANSOMAN,
+      radiusKm: 5,
+      now,
+    });
+
+  it("Antenatal / maternity (antenatal, delivery, C-section) keeps the demo: same 4, same order", async () => {
+    const results = await search(parseSearch({ service: "antenatal", card: "nhis", area: "dansoman" })!.serviceIds, NHIS);
+    expect(results.cards.map((c) => c.name)).toEqual([
+      "Akoma Mission Hospital",
+      "Lakeside Family Clinic",
+      "Gbawe Community Clinic",
+      "Pinecrest Specialist Hospital",
+    ]);
+    // Akoma offers all three; the antenatal clinic has the best status today.
+    expect(results.cards[0]).toMatchObject({ serviceName: "Antenatal clinic", status: { word: "Open till 4 pm" } });
+  });
+
+  it("Scan / X-ray (ultrasound, X-ray, CT) shows each hospital's best scan service and names it", async () => {
+    const results = await search(parseSearch({ service: "scan", card: "cash", area: "dansoman" })!.serviceIds, null);
+    const byName = Object.fromEntries(results.cards.map((c) => [c.name, `${c.serviceName}: ${c.status.word}`]));
+    expect(byName).toMatchObject({
+      "Akoma Mission Hospital": "Ultrasound scan: Available",
+      // Unity: ultrasound working beats CT down.
+      "Unity Diagnostic Centre": "Ultrasound scan: Available",
+    });
+    // Westhills X-ray is 5 days old, so it is greyed (rule F).
+    expect(results.cards.find((c) => c.name === "Westhills District Hospital")?.status.freshness.state).toBe("stale");
+  });
+
+  it("Specialist (obstetrician, children's doctor) finds both kinds", async () => {
+    const results = await search(parseSearch({ service: "specialist", card: "cash", area: "dansoman" })!.serviceIds, null);
+    const services = new Set(results.cards.map((c) => c.serviceName));
+    expect(services).toEqual(new Set(["Obstetrician", "Children's doctor"]));
   });
 });
 

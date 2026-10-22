@@ -83,23 +83,23 @@ async function facilitiesInBox(db: Db, box: BoundingBox): Promise<FacilityRow[]>
   );
 }
 
-async function offering(db: Db, facilityIds: string[], serviceId: string): Promise<FacilityServiceRow[]> {
-  if (facilityIds.length === 0) return [];
+async function offering(db: Db, facilityIds: string[], serviceIds: string[]): Promise<FacilityServiceRow[]> {
+  if (facilityIds.length === 0 || serviceIds.length === 0) return [];
   return rows(
     await db
       .from("facility_services")
       .select("*")
-      .eq("service_id", serviceId)
+      .in("service_id", serviceIds)
       .eq("offered", true)
       .in("facility_id", facilityIds),
     "services offered",
   );
 }
 
-async function statusFor(db: Db, facilityIds: string[], serviceId?: string): Promise<CurrentStatusRow[]> {
+async function statusFor(db: Db, facilityIds: string[], serviceIds?: string[]): Promise<CurrentStatusRow[]> {
   if (facilityIds.length === 0) return [];
   let query = db.from("current_status").select("*").in("facility_id", facilityIds);
-  if (serviceId) query = query.eq("service_id", serviceId);
+  if (serviceIds) query = query.in("service_id", serviceIds);
   return rows(await query, "status");
 }
 
@@ -155,11 +155,18 @@ function groupBy<T>(rows: T[], key: (row: T) => string): Map<string, T[]> {
 
 // Screen 2: results (rules B, F, T, S1) ------------------------------------------------------
 
+/** One searched service the facility offers, with its newest status (rule F). */
+export type CandidateService = {
+  serviceId: string;
+  usualHours: string | null;
+  /** null if never updated. */
+  status: CurrentStatusRow | null;
+};
+
 export type SearchCandidate = {
   facility: FacilityRow;
-  usualHours: string | null;
-  /** Newest status for the searched service, or null if never updated (rule F). */
-  status: CurrentStatusRow | null;
+  /** Every searched service this facility offers (a chip such as Scan / X-ray covers several). */
+  services: CandidateService[];
   /** The facility's row for the chosen card, or null (B5). Always null for "No card/cash". */
   link: FacilityInsurerRow | null;
   /** Live reports for the chosen card, last 12 months, newest first. */
@@ -169,7 +176,8 @@ export type SearchCandidate = {
 };
 
 export type SearchInput = {
-  serviceId: string;
+  /** One or more services, e.g. ultrasound, xray and ct for "Scan / X-ray". */
+  serviceIds: string[];
   /** null means "No card/cash". */
   insurerId: string | null;
   lat: number;
@@ -178,38 +186,42 @@ export type SearchInput = {
   now: Date;
 };
 
-/** Facilities near the point that offer the service, with everything rules B, F, T and S1 need. */
+/** Facilities near the point that offer any of the services, with everything rules B, F, T and S1 need. */
 export async function getSearchCandidates(db: Db, input: SearchInput): Promise<SearchCandidate[]> {
   const near = await facilitiesInBox(db, boundingBox(input.lat, input.lng, input.radiusKm));
-  const offered = await offering(db, near.map((f) => f.id), input.serviceId);
-  const ids = offered.map((o) => o.facility_id);
+  const offered = await offering(db, near.map((f) => f.id), input.serviceIds);
+  const offeredBy = groupBy(offered, (o) => o.facility_id);
+  const ids = [...offeredBy.keys()];
   const since = daysBefore(input.now, REPORT_WINDOW_DAYS);
   const card = input.insurerId ?? undefined;
 
   const [statuses, links, reports, responses] = await Promise.all([
-    statusFor(db, ids, input.serviceId),
+    statusFor(db, ids, input.serviceIds),
     card ? linksFor(db, ids, card) : Promise.resolve([]),
     card ? reportsFor(db, ids, since, card) : Promise.resolve([]),
     card ? responsesFor(db, ids, since, card) : Promise.resolve([]),
   ]);
 
   const byId = new Map(near.map((f) => [f.id, f]));
-  const statusBy = new Map(statuses.map((s) => [s.facility_id, s]));
+  const statusBy = new Map(statuses.map((s) => [`${s.facility_id}/${s.service_id}`, s]));
   const linkBy = new Map(links.map((l) => [l.facility_id, l]));
   const reportsBy = groupBy(reports, (r) => r.facility_id);
   const responsesBy = groupBy(responses, (r) => r.facility_id);
 
-  return offered.flatMap((o) => {
-    const facility = byId.get(o.facility_id);
+  return ids.flatMap((id) => {
+    const facility = byId.get(id);
     if (!facility) return [];
     return [
       {
         facility,
-        usualHours: o.usual_hours,
-        status: statusBy.get(o.facility_id) ?? null,
-        link: linkBy.get(o.facility_id) ?? null,
-        reports: reportsBy.get(o.facility_id) ?? [],
-        responses: responsesBy.get(o.facility_id) ?? [],
+        services: (offeredBy.get(id) ?? []).map((o) => ({
+          serviceId: o.service_id,
+          usualHours: o.usual_hours,
+          status: statusBy.get(`${id}/${o.service_id}`) ?? null,
+        })),
+        link: linkBy.get(id) ?? null,
+        reports: reportsBy.get(id) ?? [],
+        responses: responsesBy.get(id) ?? [],
       },
     ];
   });
@@ -277,10 +289,10 @@ export async function getEmergencyCandidates(
   input: { lat: number; lng: number; now: Date; radiusKm?: number },
 ): Promise<EmergencyCandidate[]> {
   const near = await facilitiesInBox(db, boundingBox(input.lat, input.lng, input.radiusKm ?? EMERGENCY_RADIUS_KM));
-  const offered = await offering(db, near.map((f) => f.id), "emergency");
+  const offered = await offering(db, near.map((f) => f.id), ["emergency"]);
   const ids = offered.map((o) => o.facility_id);
   const [statuses, links, reports] = await Promise.all([
-    statusFor(db, ids, "emergency"),
+    statusFor(db, ids, ["emergency"]),
     linksFor(db, ids),
     reportsFor(db, ids, daysBefore(input.now, REPORT_WINDOW_DAYS)),
   ]);

@@ -64,7 +64,7 @@ describe("getSearchCandidates (input to rules B, F, T and S1)", () => {
   it("returns the antenatal facilities near Dansoman with their NHIS facts", async () => {
     const db = fakeDb(pg);
     const found = await anon(() =>
-      getSearchCandidates(db, { serviceId: "antenatal", insurerId: NHIS, ...DANSOMAN, radiusKm: 5, now }),
+      getSearchCandidates(db, { serviceIds: ["antenatal"], insurerId: NHIS, ...DANSOMAN, radiusKm: 5, now }),
     );
     expect(found.map((c) => c.facility.name).sort()).toEqual([
       "Akoma Mission Hospital",
@@ -77,22 +77,23 @@ describe("getSearchCandidates (input to rules B, F, T and S1)", () => {
 
     const akoma = found.find((c) => c.facility.id === AKOMA)!;
     expect(akoma.link?.hospital_says).toBe("accepts");
-    expect(akoma.status?.status).toBe("open");
-    expect(akoma.usualHours).toBe("Mon to Fri, 8 am to 4 pm");
+    expect(akoma.services).toHaveLength(1);
+    expect(akoma.services[0]!.status?.status).toBe("open");
+    expect(akoma.services[0]!.usualHours).toBe("Mon to Fri, 8 am to 4 pm");
     // 12-month window (report history): 9 accepted in the last 30 days plus one older refusal.
     expect(akoma.reports).toHaveLength(10);
     expect(akoma.reports.every((r) => r.insurer_id === NHIS)).toBe(true);
     expect(akoma.reports.filter((r) => r.item === "scan").map((r) => r.amount_ghs)).toEqual([80, 80, 80]);
     expect(akoma.reports[0]!.created_at >= akoma.reports[1]!.created_at).toBe(true); // newest first
 
-    expect(found.find((c) => c.facility.id === GBAWE)!.status).toBeNull(); // rule F: no update yet
+    expect(found.find((c) => c.facility.id === GBAWE)!.services[0]!.status).toBeNull(); // rule F: no update yet
     expect(found.find((c) => c.facility.id === GLEFE)!.link).toBeNull(); // rule B5
   });
 
   it("returns no card facts for No card/cash", async () => {
     const db = fakeDb(pg);
     const found = await anon(() =>
-      getSearchCandidates(db, { serviceId: "antenatal", insurerId: null, ...DANSOMAN, radiusKm: 5, now }),
+      getSearchCandidates(db, { serviceIds: ["antenatal"], insurerId: null, ...DANSOMAN, radiusKm: 5, now }),
     );
     expect(found).toHaveLength(6);
     expect(found.every((c) => c.link === null && c.reports.length === 0)).toBe(true);
@@ -101,7 +102,7 @@ describe("getSearchCandidates (input to rules B, F, T and S1)", () => {
   it("returns nothing when no facility is near", async () => {
     const db = fakeDb(pg);
     const found = await anon(() =>
-      getSearchCandidates(db, { serviceId: "antenatal", insurerId: NHIS, lat: 9.4, lng: -0.85, radiusKm: 5, now }),
+      getSearchCandidates(db, { serviceIds: ["antenatal"], insurerId: NHIS, lat: 9.4, lng: -0.85, radiusKm: 5, now }),
     );
     expect(found).toEqual([]);
   });

@@ -1,4 +1,4 @@
-import { sortEmergency, sortNoCard, sortResults, type EmergencyItem, type ResultItem } from "./sort";
+import { bestStatus, sortEmergency, sortNoCard, sortResults, type EmergencyItem, type ResultItem } from "./sort";
 import { HOUR_MS, MINUTE_MS } from "./time";
 
 const now = new Date("2026-10-22T12:00:00Z");
@@ -133,5 +133,28 @@ describe("No card/cash order (rule S1 without the badge step)", () => {
       now,
     });
     expect(sorted.map((r) => r.id)).toEqual(["open-near", "open-far", "unknown", "closed"]);
+  });
+});
+
+describe("rule S1 with several services: today's status is the best one", () => {
+  const svc = (serviceId: string, status: ResultItem["status"], at: string | null = fresh) => ({
+    serviceId,
+    status,
+    statusUpdatedAt: status ? at : null,
+  });
+
+  it("picks open or accepting over unknown over closed or full", () => {
+    expect(bestStatus([svc("ct", "down"), svc("xray", null), svc("ultrasound", "working")], now)?.serviceId).toBe("ultrasound");
+    expect(bestStatus([svc("ct", "down"), svc("xray", null)], now)?.serviceId).toBe("xray");
+  });
+
+  it("treats a status over 72 hours old as unknown, and prefers the newest among equals", () => {
+    const older = new Date(now.getTime() - 5 * HOUR_MS).toISOString();
+    expect(bestStatus([svc("a", "open", stale), svc("b", "closed")], now)?.serviceId).toBe("a");
+    expect(bestStatus([svc("a", "open", older), svc("b", "open")], now)?.serviceId).toBe("b");
+  });
+
+  it("is null for no services", () => {
+    expect(bestStatus([], now)).toBeNull();
   });
 });

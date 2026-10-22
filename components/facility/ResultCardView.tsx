@@ -7,13 +7,11 @@ export function ResultCardView({
   card,
   href,
   cardName,
-  serviceName,
 }: {
   card: ResultCard;
   href: string;
   /** null for "No card/cash". */
   cardName: string | null;
-  serviceName: string;
 }) {
   const refused = card.badge?.id === "B1";
   return (
@@ -34,7 +32,7 @@ export function ResultCardView({
           </div>
         )}
         <div className="mt-2 space-y-1 text-sm">
-          <StatusLine label={serviceName} status={card.status} usualHours={card.usualHours} />
+          <StatusLine label={card.serviceName} status={card.status} usualHours={card.usualHours} />
           {cardName && (
             <p className="text-ink/80">{card.topUps.length ? card.topUps.join(" · ") : "No top-up reported"}</p>
           )}

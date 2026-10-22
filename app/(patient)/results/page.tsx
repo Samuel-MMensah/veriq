@@ -22,18 +22,20 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
   const now = new Date();
   const withCard = search.card !== CASH;
   const [insurer, services] = await Promise.all([withCard ? getInsurerBySlug(db, search.card) : null, listServices(db)]);
-  const service = services.find((s) => s.id === search.serviceId);
-  if (!service || (withCard && !insurer)) return <BrokenSearch />;
+  const serviceNames = new Map(services.map((s) => [s.id, s.name]));
+  const known = search.serviceIds.filter((id) => serviceNames.has(id));
+  if (known.length === 0 || (withCard && !insurer)) return <BrokenSearch />;
+  const serviceLabel = search.serviceLabel ?? serviceNames.get(known[0]!)!;
 
   const candidates = await getSearchCandidates(db, {
-    serviceId: service.id,
+    serviceIds: known,
     insurerId: insurer?.id ?? null,
     lat: search.origin.lat,
     lng: search.origin.lng,
     radiusKm: search.radiusKm,
     now,
   });
-  const results = buildResults({ candidates, withCard, origin: search.origin, radiusKm: search.radiusKm, now });
+  const results = buildResults({ candidates, serviceNames, withCard, origin: search.origin, radiusKm: search.radiusKm, now });
 
   // Rule K: count the search (card, ~2 km cell, found a confirmed hospital). Never blocks the page.
   try {
@@ -49,7 +51,7 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
   const card = insurer?.name ?? cardName(CASH);
   const count = results.cards.length;
   const facilityQuery = `lat=${search.origin.lat}&lng=${search.origin.lng}&card=${search.card}`;
-  const cashHref = `/results?service=${service.id}&card=${CASH}&lat=${search.origin.lat}&lng=${search.origin.lng}&r=${search.radiusKm}`;
+  const cashHref = `/results?service=${search.service}&card=${CASH}&lat=${search.origin.lat}&lng=${search.origin.lng}&r=${search.radiusKm}`;
 
   return (
     <div className="min-h-dvh bg-page">
@@ -61,7 +63,7 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
               {count} {count === 1 ? "hospital" : "hospitals"} near {search.areaName}
             </h1>
             <p className="text-sm text-ink/70">
-              {service.name} · {card} · within {search.radiusKm} km
+              {serviceLabel} · {card} · within {search.radiusKm} km
             </p>
           </div>
           {/* Screen 8 (map) is Phase 2. */}
@@ -99,7 +101,6 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
                 card={c}
                 href={`/facility/${c.id}?${facilityQuery}`}
                 cardName={withCard ? card : null}
-                serviceName={service.name}
               />
             ))}
           </ul>

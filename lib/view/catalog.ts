@@ -1,16 +1,16 @@
 // Fixed choices on the Find screen (SPEC section 2, screen 1) and parsing of the results URL.
 import type { LatLng } from "@/lib/geo";
 
-export type ServiceChip = { label: string; serviceId: string };
+/** A Find chip. Its slug goes in the URL (?service=); it searches all of its services. */
+export type ServiceChip = { slug: string; label: string; serviceIds: string[] };
 
-/** Each chip searches one service. */
 export const SERVICE_CHIPS: ServiceChip[] = [
-  { label: "Antenatal / maternity", serviceId: "antenatal" },
-  { label: "See a doctor", serviceId: "gp" },
-  { label: "Scan / X-ray", serviceId: "ultrasound" },
-  { label: "Lab test", serviceId: "lab" },
-  { label: "Specialist", serviceId: "obstetrician" },
-  { label: "Dental", serviceId: "dental" },
+  { slug: "antenatal", label: "Antenatal / maternity", serviceIds: ["antenatal", "delivery", "c_section"] },
+  { slug: "gp", label: "See a doctor", serviceIds: ["gp"] },
+  { slug: "scan", label: "Scan / X-ray", serviceIds: ["ultrasound", "xray", "ct"] },
+  { slug: "lab", label: "Lab test", serviceIds: ["lab"] },
+  { slug: "specialist", label: "Specialist", serviceIds: ["obstetrician", "paediatrics"] },
+  { slug: "dental", label: "Dental", serviceIds: ["dental"] },
 ];
 
 export const CASH = "cash";
@@ -52,7 +52,11 @@ export const DEFAULT_RADIUS_KM = 5;
 export type SearchParams = Record<string, string | string[] | undefined>;
 
 export type ParsedSearch = {
-  serviceId: string;
+  /** The ?service= value: a chip slug, or a single service id. */
+  service: string;
+  serviceIds: string[];
+  /** The chip label, or null for a single service id (the page then uses the service name). */
+  serviceLabel: string | null;
   card: string;
   origin: LatLng;
   /** Shown as "near {areaName}". */
@@ -64,9 +68,10 @@ const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v
 
 /** Reads /results?service=&card=&lat=&lng=&r=&area=. Returns null when the link is broken. */
 export function parseSearch(params: SearchParams): ParsedSearch | null {
-  const serviceId = first(params.service);
+  const service = first(params.service);
   const card = first(params.card);
-  if (!serviceId || !/^[a-z_]+$/.test(serviceId) || !card || !/^[a-z0-9-]+$/.test(card)) return null;
+  if (!service || !/^[a-z_]+$/.test(service) || !card || !/^[a-z0-9-]+$/.test(card)) return null;
+  const chip = SERVICE_CHIPS.find((c) => c.slug === service);
 
   const lat = Number(first(params.lat));
   const lng = Number(first(params.lng));
@@ -78,7 +83,15 @@ export function parseSearch(params: SearchParams): ParsedSearch | null {
   const r = Number(first(params.r));
   const radiusKm = RADIUS_OPTIONS_KM.includes(r) ? r : DEFAULT_RADIUS_KM;
   const areaName = area?.name ?? (first(params.near) === "me" ? "you" : "this place");
-  return { serviceId, card, origin: { lat: origin.lat, lng: origin.lng }, areaName, radiusKm };
+  return {
+    service,
+    serviceIds: chip?.serviceIds ?? [service],
+    serviceLabel: chip?.label ?? null,
+    card,
+    origin: { lat: origin.lat, lng: origin.lng },
+    areaName,
+    radiusKm,
+  };
 }
 
 export function cardName(slug: string): string {
