@@ -38,6 +38,7 @@ describe("parseSearch (results URL)", () => {
       card: "nhis",
       origin: DANSOMAN,
       areaName: "Dansoman",
+      areaSlug: "dansoman",
       radiusKm: 10,
     });
   });

@@ -25,12 +25,15 @@ test("the 90-second demo (SPEC section 9)", async ({ page }) => {
   const cards = page.getByRole("list").filter({ has: page.getByRole("heading", { level: 2 }) }).getByRole("listitem");
   await expect(cards).toHaveCount(4);
   await expect(cards.nth(0)).toContainText("Akoma Mission Hospital");
-  await expect(cards.nth(0)).toContainText("NHIS · Confirmed by hospital 2 days ago");
+  await expect(cards.nth(0)).toContainText("Takes NHIS");
+  await expect(cards.nth(0)).toContainText("Confirmed by hospital 2 days ago");
   await expect(cards.nth(1)).toContainText("Lakeside Family Clinic");
   await expect(cards.nth(1)).toContainText("patients confirmed in the last 30 days");
   await expect(cards.nth(2)).toContainText("Gbawe Community Clinic");
+  await expect(cards.nth(2)).toContainText("NHIS not confirmed yet");
   await expect(cards.nth(2)).toContainText("On NHIA list, not checked yet. Call first");
   await expect(cards.nth(3)).toContainText("Pinecrest Specialist Hospital");
+  await expect(cards.nth(3)).toContainText("NHIS refused, patients say");
   await expect(cards.nth(3)).toContainText("Listed, but 9 patients were refused in the last 30 days");
 
   // 4. Open Akoma: today's status with times, cards with sources, the GH¢ 80 scan top-up.

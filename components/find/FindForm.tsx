@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { RenewalNotice } from "@/components/cards/RenewalNotice";
 import { Icon } from "@/components/ui/Icon";
 import { listCards, renewalReminder, type SavedCard } from "@/lib/local/cards";
-import { setLastCard } from "@/lib/local/prefs";
+import { setLastCard, setLastSearch } from "@/lib/local/prefs";
 import {
   AREAS,
   CARD_OPTIONS,
@@ -52,6 +52,9 @@ export function FindForm() {
   const [changing, setChanging] = useState(false);
   const [locating, setLocating] = useState(false);
   const [locateError, setLocateError] = useState<string | null>(null);
+  // The area is Dansoman until the person picks one or it comes from their last search.
+  const [areaIsDefault, setAreaIsDefault] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   const [saved, setSaved] = useState<SavedCard[]>([]);
   const [cardTouched, setCardTouched] = useState(false);
@@ -59,13 +62,20 @@ export function FindForm() {
   useEffect(() => {
     // Reading localStorage must wait until after hydration.
     const last = loadLastArea();
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (last) setPlace(last);
+    if (last) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPlace(last);
+      setAreaIsDefault(false);
+    }
+    // Coming back to this page (browser back) must not leave the button saying "Finding…".
+    const reset = () => setSubmitting(false);
+    window.addEventListener("pageshow", reset);
     // Saved cards come first, and the default card is chosen (screen 1). They stay on the phone:
     // only the card type (e.g. "nhis") goes in the search link.
     listCards()
       .then(setSaved)
       .catch(() => setSaved([]));
+    return () => window.removeEventListener("pageshow", reset);
   }, []);
 
   useEffect(() => {
@@ -95,6 +105,7 @@ export function FindForm() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setPlace({ lat: pos.coords.latitude, lng: pos.coords.longitude, name: "you", slug: null });
+        setAreaIsDefault(false);
         setLocating(false);
         setChanging(false);
       },
@@ -110,10 +121,18 @@ export function FindForm() {
   const buttonText = card === CASH ? "Show hospitals near you" : `Show hospitals that take ${cardLabel}`;
 
   return (
-    <form action="/results" method="get" onSubmit={() => {
+    <form
+      action="/results"
+      method="get"
+      onSubmit={(e) => {
         saveLastArea(place);
         setLastCard(card);
-      }} className="space-y-6">
+        setLastSearch(new URLSearchParams(new FormData(e.currentTarget) as unknown as Record<string, string>));
+        // On 3G the next page can take a few seconds: say so, so nobody taps twice.
+        setSubmitting(true);
+      }}
+      className="space-y-6"
+    >
       {(reminder?.state === "due" || reminder?.state === "expired") && (
         <RenewalNotice reminder={reminder} hasNhisWithoutExpiry={false} />
       )}
@@ -157,7 +176,10 @@ export function FindForm() {
           <Icon name="pin" className="h-6 w-6 text-brand" />
           <div className="flex-1">
             <p className="font-semibold">{place.name === "you" ? "Near you" : `Near ${place.name}, Accra`}</p>
-            <p className="text-sm text-ink/70">Within {radius} km</p>
+            <p className="text-sm text-ink/70">
+              Within {radius} km
+              {areaIsDefault && !changing && <span className="font-semibold text-ink/80"> · Not here? Tap Change</span>}
+            </p>
           </div>
           <button
             type="button"
@@ -191,7 +213,10 @@ export function FindForm() {
                 value={place.slug ?? ""}
                 onChange={(e) => {
                   const a = AREAS.find((x) => x.slug === e.target.value);
-                  if (a) setPlace(fromArea(a));
+                  if (a) {
+                    setPlace(fromArea(a));
+                    setAreaIsDefault(false);
+                  }
                 }}
                 className="mt-1 block min-h-11 w-full rounded-lg border border-ink/20 bg-white px-3 text-base font-normal"
               >
@@ -226,9 +251,16 @@ export function FindForm() {
       <input type="hidden" name="r" value={radius} />
       {place.slug ? <input type="hidden" name="area" value={place.slug} /> : <input type="hidden" name="near" value="me" />}
 
-      <button type="submit" className="min-h-14 w-full rounded-2xl bg-brand px-4 text-lg font-bold text-white">
-        {buttonText}
-      </button>
+      {/* Always in reach above the bottom bar, even on a small phone (rule 7). */}
+      <div className="sticky bottom-[calc(3.5rem+env(safe-area-inset-bottom))] -mx-4 bg-white/95 px-4 pb-3 pt-2">
+        <button
+          type="submit"
+          aria-busy={submitting}
+          className="min-h-14 w-full rounded-2xl bg-brand px-4 text-lg font-bold text-white aria-busy:opacity-80"
+        >
+          {submitting ? "Finding hospitals…" : buttonText}
+        </button>
+      </div>
     </form>
   );
 }

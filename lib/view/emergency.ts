@@ -14,6 +14,8 @@ export type EmergencyUnit = {
   name: string;
   distanceKm: number;
   status: StatusView;
+  /** To call ahead, "+233 …", or null when we have no number. */
+  phone: string | null;
   directionsUrl: string;
   /** Badge per card slug at this hospital, for information only. */
   cardBadges: Record<string, BadgeId>;
@@ -58,6 +60,7 @@ export function buildEmergency({
       name: c.facility.name,
       distanceKm: s.distanceKm,
       status: statusView(c.status, now),
+      phone: c.facility.phone,
       directionsUrl: directionsUrl(c.facility),
       cardBadges,
     };

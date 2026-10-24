@@ -33,6 +33,31 @@ export type Badge = {
   history: ReportHistory;
 };
 
+/** The plain answer to "will they take my card here?" for each badge, shown above the badge text. */
+export type Verdict = {
+  /** One word for the hospital page: Yes, Unsure, Refused, No or Unknown. */
+  short: "Yes" | "Unsure" | "Refused" | "No" | "Unknown";
+  /** A few words for the result card, e.g. "Takes NHIS". */
+  headline: string;
+};
+
+/** Rule B, worded as an answer. Only the badge id decides it, so it can never disagree with the badge. */
+export function verdict(id: BadgeId, cardName: string): Verdict {
+  switch (id) {
+    case "B2": // rule B2: the hospital says yes
+    case "B3": // rule B3: patients say yes
+      return { short: "Yes", headline: `Takes ${cardName}` };
+    case "B4": // rule B4: only a list says so
+      return { short: "Unsure", headline: `${cardName} not confirmed yet` };
+    case "B1": // rule B1: patients were refused
+      return { short: "Refused", headline: `${cardName} refused, patients say` };
+    case "B2x": // rule B2x: the hospital says no
+      return { short: "No", headline: `Does not take ${cardName}` };
+    case "B5": // rule B5: nothing known
+      return { short: "Unknown", headline: `No ${cardName} information` };
+  }
+}
+
 const REPORT_WINDOW_DAYS = 30;
 const HOSPITAL_ANSWER_DAYS = 14;
 const MIN_REPORTS = 3;

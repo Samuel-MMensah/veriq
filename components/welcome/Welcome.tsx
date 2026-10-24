@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Icon, type IconName } from "@/components/ui/Icon";
+import { setSeenCookie } from "@/lib/local/prefs";
 
 /** Screen 7 shows once; after that "/" goes straight to Find care. */
 export const SEEN_WELCOME_KEY = "veriq.seenWelcome";
@@ -14,11 +15,13 @@ const POINTS: { icon: IconName; title: string; text: string }[] = [
   { icon: "people", title: "Help the next person", text: "One tap after your visit keeps Veriq true." },
 ];
 
-const LANGUAGES = ["Twi", "Ga", "Ewe", "Dagbani", "Hausa"];
+// Phase 2 (Prompt 16) adds these. One line instead of five dead buttons.
+const LANGUAGES = "Twi, Ga, Ewe, Dagbani and Hausa";
 
 function markSeen() {
   try {
     window.localStorage.setItem(SEEN_WELCOME_KEY, "1");
+    setSeenCookie();
   } catch {
     // Private mode: the welcome shows again next time, which is harmless.
   }
@@ -37,9 +40,19 @@ export function Welcome() {
 
   return (
     <main className="flex min-h-dvh flex-col bg-brand px-6 pb-6 pt-12 text-white">
-      <p aria-hidden="true" className="text-6xl font-extrabold leading-none tracking-tight">
-        veriq
-      </p>
+      <div className="flex items-start justify-between gap-3">
+        <p aria-hidden="true" className="text-6xl font-extrabold leading-none tracking-tight">
+          veriq
+        </p>
+        {/* Someone may open Veriq for the first time in an emergency: one tap, no welcome to read. */}
+        <Link
+          href="/emergency"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 font-bold text-emergency"
+        >
+          <Icon name="alert" className="h-5 w-5" />
+          Emergency
+        </Link>
+      </div>
       <p aria-hidden="true" className="mt-2 text-lg font-semibold tracking-[0.3em] text-white/85">
         HEALTH
       </p>
@@ -64,19 +77,11 @@ export function Welcome() {
 
       <fieldset className="mt-8">
         <legend className="font-bold">Language</legend>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <span className="inline-flex min-h-11 items-center rounded-full bg-white px-5 font-bold text-brand" aria-current="true">
+        <div className="mt-3 flex items-center gap-3">
+          <span className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-white px-5 font-bold text-brand" aria-current="true">
             English
           </span>
-          {LANGUAGES.map((l) => (
-            <span
-              key={l}
-              aria-disabled="true"
-              className="inline-flex min-h-11 items-center rounded-full border border-white/40 px-5 text-white/80"
-            >
-              {l} <span className="ml-1 text-xs">(coming soon)</span>
-            </span>
-          ))}
+          <span className="text-sm text-white/85">{LANGUAGES} coming soon</span>
         </div>
       </fieldset>
 

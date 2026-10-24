@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BadgeLine } from "@/components/badges/BadgeLine";
 import { CardsAccepted } from "@/components/facility/CardsAccepted";
 import { TodayGrid } from "@/components/facility/TodayGrid";
 import { BackLink } from "@/components/ui/BackLink";
@@ -37,6 +38,8 @@ export default async function FacilityPage({
   const lng = Number(first(sp.lng));
   const origin = first(sp.lat) && first(sp.lng) && Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
   const view = buildFacilityView({ detail, insurers, origin, cardSlug: first(sp.card) ?? null, now });
+  // The searched card's answer goes at the top: it is the question the person came with (rule B).
+  const yourCard = view.cards.find((c) => c.insurer.slug === first(sp.card)) ?? null;
 
   return (
     <div className="min-h-dvh bg-page pb-8">
@@ -49,6 +52,11 @@ export default async function FacilityPage({
               <SampleDataTag className="mt-1 shrink-0" />
             </div>
             <p className="mt-1 text-ink/70">{view.subtitle}</p>
+            {yourCard && (
+              <div className="mt-3">
+                <BadgeLine badge={yourCard.badge} cardName={yourCard.insurer.name} />
+              </div>
+            )}
             <div className="mt-3 flex flex-wrap gap-2">
               {view.phone && (
                 <a

@@ -1,4 +1,4 @@
-import { badge, type BadgeLink, type BadgeReport } from "./badge";
+import { badge, verdict, type BadgeLink, type BadgeReport } from "./badge";
 import { DAY_MS } from "./time";
 
 const now = new Date("2026-10-22T12:00:00Z");
@@ -188,5 +188,33 @@ describe("held and rejected reports never count (rule A)", () => {
       { outcome: "refused", created_at: daysAgo(1), state: "rejected" },
     ];
     expect(badge({ link: listed, reports: r, now }).id).toBe("B4");
+  });
+});
+
+describe("rule B worded as an answer (verdict)", () => {
+  it("B2 and B3 say the card is taken", () => {
+    expect(verdict("B2", "NHIS")).toEqual({ short: "Yes", headline: "Takes NHIS" });
+    expect(verdict("B3", "NHIS")).toEqual({ short: "Yes", headline: "Takes NHIS" });
+  });
+
+  it("B4 never claims the card is taken: only a list says so", () => {
+    expect(verdict("B4", "NHIS")).toEqual({ short: "Unsure", headline: "NHIS not confirmed yet" });
+  });
+
+  it("B1 names patients as the source of the refusals", () => {
+    expect(verdict("B1", "NHIS")).toEqual({ short: "Refused", headline: "NHIS refused, patients say" });
+  });
+
+  it("B2x and B5", () => {
+    expect(verdict("B2x", "Prudential")).toEqual({ short: "No", headline: "Does not take Prudential" });
+    expect(verdict("B5", "Prudential")).toEqual({ short: "Unknown", headline: "No Prudential information" });
+  });
+
+  it("follows the badge: a 3rd refusal turns 'Takes' into 'refused' (rules B1, B2)", () => {
+    const link: BadgeLink = { listed_by: "nhia", hospital_says: "accepts", hospital_confirmed_at: daysAgo(5) };
+    expect(verdict(badge({ link, reports: reports("refused", 1, 2), now }).id, "NHIS").headline).toBe("Takes NHIS");
+    expect(verdict(badge({ link, reports: reports("refused", 1, 2, 3), now }).id, "NHIS").headline).toBe(
+      "NHIS refused, patients say",
+    );
   });
 });

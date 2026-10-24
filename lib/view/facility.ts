@@ -2,7 +2,7 @@
 import type { FacilityDetail } from "@/lib/db/queries";
 import type { FacilityType, InsurerRow } from "@/lib/db/types";
 import { haversineKm, roundKm, type LatLng } from "@/lib/geo";
-import { badge, type Badge, type BadgeId } from "@/lib/rules/badge";
+import { badge, verdict, type Badge, type BadgeId, type Verdict } from "@/lib/rules/badge";
 import { agoText, ageMs } from "@/lib/rules/time";
 import { topUps } from "@/lib/rules/topup";
 import { SOURCE_LABEL, accraClock, statusView, type StatusView } from "./status";
@@ -19,8 +19,8 @@ export type TodayTile = { serviceId: string; label: string; status: StatusView; 
 export type CardRow = {
   insurer: InsurerRow;
   badge: Badge;
-  /** Short answer on the right: Yes, Unsure, Refused, No or Unknown. */
-  answer: "Yes" | "Unsure" | "Refused" | "No" | "Unknown";
+  /** Short answer on the right: Yes, Unsure, Refused, No or Unknown (rule B, `verdict`). */
+  answer: Verdict["short"];
   topUps: string[];
 };
 
@@ -37,14 +37,6 @@ export type FacilityView = {
   cards: CardRow[];
 };
 
-const ANSWER: Record<BadgeId, CardRow["answer"]> = {
-  B2: "Yes",
-  B3: "Yes",
-  B4: "Unsure",
-  B1: "Refused",
-  B2x: "No",
-  B5: "Unknown",
-};
 const STRENGTH: Record<BadgeId, number> = { B2: 0, B3: 1, B4: 2, B1: 3, B2x: 4, B5: 5 };
 
 export function directionsUrl(to: LatLng): string {
@@ -95,7 +87,7 @@ export function buildFacilityView({
       const reports = detail.reports.filter((r) => r.insurer_id === insurer.id);
       const responses = detail.responses.filter((r) => r.insurer_id === insurer.id);
       const b = badge({ link, reports, now });
-      return { insurer, badge: b, answer: ANSWER[b.id], topUps: topUps({ reports, responses, now }).map((t) => t.text) };
+      return { insurer, badge: b, answer: verdict(b.id, insurer.name).short, topUps: topUps({ reports, responses, now }).map((t) => t.text) };
     })
     .sort(
       (a, b) =>

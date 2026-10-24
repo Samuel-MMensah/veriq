@@ -1,13 +1,25 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { LastSearch } from "@/components/find/LastSearch";
 
 export const metadata: Metadata = { title: "Saved" };
 
-// Screen 9 is Phase 2 (Prompt 12). Until then this tab only explains that.
+// Screen 9 (saved hospitals and alerts) is Phase 2 (Prompt 12). Until then the tab is not a dead
+// end: it offers the last search this phone remembers (rule 8).
 export default function Page() {
   return (
-    <main className="px-4 pt-6 pb-4">
-      <h1 className="text-2xl font-extrabold">Saved</h1>
-      <p className="mt-2 text-sm text-ink/70">Saving hospitals is coming in the pilot.</p>
+    <main className="px-4 pb-6 pt-6">
+      <h1 className="text-3xl font-extrabold">Saved</h1>
+      <p className="mt-1 text-ink/70">Saving hospitals and alerts come in the pilot.</p>
+      <div className="mt-6 space-y-3">
+        <LastSearch />
+        <Link
+          href="/find"
+          className="flex min-h-14 items-center justify-center rounded-2xl border-2 border-brand font-bold text-brand"
+        >
+          Start a new search
+        </Link>
+      </div>
     </main>
   );
 }

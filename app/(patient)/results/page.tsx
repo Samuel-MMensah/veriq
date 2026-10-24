@@ -4,12 +4,11 @@ import { after } from "next/server";
 import { BadgeLegend } from "@/components/badges/BadgeLine";
 import { ResultCardView } from "@/components/facility/ResultCardView";
 import { BackLink } from "@/components/ui/BackLink";
-import { Icon } from "@/components/ui/Icon";
 import { SampleDataTag } from "@/components/ui/SampleDataTag";
 import { getInsurerBySlug, getSearchCandidates, listServices, logSearch } from "@/lib/db/queries";
 import { readDb, serviceDb } from "@/lib/db/server";
 import { areaCell } from "@/lib/geo";
-import { CASH, cardName, parseSearch, type SearchParams } from "@/lib/view/catalog";
+import { CASH, RADIUS_OPTIONS_KM, cardName, parseSearch, type SearchParams } from "@/lib/view/catalog";
 import { buildResults } from "@/lib/view/results";
 
 export const metadata: Metadata = { title: "Results" };
@@ -52,7 +51,16 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
   const card = insurer?.name ?? cardName(CASH);
   const count = results.cards.length;
   const facilityQuery = `lat=${search.origin.lat}&lng=${search.origin.lng}&card=${search.card}`;
-  const cashHref = `/results?service=${search.service}&card=${CASH}&lat=${search.origin.lat}&lng=${search.origin.lng}&r=${search.radiusKm}`;
+  // The same search, for "search further" and "see all under No card / cash". Keeps the area name.
+  const searchQuery: Record<string, string> = {
+    service: search.service,
+    card: search.card,
+    lat: String(search.origin.lat),
+    lng: String(search.origin.lng),
+    r: String(search.radiusKm),
+    ...(search.areaSlug ? { area: search.areaSlug } : search.areaName === "you" ? { near: "me" } : {}),
+  };
+  const cashHref = `/results?${new URLSearchParams({ ...searchQuery, card: CASH })}`;
 
   return (
     <div className="min-h-dvh bg-page">
@@ -67,33 +75,22 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
               {serviceLabel} · {card} · within {search.radiusKm} km
             </p>
           </div>
-          {/* Screen 8 (map) is Phase 2. */}
-          <span
-            aria-disabled="true"
-            title="The map comes in the pilot"
-            className="inline-flex min-h-11 items-center gap-1 rounded-full border border-ink/15 px-3 text-sm font-semibold text-ink/50"
-          >
-            <Icon name="map" className="h-4 w-4" /> Map soon
-          </span>
+          <SampleDataTag className="mt-1 shrink-0" />
         </div>
       </header>
 
       <main className="space-y-3 px-4 py-4">
-        <div className="flex items-start justify-between gap-3">
-          {withCard ? <BadgeLegend /> : <p className="text-sm text-ink/80">Without a card, every hospital nearby is shown.</p>}
-          <SampleDataTag />
-        </div>
+        {count > 0 &&
+          (withCard ? <BadgeLegend /> : <p className="text-sm text-ink/80">Without a card, every hospital nearby is shown.</p>)}
 
         {count === 0 ? (
-          <div className="rounded-2xl bg-white p-4 text-ink/80 shadow-sm">
-            <p className="font-semibold text-ink">
-              No hospitals within {search.radiusKm} km {withCard ? `that take ${card}` : "offer this"}.
-            </p>
-            <p className="mt-1 text-sm">Try a bigger area, or call a hospital before you go.</p>
-            <Link href="/find" className="mt-3 inline-flex min-h-11 items-center font-semibold text-brand underline">
-              Change the search
-            </Link>
-          </div>
+          <EmptyResults
+            withCard={withCard}
+            card={card}
+            radiusKm={search.radiusKm}
+            widerHref={(r) => `/results?${new URLSearchParams({ ...searchQuery, r: String(r) })}`}
+            cashHref={withCard ? cashHref : null}
+          />
         ) : (
           <ul className="space-y-3">
             {results.cards.map((c) => (
@@ -119,12 +116,63 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
         )}
 
         <p className="pt-2 text-center text-sm text-ink/70">
-          {withCard ? "Sorted by how sure we are, then distance" : "Sorted by today's status, then distance"} ·{" "}
+          {/* Says what rules S1 and the no-card sort really do (rule 4). */}
+          {withCard ? "Sorted by how sure we are, then today's status, then distance" : "Sorted by today's status, then distance"}{" "}
+          ·{" "}
           <Link href="/how-we-check" className="font-semibold text-brand underline">
             How Veriq checks
           </Link>
         </p>
       </main>
+    </div>
+  );
+}
+
+/** No hospital found: offer the next step in one tap instead of a dead end. */
+function EmptyResults({
+  withCard,
+  card,
+  radiusKm,
+  widerHref,
+  cashHref,
+}: {
+  withCard: boolean;
+  card: string;
+  radiusKm: number;
+  widerHref: (r: number) => string;
+  cashHref: string | null;
+}) {
+  const wider = RADIUS_OPTIONS_KM.filter((r) => r > radiusKm);
+  return (
+    <div className="rounded-2xl bg-white p-4 text-ink/80 shadow-sm">
+      <p className="font-semibold text-ink">
+        No hospitals within {radiusKm} km {withCard ? `that we know take ${card}` : "offer this"}.
+      </p>
+      <p className="mt-1 text-sm">
+        That doesn&apos;t mean none do: we may not have checked them yet. Try one of these:
+      </p>
+      <div className="mt-3 flex flex-col gap-2">
+        {wider.slice(0, 2).map((r) => (
+          <Link
+            key={r}
+            href={widerHref(r)}
+            className="inline-flex min-h-12 items-center justify-center rounded-xl bg-brand px-4 font-bold text-white"
+          >
+            Search within {r} km
+          </Link>
+        ))}
+        {cashHref && (
+          <Link
+            href={cashHref}
+            className="inline-flex min-h-12 items-center justify-center rounded-xl border border-brand px-4 font-bold text-brand"
+          >
+            See every hospital nearby
+          </Link>
+        )}
+        <Link href="/find" className="inline-flex min-h-11 items-center justify-center font-semibold text-brand underline">
+          Change the search
+        </Link>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 # Veriq Health progress
-Last updated: 2026-10-24, session 2026-10-24-02
-Current phase: 1. Gate status: not met
+Last updated: 2026-10-24, session 2026-10-24-04
+Current phase: 1. Gate status: not met (one item left: the demo by hand on a mid-range Android phone)
+Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-west-1)
 
 ## Prompts
 ### Phase 1: pitch demo
@@ -12,7 +13,7 @@ Current phase: 1. Gate status: not met
 - [x] Prompt 5: The report loop (2026-10-22-10)
 - [x] Prompt 6: Cards, emergency, help (2026-10-22-11)
 - [x] Prompt 7: Hospital and insurer views (2026-10-24-01)
-- [ ] Prompt 8: Demo mode, polish, deploy (2026-10-24-02: built and tested; waiting on the Vercel import, then the live gate check)
+- [x] Prompt 8: Demo mode, polish, deploy (2026-10-24-02, live checks 2026-10-24-03, UX/trust/accessibility audit 2026-10-24-04)
 
 ### Phase 2: pilot (prompts to be written in full after the pitch)
 - [ ] Prompt 9: Real staff auth, admin verification of hospitals, held-report review
@@ -28,14 +29,14 @@ Current phase: 1. Gate status: not met
 | # | Screen | Route | Phase | Status (not started, in progress, done) | Notes |
 | --- | --- | --- | --- | --- | --- |
 | 1 | Find care | `/find` | 1 | done | saved cards first since Prompt 6 |
-| 2 | Results | `/results` | 1 | done | Map button shows "Map soon" (Phase 2) |
+| 2 | Results | `/results` | 1 | done | answer-first badge ("Takes NHIS"); "Map soon" removed (Phase 2); empty state offers wider search |
 | 3 | Hospital detail | `/facility/[id]` | 1 | done | Share and Save are Phase 2 |
 | 4 | Was your card accepted? | `/facility/[id]/report` | 1 | done | works offline (queued on the phone) |
 | 5 | My cards | `/cards` | 1 | done | IndexedDB only; Find lists saved cards first |
-| 6 | Emergency mode | `/emergency` | 1 | done | rule S2; cards are notes only |
+| 6 | Emergency mode | `/emergency` | 1 | done | rule S2; cards are notes only; Call and Go per unit; 112/193 stream first |
 | 7 | First open | `/` | 1 | done | other languages "coming soon" until Phase 2 |
 | 8 | Map view | `/results/map` | 2 | not started | |
-| 9 | Saved and alerts | `/saved` | 2 | not started | |
+| 9 | Saved and alerts | `/saved` | 2 | not started | Phase 1 tab offers the last search again |
 | 10 | Share with family | `/facility/[id]/share` | 2 | not started | |
 | 11 | After a report | `/report/thanks` | 1 | done | top-up reports explain the hospital's morning-check prompt |
 | 12 | Offline | global state | 2 | not started | |
@@ -49,10 +50,13 @@ Current phase: 1. Gate status: not met
 | – | Admin | `/admin` | 2 | Phase 1 part done | `/admin/demo`: Reset demo data, Make this phone fresh (demo login) |
 
 ## Known bugs
-- none
+- "Open till 4 pm" still shows after 4 pm (status note is free text, no end time), medium, found 2026-10-24-04
+- Insurer "turned away" table scrolls sideways at 390 px, low, found 2026-10-24-04
 
 ## Open questions for the team
+- Approve the answer wording on badges (`verdict` in lib/rules/badge.ts): "Takes {card}", "{card} not confirmed yet", "{card} refused, patients say", "Does not take {card}". SPEC section 4 doesn't have it yet.
+- May the Saved tab leave the bottom bar until Phase 2 (SPEC section 2 change)?
 - SPEC.md section 4 still has the old badge wording ("were refused", "confirmed this month"). The team chose period-named wording on 2026-10-22 (see docs/DECISIONS.md); please update SPEC.md so the two agree.
 
 ## Next prompt
-Finish Prompt 8: import into Vercel (docs/DEPLOY.md), then the live 3G and demo checks and the Phase 1 gate. After that, Phase 2 starts with Prompt 9 only once the gate is met.
+None until the Phase 1 gate is met: rehearse the demo by hand on a mid-range Android phone (docs/DEPLOY.md, "Before every pitch"). Then Phase 2, Prompt 9: Real staff auth, admin verification of hospitals, held-report review (write it in full first, SPEC section 8).

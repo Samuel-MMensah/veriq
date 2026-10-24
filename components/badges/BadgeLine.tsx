@@ -1,5 +1,5 @@
 import { Icon, type IconName } from "@/components/ui/Icon";
-import type { Badge, BadgeTone } from "@/lib/rules/badge";
+import { verdict, type Badge, type BadgeTone } from "@/lib/rules/badge";
 
 const STYLE: Record<BadgeTone, { box: string; icon: IconName }> = {
   hospital: { box: "bg-brand/10 text-brand", icon: "check" },
@@ -10,14 +10,18 @@ const STYLE: Record<BadgeTone, { box: string; icon: IconName }> = {
   unknown: { box: "bg-ink/[0.06] text-ink/70", icon: "info" },
 };
 
-/** The rule B badge with its own words, prefixed by the card it is about. */
+/**
+ * The rule B badge as an answer first ("Takes NHIS"), then who said so and when (rule 4).
+ * Colour, icon and words all carry the meaning, so it reads without colour too.
+ */
 export function BadgeLine({ badge, cardName }: { badge: Badge; cardName: string }) {
   const style = STYLE[badge.tone];
   return (
-    <p className={`flex items-start gap-2 rounded-lg px-3 py-2 text-sm font-semibold ${style.box}`}>
-      <Icon name={style.icon} className="mt-0.5 h-4 w-4" />
+    <p className={`flex items-start gap-2 rounded-lg px-3 py-2 ${style.box}`}>
+      <Icon name={style.icon} className="mt-1 h-4 w-4" />
       <span>
-        {cardName} · {badge.text}
+        <span className="block font-bold">{verdict(badge.id, cardName).headline}</span>
+        <span className="block text-sm font-medium">{badge.text}</span>
       </span>
     </p>
   );
@@ -32,7 +36,7 @@ const LEGEND: { label: string; dot: string }[] = [
 
 export function BadgeLegend() {
   return (
-    <ul aria-label="What the badges mean" className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink/80">
+    <ul aria-label="What the badges mean" className="grid grid-cols-2 gap-x-3 gap-y-1 text-sm text-ink/80">
       {LEGEND.map((l) => (
         <li key={l.label} className="flex items-center gap-1.5">
           <span aria-hidden="true" className={`inline-block h-3 w-3 ${l.dot}`} />

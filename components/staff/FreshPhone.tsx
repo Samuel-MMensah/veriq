@@ -2,7 +2,7 @@
 
 import { deleteDB } from "idb";
 import { useState } from "react";
-import { LOCAL_STORAGE_KEYS } from "@/lib/local/prefs";
+import { LOCAL_STORAGE_KEYS, clearSeenCookie } from "@/lib/local/prefs";
 
 /** For rehearsals: forget everything this app kept on this phone, so first open shows again. */
 export function FreshPhone() {
@@ -14,6 +14,7 @@ export function FreshPhone() {
         onClick={async () => {
           if (!window.confirm("Forget this phone's saved cards, reports waiting to send and settings?")) return;
           try {
+            clearSeenCookie();
             for (const key of LOCAL_STORAGE_KEYS) window.localStorage.removeItem(key);
             await deleteDB("veriq");
           } catch {

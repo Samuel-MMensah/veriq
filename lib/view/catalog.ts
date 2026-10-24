@@ -61,6 +61,8 @@ export type ParsedSearch = {
   origin: LatLng;
   /** Shown as "near {areaName}". */
   areaName: string;
+  /** The picked area's slug, or null for "near me" or a bare point. */
+  areaSlug: string | null;
   radiusKm: number;
 };
 
@@ -90,6 +92,7 @@ export function parseSearch(params: SearchParams): ParsedSearch | null {
     card,
     origin: { lat: origin.lat, lng: origin.lng },
     areaName,
+    areaSlug: area?.slug ?? null,
     radiusKm,
   };
 }
