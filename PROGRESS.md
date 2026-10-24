@@ -54,7 +54,7 @@ Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-w
 - Insurer "turned away" table scrolls sideways at 390 px, low, found 2026-10-24-04
 
 ## Open questions for the team
-- Approve the answer wording on badges (`verdict` in lib/rules/badge.ts): "Takes {card}", "{card} not confirmed yet", "{card} refused, patients say", "Does not take {card}". SPEC section 4 doesn't have it yet.
+- Add the approved answer wording to SPEC section 4 (`verdict` in lib/rules/badge.ts): "Takes {card}", "{card} not confirmed yet", "Patients report {card} refusals", "Does not take {card}".
 - May the Saved tab leave the bottom bar until Phase 2 (SPEC section 2 change)?
 - SPEC.md section 4 still has the old badge wording ("were refused", "confirmed this month"). The team chose period-named wording on 2026-10-22 (see docs/DECISIONS.md); please update SPEC.md so the two agree.
 

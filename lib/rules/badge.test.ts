@@ -202,7 +202,7 @@ describe("rule B worded as an answer (verdict)", () => {
   });
 
   it("B1 names patients as the source of the refusals", () => {
-    expect(verdict("B1", "NHIS")).toEqual({ short: "Refused", headline: "NHIS refused, patients say" });
+    expect(verdict("B1", "NHIS")).toEqual({ short: "Refused", headline: "Patients report NHIS refusals" });
   });
 
   it("B2x and B5", () => {
@@ -210,11 +210,11 @@ describe("rule B worded as an answer (verdict)", () => {
     expect(verdict("B5", "Prudential")).toEqual({ short: "Unknown", headline: "No Prudential information" });
   });
 
-  it("follows the badge: a 3rd refusal turns 'Takes' into 'refused' (rules B1, B2)", () => {
+  it("follows the badge: a 3rd refusal turns 'Takes' into 'Patients report' (rules B1, B2)", () => {
     const link: BadgeLink = { listed_by: "nhia", hospital_says: "accepts", hospital_confirmed_at: daysAgo(5) };
     expect(verdict(badge({ link, reports: reports("refused", 1, 2), now }).id, "NHIS").headline).toBe("Takes NHIS");
     expect(verdict(badge({ link, reports: reports("refused", 1, 2, 3), now }).id, "NHIS").headline).toBe(
-      "NHIS refused, patients say",
+      "Patients report NHIS refusals",
     );
   });
 });

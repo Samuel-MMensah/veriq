@@ -50,7 +50,7 @@ export function verdict(id: BadgeId, cardName: string): Verdict {
     case "B4": // rule B4: only a list says so
       return { short: "Unsure", headline: `${cardName} not confirmed yet` };
     case "B1": // rule B1: patients were refused
-      return { short: "Refused", headline: `${cardName} refused, patients say` };
+      return { short: "Refused", headline: `Patients report ${cardName} refusals` };
     case "B2x": // rule B2x: the hospital says no
       return { short: "No", headline: `Does not take ${cardName}` };
     case "B5": // rule B5: nothing known

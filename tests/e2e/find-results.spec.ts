@@ -38,7 +38,7 @@ test("first open, find antenatal with NHIS, 4 results in order, open Akoma", asy
   await expect(cards.nth(1).getByText(/^1\d patients confirmed in the last 30 days$/)).toBeVisible();
   await expect(cards.nth(1)).toContainText("Takes NHIS");
   await expect(cards.nth(2)).toContainText("NHIS not confirmed yetOn NHIA list, not checked yet. Call first");
-  await expect(cards.nth(3)).toContainText("NHIS refused, patients sayListed, but 9 patients were refused in the last 30 days");
+  await expect(cards.nth(3)).toContainText("Patients report NHIS refusalsListed, but 9 patients were refused in the last 30 days");
 
   await page.getByRole("link", { name: /Akoma Mission Hospital/ }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Akoma Mission Hospital");

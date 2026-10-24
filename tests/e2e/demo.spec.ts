@@ -33,7 +33,7 @@ test("the 90-second demo (SPEC section 9)", async ({ page }) => {
   await expect(cards.nth(2)).toContainText("NHIS not confirmed yet");
   await expect(cards.nth(2)).toContainText("On NHIA list, not checked yet. Call first");
   await expect(cards.nth(3)).toContainText("Pinecrest Specialist Hospital");
-  await expect(cards.nth(3)).toContainText("NHIS refused, patients say");
+  await expect(cards.nth(3)).toContainText("Patients report NHIS refusals");
   await expect(cards.nth(3)).toContainText("Listed, but 9 patients were refused in the last 30 days");
 
   // 4. Open Akoma: today's status with times, cards with sources, the GH¢ 80 scan top-up.
