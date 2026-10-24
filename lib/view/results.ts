@@ -11,6 +11,8 @@ import { statusView, type StatusView } from "./status";
 export type ResultCard = {
   id: string;
   name: string;
+  /** The neighbourhood, e.g. "Kaneshie". */
+  area: string;
   distanceKm: number;
   /** null for "No card/cash". */
   badge: Badge | null;
@@ -76,6 +78,7 @@ export function buildResults({
   const toCard = (r: (typeof items)[number] & { distanceKm: number }): ResultCard => ({
     id: r.id,
     name: r.candidate.facility.name,
+    area: r.candidate.facility.area,
     distanceKm: r.distanceKm,
     badge: r.badgeResult,
     serviceName: serviceNames.get(r.shown.serviceId) ?? r.shown.serviceId,

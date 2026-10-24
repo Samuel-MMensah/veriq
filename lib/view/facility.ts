@@ -3,7 +3,7 @@ import type { FacilityDetail } from "@/lib/db/queries";
 import type { FacilityType, InsurerRow } from "@/lib/db/types";
 import { haversineKm, roundKm, type LatLng } from "@/lib/geo";
 import { badge, type Badge, type BadgeId } from "@/lib/rules/badge";
-import { formatAge, ageMs } from "@/lib/rules/time";
+import { agoText, ageMs } from "@/lib/rules/time";
 import { topUps } from "@/lib/rules/topup";
 import { SOURCE_LABEL, accraClock, statusView, type StatusView } from "./status";
 
@@ -82,7 +82,7 @@ export function buildFacilityView({
   const newest = [...detail.statuses].sort((a, b) => b.created_at.localeCompare(a.created_at))[0];
   const todayUpdated = newest
     ? `Updated by ${SOURCE_LABEL[newest.source]} ${
-        ageMs(newest.created_at, now) < 12 * 60 * 60 * 1000 ? accraClock(newest.created_at) : `${formatAge(ageMs(newest.created_at, now))} ago`
+        ageMs(newest.created_at, now) < 12 * 60 * 60 * 1000 ? accraClock(newest.created_at) : agoText(ageMs(newest.created_at, now))
       }`
     : null;
 

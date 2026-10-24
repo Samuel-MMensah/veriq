@@ -16,6 +16,8 @@ const PATHS = {
   locate: "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm0-6v3m0 14v3M2 12h3m14 0h3",
   lock: "M6 11h12v10H6V11Zm2 0V8a4 4 0 1 1 8 0v3",
   close: "M6 6l12 12M18 6L6 18",
+  bell: "M6 16V11a6 6 0 1 1 12 0v5l2 2H4l2-2Zm4 4a2 2 0 0 0 4 0",
+  plus: "M12 5v14M5 12h14",
 } as const;
 
 export type IconName = keyof typeof PATHS;

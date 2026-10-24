@@ -14,6 +14,11 @@ export function withinDays(at: string, now: Date, days: number): boolean {
   return ageMs(at, now) <= days * DAY_MS;
 }
 
+/** "just now" under a minute, otherwise "40 min ago", "2 days ago". */
+export function agoText(ms: number): string {
+  return ms < MINUTE_MS ? "just now" : `${formatAge(ms)} ago`;
+}
+
 /** Plain-words age: "just now", "40 min", "2 h", "1 day", "3 days" (rule 9). */
 export function formatAge(ms: number): string {
   if (ms < MINUTE_MS) return "just now";

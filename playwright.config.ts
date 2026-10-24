@@ -4,7 +4,10 @@ const port = 3100;
 
 export default defineConfig({
   testDir: "tests/e2e",
-  fullyParallel: true,
+  // One test at a time, in file order: every test shares one server with one in-memory database,
+  // and some tests change it (reports, the morning check).
+  fullyParallel: false,
+  workers: 1,
   retries: process.env.CI ? 2 : 0,
   reporter: "list",
   use: {

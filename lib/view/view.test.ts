@@ -3,11 +3,12 @@ import type { PGlite } from "@electric-sql/pglite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { fakeDb } from "@/lib/db/fake-postgrest";
 import { createDb } from "@/lib/db/pglite";
-import { getFacilityDetail, getSearchCandidates, listInsurers, listServices } from "@/lib/db/queries";
+import { getEmergencyCandidates, getFacilityDetail, getSearchCandidates, listInsurers, listServices } from "@/lib/db/queries";
 import { HOUR_MS } from "@/lib/rules/time";
 import { DEFAULT_AREA, parseSearch } from "./catalog";
 import { buildFacilityView, directionsUrl } from "./facility";
 import { submitReport } from "@/lib/reports/submit";
+import { buildEmergency, cardNote } from "./emergency";
 import { buildResults } from "./results";
 import { whatChanged } from "./thanks";
 import { clockFromTime, statusView } from "./status";
@@ -237,5 +238,52 @@ describe("whatChanged (screen 11, recalculated with rules B and T)", () => {
 
   it("a report that isn't showing (held, or not found) changes nothing yet", async () => {
     expect(await changedAt(AKOMA, "00000000-0000-4000-8000-000000000000")).toEqual({ kind: "none" });
+  });
+});
+
+describe("buildEmergency (screen 6, rule S2)", () => {
+  const units = async () => {
+    const db = fakeDb(pg, "anon");
+    const t = new Date();
+    return buildEmergency({
+      candidates: await getEmergencyCandidates(db, { ...DANSOMAN, now: t }),
+      insurers: await listInsurers(db),
+      origin: DANSOMAN,
+      now: t,
+    });
+  };
+
+  it("lists Akoma and Westhills (accepting), then Pinecrest (full), within 15 km", async () => {
+    const list = await units();
+    expect(list.map((u) => [u.name, u.status.word, u.distanceKm])).toEqual([
+      ["Akoma Mission Hospital", "Accepting", 1.8],
+      ["Westhills District Hospital", "Accepting", 4.2],
+      ["Pinecrest Specialist Hospital", "Full", 3.4],
+    ]);
+    expect(list[0]!.directionsUrl).toMatch(/google\.com\/maps\/dir/);
+  });
+
+  it("changing the card never changes emergency results (rules 3 and S2)", async () => {
+    const list = await units();
+    const names = { nhis: "NHIS", cosmopolitan: "Cosmopolitan Health", prudential: "Prudential" };
+    const order = list.map((u) => u.id);
+    for (const saved of [[], ["nhis"], ["cosmopolitan"], ["prudential"], ["nhis", "cosmopolitan"]]) {
+      // The card only adds a note; the units and their order are built without it.
+      const shown = list.map((u) => ({ id: u.id, note: cardNote(u.cardBadges, saved, names) }));
+      expect(shown.map((s) => s.id)).toEqual(order);
+      expect(shown).toHaveLength(3);
+    }
+    // Pinecrest refuses NHIS (B1) and is still listed.
+    expect(list.map((u) => u.name)).toContain("Pinecrest Specialist Hospital");
+  });
+
+  it("the card note says what each saved card means there, in plain words", async () => {
+    const list = await units();
+    const names = { nhis: "NHIS", cosmopolitan: "Cosmopolitan Health" };
+    const note = (name: string, saved: string[]) => cardNote(list.find((u) => u.name === name)!.cardBadges, saved, names);
+    expect(note("Akoma Mission Hospital", ["nhis", "cosmopolitan"])).toBe("Takes your NHIS and Cosmopolitan Health cards");
+    expect(note("Westhills District Hospital", ["nhis", "cosmopolitan"])).toBe("Takes your NHIS card · Cosmopolitan Health not checked");
+    expect(note("Pinecrest Specialist Hospital", ["nhis"])).toBe("NHIS reported refused");
+    expect(note("Akoma Mission Hospital", [])).toBeNull();
   });
 });

@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { RenewalNotice } from "@/components/cards/RenewalNotice";
 import { Icon } from "@/components/ui/Icon";
+import { listCards, renewalReminder, type SavedCard } from "@/lib/local/cards";
 import {
   AREAS,
   CARD_OPTIONS,
@@ -50,12 +52,37 @@ export function FindForm() {
   const [locating, setLocating] = useState(false);
   const [locateError, setLocateError] = useState<string | null>(null);
 
+  const [saved, setSaved] = useState<SavedCard[]>([]);
+  const [cardTouched, setCardTouched] = useState(false);
+
   useEffect(() => {
     // Reading localStorage must wait until after hydration.
     const last = loadLastArea();
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (last) setPlace(last);
+    // Saved cards come first, and the default card is chosen (screen 1). They stay on the phone:
+    // only the card type (e.g. "nhis") goes in the search link.
+    listCards()
+      .then(setSaved)
+      .catch(() => setSaved([]));
   }, []);
+
+  useEffect(() => {
+    const preferred = saved[0]?.insurerSlug;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (preferred && !cardTouched) setCard(preferred);
+  }, [saved, cardTouched]);
+
+  const savedSlugs = [...new Set(saved.map((c) => c.insurerSlug))];
+  const cardOptions = [
+    ...savedSlugs.flatMap((slug) => {
+      const option = CARD_OPTIONS.find((c) => c.slug === slug);
+      const holder = saved.find((c) => c.insurerSlug === slug);
+      return option ? [{ ...option, note: `Saved card${holder ? ` · ${holder.nickname}` : ""}` }] : [];
+    }),
+    ...CARD_OPTIONS.filter((c) => !savedSlugs.includes(c.slug)),
+  ];
+  const reminder = renewalReminder(saved, new Date());
 
   function useMyLocation() {
     if (!("geolocation" in navigator)) {
@@ -83,6 +110,9 @@ export function FindForm() {
 
   return (
     <form action="/results" method="get" onSubmit={() => saveLastArea(place)} className="space-y-6">
+      {(reminder?.state === "due" || reminder?.state === "expired") && (
+        <RenewalNotice reminder={reminder} hasNhisWithoutExpiry={false} />
+      )}
       <fieldset>
         <legend className="text-xl font-bold">What do you need?</legend>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -97,16 +127,18 @@ export function FindForm() {
 
       <fieldset>
         <legend className="text-xl font-bold">Which card will you use?</legend>
-        {/* Saved cards come first once Prompt 6 adds them (screen 5). */}
         <div className="mt-3 grid grid-cols-2 gap-3">
-          {CARD_OPTIONS.map((c) => (
+          {cardOptions.map((c) => (
             <label key={c.slug} className={cardBox}>
               <input
                 type="radio"
                 name="card"
                 value={c.slug}
                 checked={card === c.slug}
-                onChange={() => setCard(c.slug)}
+                onChange={() => {
+                  setCard(c.slug);
+                  setCardTouched(true);
+                }}
                 className="sr-only"
               />
               <span className="font-bold leading-tight">{c.name}</span>

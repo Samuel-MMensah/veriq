@@ -1,5 +1,5 @@
 // A small stand-in for the supabase-js query builder, backed by PGlite. It supports only the
-// calls the app makes (select *, insert, eq, in, gte, lte, order, maybeSingle, single, and rpc) and returns
+// calls the app makes (select *, insert, update, eq, in, gte, lte, order, maybeSingle, single, and rpc) and returns
 // values the way PostgREST does: timestamps as ISO strings, numerics as numbers.
 // Used by tests and by local data mode (VERIQ_DATA=local).
 import type { PGlite } from "@electric-sql/pglite";
@@ -32,6 +32,7 @@ class Query implements PromiseLike<Result> {
   private oneRow = false;
   private strictSingle = false;
   private row: Record<string, unknown> | null = null;
+  private patch: Record<string, unknown> | null = null;
 
   constructor(
     private db: PGlite,
@@ -73,6 +74,10 @@ class Query implements PromiseLike<Result> {
     this.row = row;
     return this;
   }
+  update(patch: Record<string, unknown>) {
+    this.patch = patch;
+    return this;
+  }
 
   private add(sql: string, values: unknown[]) {
     this.filters.push({ sql, values });
@@ -99,6 +104,14 @@ class Query implements PromiseLike<Result> {
       sql = `insert into public.${ident(this.table)} (${cols.map(ident).join(", ")}) values (${cols
         .map((_, i) => `$${i + 1}`)
         .join(", ")}) returning *`;
+    }
+    if (this.patch) {
+      const cols = Object.keys(this.patch);
+      const sets = cols.map((c) => {
+        values.push(this.patch![c]);
+        return `${ident(c)} = $${values.length}`;
+      });
+      sql = `update public.${ident(this.table)} set ${sets.join(", ")}${where ? ` where ${where}` : ""} returning *`;
     }
     try {
       const res = await run(this.db, this.role, sql, values);

@@ -136,21 +136,21 @@ describe("No card/cash order (rule S1 without the badge step)", () => {
   });
 });
 
-describe("rule S1 with several services: today's status is the best one", () => {
+describe("rule S1 with several services: the status shown is the best known one", () => {
   const svc = (serviceId: string, status: ResultItem["status"], at: string | null = fresh) => ({
     serviceId,
     status,
     statusUpdatedAt: status ? at : null,
   });
 
-  it("picks open or accepting over unknown over closed or full", () => {
+  it("picks open or accepting, then closed or full, then unknown: a known fact beats 'no update' (rule 4)", () => {
     expect(bestStatus([svc("ct", "down"), svc("xray", null), svc("ultrasound", "working")], now)?.serviceId).toBe("ultrasound");
-    expect(bestStatus([svc("ct", "down"), svc("xray", null)], now)?.serviceId).toBe("xray");
+    expect(bestStatus([svc("ct", "down"), svc("xray", null)], now)?.serviceId).toBe("ct");
   });
 
   it("treats a status over 72 hours old as unknown, and prefers the newest among equals", () => {
     const older = new Date(now.getTime() - 5 * HOUR_MS).toISOString();
-    expect(bestStatus([svc("a", "open", stale), svc("b", "closed")], now)?.serviceId).toBe("a");
+    expect(bestStatus([svc("a", "open", stale), svc("b", "closed")], now)?.serviceId).toBe("b");
     expect(bestStatus([svc("a", "open", older), svc("b", "open")], now)?.serviceId).toBe("b");
   });
 

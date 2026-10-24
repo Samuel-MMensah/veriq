@@ -74,6 +74,11 @@ describe("rule B2: hospital confirmed", () => {
     expect(result.text).toBe("Confirmed by hospital 2 days ago");
   });
 
+  it("confirmed under a minute ago reads 'just now'", () => {
+    const link: BadgeLink = { listed_by: "none", hospital_says: "accepts", hospital_confirmed_at: new Date(now.getTime() - 5000).toISOString() };
+    expect(badge({ link, reports: [], now }).text).toBe("Confirmed by hospital just now");
+  });
+
   it("partial adds 'with top-ups'", () => {
     const link: BadgeLink = { listed_by: "insurer", hospital_says: "partial", hospital_confirmed_at: daysAgo(3) };
     expect(badge({ link, reports: [], now }).text).toBe("Confirmed by hospital 3 days ago with top-ups");

@@ -10,10 +10,11 @@ const routes = [
   { path: "/report/thanks", title: "Thank you. The next person will know.", sample: true },
   { path: "/how-we-check", title: "Every badge tells you who said so, and when.", sample: false },
   { path: "/cards", title: "My cards", sample: false },
-  { path: "/emergency", title: "Emergency mode", sample: true },
-  { path: "/help", title: "Help: USSD and SMS", sample: false },
-  { path: "/h/check", title: "Hospital morning check", sample: true },
-  { path: "/i/network", title: "Insurer network health", sample: true },
+  { path: "/emergency", title: "Get help now. Cards come later.", sample: true },
+  { path: "/help", title: "No smartphone? No data? Dial Veriq.", sample: false },
+  // Signed out, the staff screens show the demo sign-in (no data yet).
+  { path: "/h/check", title: "Morning check", sample: false },
+  { path: "/i/network", title: "Network health", sample: false },
 ];
 
 for (const route of routes) {
@@ -21,7 +22,7 @@ for (const route of routes) {
     await page.goto(route.path);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(route.title);
     // Rule 1: data screens show SAMPLE DATA.
-    await expect(page.getByText("SAMPLE DATA")).toHaveCount(route.sample ? 1 : 0);
+    await expect(page.getByText("SAMPLE DATA", { exact: true })).toHaveCount(route.sample ? 1 : 0);
   });
 }
 

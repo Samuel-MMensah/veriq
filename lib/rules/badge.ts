@@ -2,7 +2,7 @@
 // Rule 5: only list, hospital-answer and report-outcome fields are read here.
 import type { HospitalSays, ListedBy, ReportOutcome, ReportState } from "@/lib/db/types";
 import { reportHistory, type ReportHistory } from "./history";
-import { DAY_MS, ageMs, formatAge, withinDays } from "./time";
+import { DAY_MS, agoText, ageMs, withinDays } from "./time";
 
 export type BadgeId = "B1" | "B2" | "B2x" | "B3" | "B4" | "B5";
 /** Colour family: B1 orange, B2 dark green, B3 light green, B4 grey. */
@@ -77,7 +77,7 @@ function classify({ link, reports, now }: BadgeInput): Omit<Badge, "history"> {
     return {
       id: "B2",
       tone: "hospital",
-      text: `Confirmed by hospital ${formatAge(freshAnswerAgeMs)} ago${withTopUps}`,
+      text: `Confirmed by hospital ${agoText(freshAnswerAgeMs)}${withTopUps}`,
       inCardSearch: true,
     };
   }

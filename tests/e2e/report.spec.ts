@@ -49,7 +49,8 @@ test("a second report from the same phone within 7 days is refused politely (rul
 test("offline: the report waits on the phone, then sends when back online (rule 8)", async ({ page, context }) => {
   await openReport(page, LAKESIDE);
   await context.setOffline(true);
-  await page.getByText("No, they refused my card").click();
+  // "Covered", so this test doesn't change the refusal figures other tests read.
+  await page.getByText("Yes, fully covered").click();
   await page.getByRole("button", { name: "Send" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Saved on your phone.");
 

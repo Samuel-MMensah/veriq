@@ -1,4 +1,4 @@
-import { DAY_MS, HOUR_MS, MINUTE_MS, ageMs, formatAge, withinDays } from "./time";
+import { DAY_MS, HOUR_MS, MINUTE_MS, agoText, ageMs, formatAge, withinDays } from "./time";
 
 const now = new Date("2026-10-22T12:00:00Z");
 const ago = (ms: number) => new Date(now.getTime() - ms).toISOString();
@@ -17,6 +17,14 @@ describe("withinDays (the windows in rules B, T, A and K)", () => {
   it("includes the boundary: exactly 30 days ago is within 30 days", () => {
     expect(withinDays(ago(30 * DAY_MS), now, 30)).toBe(true);
     expect(withinDays(ago(30 * DAY_MS + 1), now, 30)).toBe(false);
+  });
+});
+
+describe("agoText", () => {
+  it("says 'just now' under a minute, otherwise '… ago'", () => {
+    expect(agoText(59_000)).toBe("just now");
+    expect(agoText(MINUTE_MS)).toBe("1 min ago");
+    expect(agoText(2 * DAY_MS)).toBe("2 days ago");
   });
 });
 
