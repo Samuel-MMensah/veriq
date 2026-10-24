@@ -1,6 +1,12 @@
 import { expect, test, type Page } from "@playwright/test";
+import { resetDemo } from "./helpers";
 
 // Prompt 6: screens 5, 6 and 13. Each test gets a fresh browser, so an empty phone.
+
+// Start from the demo story, whatever ran before (Prompt 8 reset).
+test.beforeAll(async ({ browser }) => {
+  await resetDemo(browser);
+});
 
 async function addCard(page: Page, card: { type: string; last4: string; name: string; expires?: string; family?: string }) {
   await page.goto("/cards");

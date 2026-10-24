@@ -1,7 +1,7 @@
 // Rule M: the hospital's morning check. Pure functions; the server action writes what they plan.
 import type { HospitalResponseKind, HospitalSays, ReportItem, ReportOutcome, ReportState, ServiceStatus } from "@/lib/db/types";
 import { median, roundToNearest5 } from "./topup";
-import { HOUR_MS, ageMs, withinDays } from "./time";
+import { MINUTE_MS, ageMs, withinDays } from "./time";
 
 export type StatusOption = { status: ServiceStatus; label: string };
 
@@ -50,14 +50,15 @@ export type CurrentStatusLike = {
 export type SubmittedStatus = { serviceId: string; status: ServiceStatus; fromTime: string | null };
 export type PlannedStatusRow = { serviceId: string; status: ServiceStatus; fromTime: string | null; note: string | null };
 
-/** An unchanged status is re-confirmed when its row is older than this, so a daily check keeps it fresh (rule F). */
-export const RECONFIRM_AFTER_HOURS = 12;
+/** An identical status submitted again within this many minutes is a double submit, not a new confirmation. */
+export const DOUBLE_SUBMIT_MINUTES = 10;
 const HH_MM = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
 /**
- * rule M: one status_updates row per changed service. "Changed" means a different status or time,
- * or the same status last written more than 12 hours ago (team decision 2026-10-24: confirming an
- * unchanged status every morning must keep it fresh under rule F).
+ * rule M: one status_updates row per changed service. Team decision 2026-10-24: every confirmation
+ * is a dated event, so "changed" means a different status or time, or the same status confirmed
+ * again (rule F then shows when the hospital last checked). Only an identical submit within
+ * 10 minutes is dropped, as a double tap. Services left blank are not written.
  */
 export function planStatusRows({
   current,
@@ -79,7 +80,7 @@ export function planStatusRows({
     const existing = current.find((c) => c.service_id === s.serviceId);
     const sameTime = (existing?.from_time ?? "").slice(0, 5) === (fromTime ?? "");
     const unchanged = existing && existing.status === s.status && sameTime;
-    if (unchanged && ageMs(existing.created_at, now) <= RECONFIRM_AFTER_HOURS * HOUR_MS) return [];
+    if (unchanged && ageMs(existing.created_at, now) <= DOUBLE_SUBMIT_MINUTES * MINUTE_MS) return [];
     return [{ serviceId: s.serviceId, status: s.status, fromTime, note: unchanged ? existing.note : null }];
   });
 }

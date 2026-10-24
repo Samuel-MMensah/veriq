@@ -5,7 +5,8 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 
 export type DemoAccount =
   | { key: "hospital-akoma"; role: "hospital"; facilityId: string; name: string; title: string; phone: string }
-  | { key: "insurer-nhis"; role: "insurer"; insurerId: string; name: string; title: string; phone: string };
+  | { key: "insurer-nhis"; role: "insurer"; insurerId: string; name: string; title: string; phone: string }
+  | { key: "admin-demo"; role: "admin"; name: string; title: string; phone: string };
 
 /** Demo only. Invented people; phone numbers deliberately invalid. */
 export const DEMO_ACCOUNTS: DemoAccount[] = [
@@ -25,6 +26,7 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
     title: "Network team",
     phone: "+233000000102",
   },
+  { key: "admin-demo", role: "admin", name: "Presenter", title: "Veriq demo", phone: "+233000000103" },
 ];
 
 export const SESSION_COOKIE = "veriq_staff";

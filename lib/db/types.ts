@@ -167,6 +167,8 @@ export type Database = {
       is_admin: { Args: Record<string, never>; Returns: boolean };
       staff_facility_id: { Args: Record<string, never>; Returns: string | null };
       staff_insurer_id: { Args: Record<string, never>; Returns: string | null };
+      reset_demo: { Args: Record<string, never>; Returns: undefined };
+      demo_facility_id: { Args: { code: string }; Returns: string };
       log_search: {
         Args: { p_insurer_id: string | null; p_area_cell: string; p_had_confirmed: boolean };
         Returns: undefined;

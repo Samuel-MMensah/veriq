@@ -55,8 +55,8 @@ export default async function MorningCheckPage({ searchParams }: { searchParams:
         {published && (
           <p role="status" className="mb-4 flex gap-3 rounded-2xl bg-brand/10 p-4 font-semibold text-brand">
             <Icon name="check" className="mt-0.5 h-5 w-5" />
-            Published at {accraClock(now.toISOString())}. Patients see it now. ({count(published[0], "service")} updated,{" "}
-            {count(published[1], "card")} confirmed, {count(published[2], "answer")})
+            Published at {accraClock(now.toISOString())}. Patients see it now. ({count(published[0], "service")} confirmed,{" "}
+            {count(published[1], "card")} checked, {count(published[2], "answer")})
           </p>
         )}
         {error && (

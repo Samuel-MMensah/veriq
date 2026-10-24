@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { RenewalNotice } from "@/components/cards/RenewalNotice";
 import { Icon } from "@/components/ui/Icon";
 import { listCards, renewalReminder, type SavedCard } from "@/lib/local/cards";
+import { setLastCard } from "@/lib/local/prefs";
 import {
   AREAS,
   CARD_OPTIONS,
@@ -109,7 +110,10 @@ export function FindForm() {
   const buttonText = card === CASH ? "Show hospitals near you" : `Show hospitals that take ${cardLabel}`;
 
   return (
-    <form action="/results" method="get" onSubmit={() => saveLastArea(place)} className="space-y-6">
+    <form action="/results" method="get" onSubmit={() => {
+        saveLastArea(place);
+        setLastCard(card);
+      }} className="space-y-6">
       {(reminder?.state === "due" || reminder?.state === "expired") && (
         <RenewalNotice reminder={reminder} hasNhisWithoutExpiry={false} />
       )}

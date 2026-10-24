@@ -10,7 +10,7 @@ export function StaffHeader({
   subtitle,
   path,
 }: {
-  product: "hospitals" | "insurers";
+  product: "hospitals" | "insurers" | "admins";
   staff: DemoAccount | null;
   title: string;
   subtitle?: string;

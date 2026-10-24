@@ -1,7 +1,13 @@
 import { expect, test, type Page } from "@playwright/test";
+import { resetDemo } from "./helpers";
 
 // Prompt 5: the report loop (demo step 5). Local data mode: a fresh seed on every server start, and
 // each test gets a fresh browser, so a fresh phone (device id) too.
+
+// Start from the demo story, whatever ran before (Prompt 8 reset).
+test.beforeAll(async ({ browser }) => {
+  await resetDemo(browser);
+});
 
 const AKOMA = "f0000000-0000-4000-8000-000000000001";
 const LAKESIDE = "f0000000-0000-4000-8000-000000000002";
@@ -27,6 +33,7 @@ test("Akoma: 'Yes, but I paid extra' GH¢ 80 for a scan; thanks shows what chang
   await expect(page.getByText("Scan top-up about GH¢ 80 (4 patients, last 60 days)")).toBeVisible();
   await expect(page.getByText("Before your report: Scan top-up about GH¢ 80 (3 patients, last 60 days).")).toBeVisible();
   await expect(page.getByText("report from you")).toBeVisible();
+  await expect(page.getByText("we ask the hospital to confirm or correct it at its morning check", { exact: false })).toBeVisible();
 
   await page.getByRole("link", { name: "Done" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Akoma Mission Hospital");

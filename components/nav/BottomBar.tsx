@@ -35,7 +35,7 @@ export function BottomBar() {
                 href={tab.href}
                 aria-current={active ? "page" : undefined}
                 className={`flex min-h-14 flex-col items-center justify-center gap-0.5 text-xs font-semibold ${
-                  active ? "text-brand" : "text-ink/60"
+                  active ? "text-brand" : "text-ink/75"
                 }`}
               >
                 <svg

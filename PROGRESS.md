@@ -1,5 +1,5 @@
 # Veriq Health progress
-Last updated: 2026-10-24, session 2026-10-24-01
+Last updated: 2026-10-24, session 2026-10-24-02
 Current phase: 1. Gate status: not met
 
 ## Prompts
@@ -12,7 +12,7 @@ Current phase: 1. Gate status: not met
 - [x] Prompt 5: The report loop (2026-10-22-10)
 - [x] Prompt 6: Cards, emergency, help (2026-10-22-11)
 - [x] Prompt 7: Hospital and insurer views (2026-10-24-01)
-- [ ] Prompt 8: Demo mode, polish, deploy
+- [ ] Prompt 8: Demo mode, polish, deploy (2026-10-24-02: built and tested; waiting on the Vercel import, then the live gate check)
 
 ### Phase 2: pilot (prompts to be written in full after the pitch)
 - [ ] Prompt 9: Real staff auth, admin verification of hospitals, held-report review
@@ -37,7 +37,7 @@ Current phase: 1. Gate status: not met
 | 8 | Map view | `/results/map` | 2 | not started | |
 | 9 | Saved and alerts | `/saved` | 2 | not started | |
 | 10 | Share with family | `/facility/[id]/share` | 2 | not started | |
-| 11 | After a report | `/report/thanks` | 1 | done | the "we asked the hospital" line can now be added (morning check exists): Prompt 8 polish |
+| 11 | After a report | `/report/thanks` | 1 | done | top-up reports explain the hospital's morning-check prompt |
 | 12 | Offline | global state | 2 | not started | |
 | 13 | Help: USSD and SMS | `/help` | 1 static, 2 live | done (Phase 1) | `/api/ussd` tested; SMS through the console stub until Prompt 14 |
 | 14 | How Veriq checks | `/how-we-check` | 1 | done | |
@@ -46,14 +46,13 @@ Current phase: 1. Gate status: not met
 | 17 | Link to national bed system | `/h/national` | 3 | not started | Only after a signed agreement |
 | 18 | Insurer network health | `/i/network` | 1 (read-only) | done | demo login (NHIS); "Add to list" waits for screen 19 |
 | 19 | Insurer list upload | `/i/upload` | 2 | not started | |
-| – | Admin | `/admin` | 2 | not started | Phase 1 only needs the demo reset (Prompt 8) |
+| – | Admin | `/admin` | 2 | Phase 1 part done | `/admin/demo`: Reset demo data, Make this phone fresh (demo login) |
 
 ## Known bugs
 - none
 
 ## Open questions for the team
 - SPEC.md section 4 still has the old badge wording ("were refused", "confirmed this month"). The team chose period-named wording on 2026-10-22 (see docs/DECISIONS.md); please update SPEC.md so the two agree.
-- Rule M: is it right that an unchanged status is re-written when it is more than 12 hours old, so a daily morning check keeps it fresh? (See docs/DECISIONS.md, 2026-10-24.)
 
 ## Next prompt
-Prompt 8: Demo mode, polish, deploy
+Finish Prompt 8: import into Vercel (docs/DEPLOY.md), then the live 3G and demo checks and the Phase 1 gate. After that, Phase 2 starts with Prompt 9 only once the gate is met.

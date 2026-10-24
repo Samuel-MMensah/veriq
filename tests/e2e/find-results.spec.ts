@@ -1,7 +1,13 @@
 import { expect, test } from "@playwright/test";
+import { resetDemo } from "./helpers";
 
 // Prompt 4: find antenatal with NHIS, see 4 results in the right order, open Akoma (demo steps 1 to 4).
 // The server runs with VERIQ_DATA=local, so the seed is fresh on every start.
+
+// Start from the demo story, whatever ran before (Prompt 8 reset).
+test.beforeAll(async ({ browser }) => {
+  await resetDemo(browser);
+});
 
 test("first open, find antenatal with NHIS, 4 results in order, open Akoma", async ({ page }) => {
   await page.goto("/");

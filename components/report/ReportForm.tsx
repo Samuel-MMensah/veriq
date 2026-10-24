@@ -129,7 +129,7 @@ export function ReportForm({
         </label>
 
         <div className={OPTION}>
-          <label className="flex cursor-pointer items-center gap-4">
+          <label className="flex min-h-11 cursor-pointer items-center gap-4">
             <input type="radio" name="outcome" value="topup" checked={outcome === "topup"} onChange={() => setOutcome("topup")} className={RADIO_DOT} />
             <span className="text-lg font-bold">Yes, but I paid extra</span>
           </label>

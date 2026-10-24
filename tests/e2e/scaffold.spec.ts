@@ -1,6 +1,12 @@
 import { expect, test } from "@playwright/test";
+import { resetDemo } from "./helpers";
 
 // Every Phase 1 route from SPEC section 2 renders its screen title (built screens show their real heading).
+// Start from the demo story, whatever ran before (Prompt 8 reset).
+test.beforeAll(async ({ browser }) => {
+  await resetDemo(browser);
+});
+
 const routes = [
   { path: "/", title: "Know before you go.", sample: false },
   { path: "/find", title: "Find care", sample: true },

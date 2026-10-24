@@ -40,7 +40,7 @@ export function Welcome() {
       <p aria-hidden="true" className="text-6xl font-extrabold leading-none tracking-tight">
         veriq
       </p>
-      <p aria-hidden="true" className="mt-2 text-lg font-semibold tracking-[0.3em] text-white/70">
+      <p aria-hidden="true" className="mt-2 text-lg font-semibold tracking-[0.3em] text-white/85">
         HEALTH
       </p>
       <h1 className="mt-4 text-3xl font-extrabold">Know before you go.</h1>

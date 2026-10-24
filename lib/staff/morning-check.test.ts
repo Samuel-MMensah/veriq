@@ -68,7 +68,7 @@ describe("parseMorningForm", () => {
 });
 
 describe("publishMorningCheck (rule M)", () => {
-  it("antenatal Closed: one new status row, and the results page shows Closed (rules M, F, S1)", async () => {
+  it("antenatal Closed: each confirmed service gets a dated row, and the results page shows Closed (rules M, F, S1)", async () => {
     const before = await statusRows();
     const result = await publishMorningCheck({
       db: service(),
@@ -76,15 +76,15 @@ describe("publishMorningCheck (rule M)", () => {
       form: {
         statuses: [
           { serviceId: "antenatal", status: "closed", fromTime: null },
-          { serviceId: "emergency", status: "accepting", fromTime: null }, // unchanged, 40 min old
+          { serviceId: "emergency", status: "accepting", fromTime: null }, // unchanged, 40 min old: re-confirmed
         ],
         cards: [],
         prompts: [],
       },
       now: new Date(),
     });
-    expect(result).toEqual({ services: 1, cards: 0, answers: 0 });
-    expect(await statusRows()).toBe(before + 1);
+    expect(result).toEqual({ services: 2, cards: 0, answers: 0 });
+    expect(await statusRows()).toBe(before + 2);
 
     const t = new Date();
     const services = new Map((await listServices(fakeDb(pg, "anon"))).map((s) => [s.id, s.name]));

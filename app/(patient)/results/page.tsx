@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { after } from "next/server";
 import { BadgeLegend } from "@/components/badges/BadgeLine";
 import { ResultCardView } from "@/components/facility/ResultCardView";
 import { BackLink } from "@/components/ui/BackLink";
@@ -37,16 +38,16 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
   });
   const results = buildResults({ candidates, serviceNames, withCard, origin: search.origin, radiusKm: search.radiusKm, now });
 
-  // Rule K: count the search (card, ~2 km cell, found a confirmed hospital). Never blocks the page.
-  try {
-    await logSearch(await serviceDb(), {
-      insurerId: insurer?.id ?? null,
-      areaCell: areaCell(search.origin.lat, search.origin.lng),
-      hadConfirmedResult: results.hadConfirmedResult,
-    });
-  } catch (e) {
-    console.error(e);
-  }
+  // Rule K: count the search (card, ~2 km cell, found a confirmed hospital). Runs after the page is
+  // sent, so a patient on 3G never waits for it; a failure is only logged.
+  const logged = { insurerId: insurer?.id ?? null, areaCell: areaCell(search.origin.lat, search.origin.lng), hadConfirmedResult: results.hadConfirmedResult };
+  after(async () => {
+    try {
+      await logSearch(await serviceDb(), logged);
+    } catch (e) {
+      console.error(e);
+    }
+  });
 
   const card = insurer?.name ?? cardName(CASH);
   const count = results.cards.length;

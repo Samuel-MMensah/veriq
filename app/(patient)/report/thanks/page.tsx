@@ -24,6 +24,7 @@ export default async function ThanksPage({ searchParams }: { searchParams: Promi
 
   let facilityName: string | null = null;
   let change: Change = { kind: "none" };
+  let wasTopUp = false;
   if (UUID.test(facilityId)) {
     const db = await readDb();
     const now = new Date();
@@ -31,6 +32,7 @@ export default async function ThanksPage({ searchParams }: { searchParams: Promi
     facilityName = detail?.facility.name ?? null;
     if (detail && insurer && state === "counted" && UUID.test(reportId)) {
       change = whatChanged({ detail, insurerId: insurer.id, cardName: insurer.name, reportId, now });
+      wasTopUp = detail.reports.some((r) => r.id === reportId && r.outcome === "topup");
     }
   }
 
@@ -68,6 +70,12 @@ export default async function ThanksPage({ searchParams }: { searchParams: Promi
             What changed
           </h2>
           <ChangeText facilityName={facilityName} change={change} />
+          {wasTopUp && (
+            <p className="mt-3 text-sm text-ink/70">
+              When 2 or more patients report the same top-up in a week, we ask the hospital to confirm or correct it at
+              its morning check.
+            </p>
+          )}
         </section>
       )}
 

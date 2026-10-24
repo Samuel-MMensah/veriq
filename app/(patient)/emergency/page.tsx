@@ -89,7 +89,7 @@ export default async function EmergencyPage({ searchParams }: { searchParams: Pr
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex min-h-11 min-w-11 items-center justify-center font-bold text-emergency underline"
-                      aria-label={`Directions to ${u.name}`}
+                      aria-label={`Go: directions to ${u.name}`}
                     >
                       Go
                     </a>

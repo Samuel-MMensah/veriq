@@ -301,6 +301,26 @@ describe("insurer figures (rule K)", () => {
   });
 });
 
+describe("reset_demo() puts the demo back (Prompt 8)", () => {
+  it("undoes a closed clinic, extra reports and logged searches", async () => {
+    await db.exec(`
+      insert into public.status_updates (facility_id, service_id, status, source)
+        values ('${F.akoma}', 'antenatal', 'closed', 'hospital');
+      insert into public.card_reports (facility_id, insurer_id, outcome, device_hash)
+        values ('${F.akoma}', '${NHIS}', 'refused', 'demo-visitor');
+      select public.log_search(null, '9.40,-0.86', false);
+    `);
+    await db.exec("select public.reset_demo()");
+    const r = await one<{ status: string; extra: number; searches: number }>(
+      `select (select status from public.current_status where facility_id = $1 and service_id = 'antenatal') status,
+              (select count(*) from public.card_reports where device_hash = 'demo-visitor')::int extra,
+              (select count(*) from public.search_daily where area_cell = '9.40,-0.86')::int searches`,
+      [F.akoma],
+    );
+    expect(r).toEqual({ status: "open", extra: 0, searches: 0 });
+  });
+});
+
 describe("seed can run again (demo reset)", () => {
   it("gives the same counts the second time", async () => {
     const count = () =>
@@ -451,6 +471,15 @@ describe("access rules (section 3)", () => {
     });
     await as(db, "authenticated", INSURER_USER, async () => {
       await expect(db.query("select public.log_search(null, '5.54,-0.28', true)")).rejects.toThrow();
+    });
+  });
+
+  it("anon and signed-in users cannot reset the demo", async () => {
+    await as(db, "anon", null, async () => {
+      await expect(db.query("select public.reset_demo()")).rejects.toThrow();
+    });
+    await as(db, "authenticated", INSURER_USER, async () => {
+      await expect(db.query("select public.reset_demo()")).rejects.toThrow();
     });
   });
 

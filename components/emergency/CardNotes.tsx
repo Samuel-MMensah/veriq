@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { listCards } from "@/lib/local/cards";
+import { getLastCard } from "@/lib/local/prefs";
+import { CASH } from "@/lib/view/catalog";
 import type { BadgeId } from "@/lib/rules/badge";
 import { cardNote } from "@/lib/view/emergency";
 
@@ -13,9 +15,14 @@ export function CardNote({ cardBadges, names }: { cardBadges: Record<string, Bad
   const [slugs, setSlugs] = useState<string[] | null>(null);
 
   useEffect(() => {
+    // Saved cards; if none, the card last searched with (not "No card/cash").
+    const lastSearched = () => {
+      const last = getLastCard();
+      return last && last !== CASH ? [last] : [];
+    };
     listCards()
-      .then((cards) => setSlugs([...new Set(cards.map((c) => c.insurerSlug))]))
-      .catch(() => setSlugs([]));
+      .then((cards) => setSlugs(cards.length ? [...new Set(cards.map((c) => c.insurerSlug))] : lastSearched()))
+      .catch(() => setSlugs(lastSearched()));
   }, []);
 
   const note = slugs ? cardNote(cardBadges, slugs, names) : null;

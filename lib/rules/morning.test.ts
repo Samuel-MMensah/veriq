@@ -28,14 +28,14 @@ describe("rule M: what each service can be set to", () => {
   });
 });
 
-describe("rule M: one status row per changed service", () => {
+describe("rule M: one status row per changed or re-confirmed service (team decision 2026-10-24)", () => {
   const current: CurrentStatusLike[] = [
     { service_id: "antenatal", status: "open", from_time: null, note: "Open till 4 pm", created_at: ago(2 * HOUR_MS) },
     { service_id: "emergency", status: "accepting", from_time: null, note: null, created_at: ago(2 * HOUR_MS) },
     { service_id: "obstetrician", status: "from_time", from_time: "14:00:00", note: null, created_at: ago(2 * HOUR_MS) },
   ];
 
-  it("writes only the services whose status changed", () => {
+  it("an unchanged status confirmed again within 10 minutes is a double submit: nothing new", () => {
     const rows = planStatusRows({
       current,
       submitted: [
@@ -45,7 +45,20 @@ describe("rule M: one status row per changed service", () => {
       ],
       now,
     });
-    expect(rows).toEqual([{ serviceId: "antenatal", status: "closed", fromTime: null, note: null }]);
+    // These statuses are 2 hours old, so every service confirmed gets a fresh, dated row.
+    expect(rows.map((r) => r.serviceId)).toEqual(["antenatal", "emergency", "obstetrician"]);
+    // Confirmed 5 minutes ago: only the real change is written.
+    const justNow = current.map((c) => ({ ...c, created_at: ago(5 * 60_000) }));
+    expect(
+      planStatusRows({
+        current: justNow,
+        submitted: [
+          { serviceId: "antenatal", status: "closed", fromTime: null },
+          { serviceId: "emergency", status: "accepting", fromTime: null },
+        ],
+        now,
+      }),
+    ).toEqual([{ serviceId: "antenatal", status: "closed", fromTime: null, note: null }]);
   });
 
   it("a new specialist time is a change", () => {
@@ -58,13 +71,17 @@ describe("rule M: one status row per changed service", () => {
     expect(rows).toHaveLength(1);
   });
 
-  it("re-confirms an unchanged status more than 12 hours old, keeping its note (threshold)", () => {
-    const old = [{ ...current[0]!, created_at: ago(12 * HOUR_MS + 1) }];
+  it("every confirmation is dated: an unchanged status is re-confirmed after 10 minutes, keeping its note (threshold)", () => {
+    const old = [{ ...current[0]!, created_at: ago(10 * 60_000 + 1) }];
     expect(planStatusRows({ current: old, submitted: [{ serviceId: "antenatal", status: "open", fromTime: null }], now })).toEqual([
       { serviceId: "antenatal", status: "open", fromTime: null, note: "Open till 4 pm" },
     ]);
-    const twelve = [{ ...current[0]!, created_at: ago(12 * HOUR_MS) }];
-    expect(planStatusRows({ current: twelve, submitted: [{ serviceId: "antenatal", status: "open", fromTime: null }], now })).toEqual([]);
+    const ten = [{ ...current[0]!, created_at: ago(10 * 60_000) }];
+    expect(planStatusRows({ current: ten, submitted: [{ serviceId: "antenatal", status: "open", fromTime: null }], now })).toEqual([]);
+  });
+
+  it("a service left blank is not written (nothing is claimed for it)", () => {
+    expect(planStatusRows({ current, submitted: [], now })).toEqual([]);
   });
 
   it("refuses a status that doesn't fit the service, or a time without 'From'", () => {

@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { DEMO_ACCOUNTS } from "./demo";
 import { signInDemo, signOut } from "./session";
 
-const SAFE_NEXT = /^\/(h|i)\/[a-z/]*$/;
+const SAFE_NEXT = /^\/(h|i|admin)\/[a-z/]*$/;
 
 /** "Demo login" button (Phase 1 only). */
 export async function demoSignIn(formData: FormData): Promise<void> {
@@ -13,7 +13,7 @@ export async function demoSignIn(formData: FormData): Promise<void> {
   if (!account) throw new Error("Unknown demo account.");
   await signInDemo(account.key);
   const next = String(formData.get("next") ?? "");
-  redirect(SAFE_NEXT.test(next) ? next : account.role === "hospital" ? "/h/check" : "/i/network");
+  redirect(SAFE_NEXT.test(next) ? next : { hospital: "/h/check", insurer: "/i/network", admin: "/admin/demo" }[account.role]);
 }
 
 export async function staffSignOut(formData: FormData): Promise<void> {

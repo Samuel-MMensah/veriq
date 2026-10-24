@@ -1,7 +1,13 @@
 import { expect, test } from "@playwright/test";
+import { resetDemo } from "./helpers";
 
 // Prompt 7: screen 16 (morning check, rule M) and screen 18 (insurer network health, rule K).
 // Runs after find-results.spec.ts (files run in order), because it closes Akoma's antenatal clinic.
+
+// Start from the demo story, whatever ran before (Prompt 8 reset).
+test.beforeAll(async ({ browser }) => {
+  await resetDemo(browser);
+});
 
 const RESULTS = "/results?service=antenatal&card=nhis&lat=5.545&lng=-0.265&area=dansoman";
 
@@ -23,7 +29,7 @@ test("the hospital marks antenatal Closed, and the results page shows it (demo s
   await expect(antenatal.getByLabel("Open")).toBeChecked();
   await antenatal.getByText("Closed").click();
   await page.getByRole("button", { name: "Confirm and publish" }).click();
-  await expect(page.getByRole("status")).toContainText("Patients see it now. (1 service updated");
+  await expect(page.getByRole("status")).toContainText("Patients see it now. (4 services confirmed");
 
   await page.goto(RESULTS);
   await expect(akoma).toContainText("Antenatal clinic: Closed · updated by hospital just now");
