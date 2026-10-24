@@ -28,10 +28,14 @@ export function ResultCardView({
         }`}
       >
         <div className="flex items-start justify-between gap-3">
-          <h2 className="text-lg font-bold leading-snug">{card.name}</h2>
-          <span className="shrink-0 pt-0.5 text-sm font-semibold text-ink/80">{card.distanceKm} km</span>
+          <div className="min-w-0">
+            <h2 className="text-lg font-bold leading-snug">{card.name}</h2>
+            <p className="text-sm text-ink/70">
+              {card.area} · <span className="font-semibold text-ink/80">{card.distanceKm} km</span>
+            </p>
+          </div>
+          <Icon name="chevron" className="mt-1 h-5 w-5 text-brand" />
         </div>
-        <p className="text-sm text-ink/70">{card.area}</p>
         {card.badge && cardName && (
           <div className="mt-2">
             <BadgeLine badge={card.badge} cardName={cardName} />
@@ -39,14 +43,9 @@ export function ResultCardView({
         )}
         <div className="mt-2 space-y-1 text-[0.9375rem] leading-snug">
           <StatusLine label={card.serviceName} status={card.status} usualHours={card.usualHours} />
-          {cardName && (
-            <p className="text-ink/80">{card.topUps.length ? card.topUps.join(" · ") : "No top-up reported"}</p>
-          )}
+          {/* Rule T: only shown when patients reported one; no line for "nothing reported". */}
+          {cardName && card.topUps.length > 0 && <p className="text-ink/80">{card.topUps.join(" · ")}</p>}
         </div>
-        <span className="mt-2 flex items-center justify-end gap-1 text-sm font-bold text-brand">
-          Details, call and directions
-          <Icon name="chevron" className="h-4 w-4" />
-        </span>
       </Link>
     </li>
   );

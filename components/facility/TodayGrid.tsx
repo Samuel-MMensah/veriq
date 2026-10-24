@@ -40,10 +40,17 @@ export function TodayGrid({ tiles, updated }: { tiles: TodayTile[]; updated: str
         </ul>
       )}
       {noNews.length > 0 && (
-        <p className="mt-3 text-sm text-ink/70">
-          <span className="font-semibold">No update yet:</span>{" "}
-          {noNews.map((t) => (t.usualHours ? `${t.label} (usually ${t.usualHours})` : t.label)).join(", ")}
-        </p>
+        <details className="mt-2">
+          <summary className="flex min-h-11 cursor-pointer items-center text-sm text-ink/70">
+            <span>
+              <span className="font-semibold">No update yet</span> for {noNews.length} more{" "}
+              {noNews.length === 1 ? "service" : "services"}. <span className="font-semibold text-brand">Show</span>
+            </span>
+          </summary>
+          <p className="text-sm text-ink/70">
+            {noNews.map((t) => (t.usualHours ? `${t.label} (usually ${t.usualHours})` : t.label)).join(", ")}
+          </p>
+        </details>
       )}
     </section>
   );

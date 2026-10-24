@@ -71,8 +71,8 @@ export default async function EmergencyPage({ searchParams }: { searchParams: Pr
 
         <p className="mt-4 flex gap-3 rounded-2xl bg-page p-4 text-ink/80">
           <Icon name="info" className="mt-0.5 h-5 w-5" />
-          Sorted by status and distance only. Your card is shown, but never hides a hospital. If an ambulance is coming, the
-          crew picks the hospital through the national bed system.
+          Sorted by status and distance. Your card never hides a hospital. Ambulance crews choose the hospital through the
+          national bed system.
         </p>
       </main>
     </div>

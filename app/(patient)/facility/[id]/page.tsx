@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BadgeLine } from "@/components/badges/BadgeLine";
-import { CardsAccepted } from "@/components/facility/CardsAccepted";
+import { CardsAccepted, YourCard } from "@/components/facility/CardsAccepted";
 import { TodayGrid } from "@/components/facility/TodayGrid";
 import { BackLink } from "@/components/ui/BackLink";
 import { Icon } from "@/components/ui/Icon";
@@ -52,11 +51,6 @@ export default async function FacilityPage({
               <SampleDataTag className="mt-1 shrink-0" />
             </div>
             <p className="mt-1 text-ink/70">{view.subtitle}</p>
-            {yourCard && (
-              <div className="mt-3">
-                <BadgeLine badge={yourCard.badge} cardName={yourCard.insurer.name} />
-              </div>
-            )}
             <div className="mt-3 flex flex-wrap gap-2">
               {view.phone && (
                 <a
@@ -80,8 +74,14 @@ export default async function FacilityPage({
       </header>
 
       <main className="space-y-4 px-4 pt-4">
+        {yourCard && <YourCard card={yourCard} />}
         <TodayGrid tiles={view.today} updated={view.todayUpdated} />
-        <CardsAccepted cards={view.cards} />
+        {/* The searched card is shown once, above; the rest follow with their badge and source (rule 4). */}
+        <CardsAccepted
+          cards={yourCard ? view.cards.filter((c) => c !== yourCard) : view.cards}
+          title={yourCard ? "Other cards" : "Cards accepted"}
+          howWeCheck={!yourCard}
+        />
         <Link
           href={`/facility/${view.id}/report${first(sp.card) ? `?card=${first(sp.card)}` : ""}`}
           className="flex min-h-14 items-center justify-between gap-3 rounded-2xl border-2 border-dashed border-brand/50 px-4 py-3 font-bold text-brand"

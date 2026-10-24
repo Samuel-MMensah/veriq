@@ -1,6 +1,6 @@
 # Veriq Health progress
 Last updated: 2026-10-24, session 2026-10-24-04
-Current phase: 1. Gate status: not met (one item left: the demo by hand on a mid-range Android phone)
+Current phase: 1. Gate status: met on 2026-10-24 (demo rehearsed by hand on a phone by the team)
 Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-west-1)
 
 ## Prompts
@@ -36,7 +36,7 @@ Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-w
 | 6 | Emergency mode | `/emergency` | 1 | done | rule S2; cards are notes only; Call and Go per unit; 112/193 stream first |
 | 7 | First open | `/` | 1 | done | other languages "coming soon" until Phase 2 |
 | 8 | Map view | `/results/map` | 2 | not started | |
-| 9 | Saved and alerts | `/saved` | 2 | not started | Phase 1 tab offers the last search again |
+| 9 | Saved and alerts | `/saved` | 2 | not started | Phase 1 tab offers the last search again (tab kept, team decision) |
 | 10 | Share with family | `/facility/[id]/share` | 2 | not started | |
 | 11 | After a report | `/report/thanks` | 1 | done | top-up reports explain the hospital's morning-check prompt |
 | 12 | Offline | global state | 2 | not started | |
@@ -55,8 +55,7 @@ Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-w
 
 ## Open questions for the team
 - Add the approved answer wording to SPEC section 4 (`verdict` in lib/rules/badge.ts): "Takes {card}", "{card} not confirmed yet", "Patients report {card} refusals", "Does not take {card}".
-- May the Saved tab leave the bottom bar until Phase 2 (SPEC section 2 change)?
 - SPEC.md section 4 still has the old badge wording ("were refused", "confirmed this month"). The team chose period-named wording on 2026-10-22 (see docs/DECISIONS.md); please update SPEC.md so the two agree.
 
 ## Next prompt
-None until the Phase 1 gate is met: rehearse the demo by hand on a mid-range Android phone (docs/DEPLOY.md, "Before every pitch"). Then Phase 2, Prompt 9: Real staff auth, admin verification of hospitals, held-report review (write it in full first, SPEC section 8).
+Phase 1 gate met (2026-10-24). Phase 2, Prompt 9: Real staff auth, admin verification of hospitals, held-report review. Write it in full first (SPEC section 8), after the pitch. Before it: commit, let Vercel redeploy, and re-run the live demo and 3G checks.

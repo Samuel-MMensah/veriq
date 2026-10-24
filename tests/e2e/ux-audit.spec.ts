@@ -39,11 +39,15 @@ test("no results offers a wider search and every hospital nearby, not a dead end
   await expect(page.getByRole("heading", { level: 1 })).toContainText("near Ashaiman");
 });
 
-test("the hospital page answers the searched card first, and report tables open on tap", async ({ page }) => {
+test("the hospital page answers the searched card once, first, and report tables open on tap", async ({ page }) => {
   await page.goto("/facility/f0000000-0000-4000-8000-000000000001?card=nhis");
-  const header = page.getByRole("banner");
-  await expect(header).toContainText("Takes NHIS");
-  await expect(header).toContainText("Confirmed by hospital 2 days ago");
+  // Shown once, in its own section above "Today"; the other cards keep their badge and source (rule 4).
+  const yours = page.getByRole("region", { name: "Your card here" });
+  await expect(yours).toContainText("Takes NHIS");
+  await expect(yours).toContainText("Confirmed by hospital 2 days ago");
+  const others = page.getByRole("region", { name: "Other cards" });
+  await expect(others).not.toContainText("NHIS ");
+  await expect(others).toContainText("On insurer list, not checked yet. Call first");
   await expect(page.getByRole("table")).toHaveCount(0);
   await page.getByText("Patients, last 30 days: 9 card worked", { exact: false }).click();
   await expect(page.getByRole("table")).toHaveCount(1);
@@ -57,4 +61,16 @@ test("Saved offers the last search again (rule 8)", async ({ page }) => {
   await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Saved" }).click();
   await page.getByRole("link", { name: /Scan \/ X-ray · NHIS · near Dansoman/ }).click();
   await expect(page.getByText("Scan / X-ray · NHIS · within 5 km")).toBeVisible();
+});
+
+test("results stay short: legend folded, no 'nothing reported' lines, never-updated services folded", async ({ page }) => {
+  await page.goto("/results?service=antenatal&card=nhis&lat=5.545&lng=-0.265&area=dansoman");
+  await expect(page.getByText("No top-up reported")).toHaveCount(0);
+  await expect(page.getByRole("list", { name: "What the badges mean" })).toBeHidden();
+  await page.getByText("What the colours mean").click();
+  await expect(page.getByRole("list", { name: "What the badges mean" })).toBeVisible();
+  await page.goto("/facility/f0000000-0000-4000-8000-000000000001?card=nhis");
+  await expect(page.getByText("C-section", { exact: false })).toBeHidden();
+  await page.getByText("more services", { exact: false }).click();
+  await expect(page.getByText("C-section", { exact: false })).toBeVisible();
 });

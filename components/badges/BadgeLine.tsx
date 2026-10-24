@@ -34,15 +34,19 @@ const LEGEND: { label: string; dot: string }[] = [
   { label: "Reported refused", dot: "rounded-sm bg-refused" },
 ];
 
+/** Folded to one line: every badge already says its answer in words, so the colours are a reminder. */
 export function BadgeLegend() {
   return (
-    <ul aria-label="What the badges mean" className="grid grid-cols-2 gap-x-3 gap-y-1 text-sm text-ink/80">
-      {LEGEND.map((l) => (
-        <li key={l.label} className="flex items-center gap-1.5">
-          <span aria-hidden="true" className={`inline-block h-3 w-3 ${l.dot}`} />
-          {l.label}
-        </li>
-      ))}
-    </ul>
+    <details className="text-sm text-ink/80">
+      <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-brand">What the colours mean</summary>
+      <ul aria-label="What the badges mean" className="grid grid-cols-2 gap-x-3 gap-y-1 pb-1">
+        {LEGEND.map((l) => (
+          <li key={l.label} className="flex items-center gap-1.5">
+            <span aria-hidden="true" className={`inline-block h-3 w-3 ${l.dot}`} />
+            {l.label}
+          </li>
+        ))}
+      </ul>
+    </details>
   );
 }
