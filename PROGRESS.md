@@ -16,7 +16,7 @@ Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-w
 - [x] Prompt 8: Demo mode, polish, deploy (2026-10-24-02, live checks 2026-10-24-03, UX/trust/accessibility audit 2026-10-24-04)
 
 ### Phase 2: pilot (each prompt written in full in SPEC section 8 before it runs)
-- [ ] Prompt 9: Real NHIA directory for Greater Accra (2026-10-26-01: built and tested locally; item 9, the live check, waits for migrations 6 and 7 on Supabase and the deploy)
+- [x] Prompt 9: Real NHIA directory for Greater Accra (2026-10-26-01; live and checked on the live site 2026-10-26)
 - [ ] Prompt 10: Real staff auth, admin verification of hospitals, held-report review
 - [ ] Prompt 11: Hospital onboarding (screen 15), SMS morning-check reminders
 - [ ] Prompt 12: Map view with Leaflet and OpenStreetMap (screen 8)
@@ -58,4 +58,4 @@ Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-w
 - Who asks NHIA for permission to republish the provider list, and for a dated copy with NHIA codes and phone numbers?
 
 ## Next prompt
-Finish Prompt 9 item 9 first: apply migrations 6 and 7 to Supabase (docs/DEPLOY.md, "Applying new migrations"), commit and push, run `select public.reset_demo();`, then `$env:E2E_BASE_URL="https://veriqhealth.vercel.app"; npx playwright test directory demo`. Then Prompt 10: Real staff auth, admin verification of hospitals, held-report review (write it in full in SPEC section 8 first).
+Prompt 10: Real staff auth, admin side (hospital verification, held-report review), with a UI design pass on admin and patient screens. Before it: write it in full in SPEC section 8 (a draft is in session 2026-10-26-01's follow-up); make sure the Supabase dashboard is reachable (Auth email settings, custom email sender); the team creates the first admin in the app.

@@ -106,6 +106,8 @@ test("emergency mode lists real hospitals as 'Emergency not checked. Call first'
   await page.goto("/emergency");
   await expect(page.getByRole("link", { name: /112/ })).toHaveAttribute("href", "tel:112");
   const units = page.getByRole("listitem").filter({ hasText: "Emergency not checked. Call first" });
+  // The unit list streams in after 112 and 193 (Suspense), so wait for it before counting.
+  await expect(units.first()).toBeVisible();
   expect(await units.count()).toBeGreaterThan(0);
   await expect(units.first()).toContainText(SOURCE);
   await expect(units.first()).toContainText(/Type on the NHIA list: (PRIMARY HOSPITAL|SECONDARY HOSPITAL|POLY2005)/);
