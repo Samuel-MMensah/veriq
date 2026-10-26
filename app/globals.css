@@ -1,7 +1,11 @@
 @import "tailwindcss";
 
-/* Section 2 colours as theme tokens: bg-brand, text-ink, bg-page, etc. */
+/*
+ * Veriq design tokens (Prompt 10). One set for the patient and staff sides; docs/DESIGN.md explains
+ * each choice. Colour is for meaning (badges, status, actions), not decoration.
+ */
 @theme {
+  /* Section 2 colours, kept by name: bg-brand, text-ink, bg-page, ... */
   --color-brand: #0b6e4f;
   --color-ink: #16201c;
   --color-page: #f4f6f5;
@@ -14,7 +18,53 @@
   --color-patient-ink: #2c6b52;
   --color-emergency-bg: #fdecea;
 
+  /* Roles. Surfaces and lines */
+  --color-surface: #ffffff;
+  --color-line: #e2e7e5;
+  --color-line-strong: #c9d1ce;
+  /* Text: ink for content, muted for secondary lines (5.9:1 on white, 5.4:1 on page). */
+  --color-muted: #4f5d57;
+  /* Actions and good news */
+  --color-brand-strong: #08573f;
+  --color-brand-soft: #e8f2ee;
+  /* Status tones: pale background + dark text, each pair AA */
+  --color-good-bg: #e6f2ec;
+  --color-good-ink: #1d5c43;
+  --color-warn-bg: #fdf0e6;
+  --color-warn-ink: #8f3d07;
+  --color-danger-bg: #fdecea;
+  --color-danger-ink: #8a1c12;
+  --color-neutral-bg: #eef1f0;
+  --color-neutral-ink: #3f4b46;
+
+  /* Type: Plus Jakarta Sans. The scale is Tailwind's sm..3xl, used by role (docs/DESIGN.md). */
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+
+  /* Radius: controls (inputs, buttons) and cards */
+  --radius-control: 0.75rem;
+  --radius-card: 1rem;
+
+  /* Shadow: cards sit on the page; raised things (toasts, dialogs) float */
+  --shadow-card: 0 1px 2px rgb(22 32 28 / 0.06), 0 0 0 1px rgb(22 32 28 / 0.04);
+  --shadow-raised: 0 12px 32px -8px rgb(22 32 28 / 0.22), 0 0 0 1px rgb(22 32 28 / 0.06);
+
+  /* Motion: short and soft, and off for people who ask for less motion */
+  --ease-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animate-enter: enter 240ms var(--ease-soft) both;
+  --animate-fade: fade 160ms ease-out both;
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
 }
 
 html {
@@ -30,4 +80,23 @@ body {
 :focus-visible {
   outline: 3px solid var(--color-brand);
   outline-offset: 2px;
+}
+
+::selection {
+  background: var(--color-brand-soft);
+}
+
+dialog::backdrop {
+  background: rgb(22 32 28 / 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

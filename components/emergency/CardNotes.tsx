@@ -27,5 +27,5 @@ export function CardNote({ cardBadges, names }: { cardBadges: Record<string, Bad
 
   const note = slugs ? cardNote(cardBadges, slugs, names) : null;
   if (!note) return null;
-  return <p className="mt-3 text-sm text-ink/80">{note}</p>;
+  return <p className="mt-3 text-sm text-muted">{note}</p>;
 }

@@ -1,125 +1,127 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { DemoLogin } from "@/components/staff/DemoLogin";
-import { StaffHeader } from "@/components/staff/StaffHeader";
-import { Icon } from "@/components/ui/Icon";
-import { currentStaff, demoLoginEnabled } from "@/lib/auth/session";
+import { AdminBody, AdminPageHeader } from "@/components/admin/AdminShell";
+import { StaffGateScreen } from "@/components/staff/StaffGateScreen";
+import { Card } from "@/components/ui/Card";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Icon, type IconName } from "@/components/ui/Icon";
+import { ListRow } from "@/components/ui/ListRow";
+import { SampleDataTag } from "@/components/ui/SampleDataTag";
+import { SourceLine } from "@/components/ui/SourceLine";
+import { Toast } from "@/components/ui/Toast";
+import { actionText, recentActions } from "@/lib/admin/log";
+import { listHeldReports } from "@/lib/admin/reports";
+import { listHospitalClaims } from "@/lib/admin/verify";
+import { staffGate } from "@/lib/auth/session";
 import { listNeedsLocation } from "@/lib/db/queries";
 import { serviceDb } from "@/lib/db/server";
-import type { FacilityRow } from "@/lib/db/types";
+import { isDemoMode } from "@/lib/demo/mode";
 import { sourceLine } from "@/lib/rules/directory";
+import { DAY_MS } from "@/lib/rules/time";
 import type { SearchParams } from "@/lib/view/catalog";
-import { displayName, displayPlace } from "@/lib/view/names";
-import { setLocationAction } from "./actions";
+import { accraClock } from "@/lib/view/status";
+import { whenText } from "@/lib/view/when";
 
 export const metadata: Metadata = { title: "Admin" };
 
+const PATH = "/admin";
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
-// Admin (Prompt 9): real NHIA facilities with no confident map location (rule D1). Until one is set
-// here (location_source = admin), the facility is left out of every distance search and emergency mode.
-export default async function AdminPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const staff = await currentStaff();
-  if (staff?.role !== "admin") {
-    return (
-      <div className="mx-auto min-h-dvh max-w-md bg-page">
-        <StaffHeader product="admins" staff={null} title="Admin" path="/admin/" />
-        <DemoLogin account="admin-demo" who="the demo presenter" next="/admin/" enabled={demoLoginEnabled()} />
-      </div>
-    );
-  }
-
+// Admin home (Prompt 10): what needs doing, each count opening its list.
+export default async function AdminHome({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  const gate = await staffGate("admin", PATH);
+  if (!gate.ok) return <StaffGateScreen role="admin" staff={gate.staff} title="Admin" subtitle="Veriq staff only" path={PATH} />;
+  const { staff } = gate;
   const sp = await searchParams;
-  const error = first(sp.error);
-  const setId = first(sp.set);
-  const facilities = await listNeedsLocation(await serviceDb());
-  const byDistrict = new Map<string, FacilityRow[]>();
-  for (const f of facilities) {
-    const key = displayPlace(f.district) ?? f.district;
-    byDistrict.set(key, [...(byDistrict.get(key) ?? []), f]);
-  }
-  const districts = [...byDistrict].sort((a, b) => a[0].localeCompare(b[0]));
+  const db = await serviceDb();
+  const now = new Date();
+  // Rule D2: claims and held reports follow demo mode; "Needs a location" is about the real list only.
+  const demo = await isDemoMode(sp);
+  const source = demo ? "demo" : "nhia";
+  const [needs, claims, held, recent] = await Promise.all([
+    listNeedsLocation(db),
+    listHospitalClaims(db, source),
+    listHeldReports(db, source),
+    recentActions(db, new Date(now.getTime() - 30 * DAY_MS).toISOString()),
+  ]);
+  const listSource = needs[0] ? sourceLine(needs[0]) : "From the NHIA list";
+  const counted = `Counted at ${accraClock(now.toISOString())}`;
 
   return (
-    <div className="mx-auto min-h-dvh max-w-md bg-page">
-      {/* Real facilities only on this screen, so no SAMPLE DATA tag (rule 1). */}
-      <StaffHeader product="admins" staff={staff} title="Admin" subtitle="Real facilities from the NHIA list" path="/admin/" sample={false} />
-      <main className="space-y-4 px-4 py-4">
-        {setId && (
-          <p role="status" className="flex gap-3 rounded-2xl bg-brand/10 p-4 font-semibold text-brand">
-            <Icon name="check" className="mt-0.5 h-5 w-5" />
-            Location saved. The facility now shows in searches near it.
-          </p>
-        )}
-        {error && (
-          <p role="alert" className="rounded-2xl bg-emergency-bg p-4 font-semibold text-emergency">
-            {error}
-          </p>
-        )}
+    <>
+      <AdminPageHeader
+        title={`Good ${greeting(now)}, ${staff.name.split(/[\s@]/)[0]}`}
+        description="What needs doing today. Each number opens its list."
+        action={demo ? <SampleDataTag /> : undefined}
+      />
+      <AdminBody>
+        {first(sp.password) === "set" && <Toast>Your password is saved.</Toast>}
+        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:gap-4" aria-label="To do">
+          <Todo
+            href="/admin/hospitals"
+            icon="shield"
+            count={claims.waiting.length}
+            label="Hospitals waiting for verification"
+            source={`From staff accounts linked to ${demo ? "demo" : "real"} facilities · ${counted}`}
+          />
+          <Todo
+            href="/admin/reports"
+            icon="flag"
+            count={held.length}
+            label="Held reports to review"
+            source={`Patient reports held by the burst rule (rule A) · ${counted}`}
+          />
+          <Todo href="/admin/locations" icon="pin" count={needs.length} label="Facilities needing a location" source={`${listSource} · ${counted}`} />
+        </ul>
 
-        <section aria-labelledby="needs-location" className="rounded-2xl bg-white p-4 shadow-sm">
-          <h2 id="needs-location" className="text-lg font-bold">
-            Needs a location ({facilities.length})
-          </h2>
-          <p className="mt-1 text-ink/80">
-            We found no sure match on OpenStreetMap for these, so patients can&apos;t find them by distance yet. Check the place,
-            then paste its latitude and longitude, e.g. 5.5612, -0.2601.
-          </p>
-          {facilities.length === 0 ? (
-            <p className="mt-3 text-ink/70">Every facility has a location.</p>
+        <Card title="Recent admin actions" titleId="recent" aside="Last 30 days">
+          {recent.length === 0 ? (
+            <EmptyState icon="history" title="Nothing yet">
+              Every admin action is logged here: who, what, when and why.
+            </EmptyState>
           ) : (
-            <div className="mt-3 space-y-2">
-              {districts.map(([district, list]) => (
-                <details key={district} className="rounded-xl border border-ink/10">
-                  <summary className="flex min-h-12 cursor-pointer items-center justify-between px-3 font-semibold">
-                    {district} <span className="text-ink/70">{list.length}</span>
-                  </summary>
-                  <ul className="divide-y divide-ink/10">
-                    {list.map((f) => (
-                      <li key={f.id} id={`f-${f.id}`} className="px-3 py-3">
-                        <p className="font-semibold">{displayName(f.name)}</p>
-                        <p className="text-sm text-ink/80">
-                          {[f.nhia_type, displayPlace(f.area) ?? "No location in the file"].join(" · ")}
-                        </p>
-                        <p className="text-xs text-ink/70">
-                          {sourceLine(f)} · {f.source_ref}
-                        </p>
-                        <form action={setLocationAction} className="mt-2 flex gap-2">
-                          <input type="hidden" name="facility" value={f.id} />
-                          <label className="sr-only" htmlFor={`loc-${f.id}`}>
-                            Latitude and longitude for {displayName(f.name)}
-                          </label>
-                          <input
-                            id={`loc-${f.id}`}
-                            name="location"
-                            inputMode="decimal"
-                            placeholder="5.5612, -0.2601"
-                            className="min-h-11 min-w-0 flex-1 rounded-xl border border-ink/20 px-3"
-                          />
-                          <button type="submit" className="min-h-11 rounded-xl bg-brand px-4 font-bold text-white">
-                            Save
-                          </button>
-                        </form>
-                      </li>
-                    ))}
-                  </ul>
-                </details>
+            <ul className="divide-y divide-line">
+              {recent.slice(0, 8).map((a) => (
+                <li key={a.id}>
+                  <ListRow
+                    href={a.facility_id ? `/admin/hospitals/${a.facility_id}` : a.profile_id ? `/admin/staff/${a.profile_id}` : undefined}
+                    title={actionText(a.action)}
+                    detail={a.reason ?? undefined}
+                    meta={`${a.actor_label} · ${whenText(a.created_at, now)}`}
+                  />
+                </li>
               ))}
-            </div>
+            </ul>
           )}
-        </section>
+          <SourceLine className="mt-3">From the admin log, which nobody can change or delete</SourceLine>
+        </Card>
+      </AdminBody>
+    </>
+  );
+}
 
-        <p className="text-sm text-ink/70">
-          Map data from OpenStreetMap ©{" "}
-          <a href="https://www.openstreetmap.org/copyright" className="underline" target="_blank" rel="noopener noreferrer">
-            OpenStreetMap contributors
-          </a>
-          , ODbL.
-        </p>
-        <Link href="/admin/demo" className="flex min-h-12 items-center justify-center font-bold text-brand underline">
-          Demo data
-        </Link>
-      </main>
-    </div>
+function greeting(now: Date): string {
+  const h = now.getUTCHours(); // Accra is GMT
+  return h < 12 ? "morning" : h < 17 ? "afternoon" : "evening";
+}
+
+function Todo({ href, icon, count, label, source }: { href: string; icon: IconName; count: number; label: string; source: string }) {
+  return (
+    <li>
+      <Link
+        href={href}
+        className="flex h-full flex-col rounded-(--radius-card) bg-surface p-4 shadow-card transition-shadow hover:shadow-raised sm:p-5"
+      >
+        <span className="flex items-center justify-between">
+          <span className={`flex h-10 w-10 items-center justify-center rounded-full ${count ? "bg-warn-bg text-warn-ink" : "bg-good-bg text-good-ink"}`}>
+            <Icon name={count ? icon : "check"} className="h-5 w-5" />
+          </span>
+          <Icon name="chevron" className="h-5 w-5 text-brand" />
+        </span>
+        <span className="mt-4 text-3xl font-extrabold tabular-nums">{count.toLocaleString("en-GB")}</span>
+        <span className="mt-0.5 font-semibold">{label}</span>
+        <span className="mt-2 text-sm text-muted">{source}</span>
+      </Link>
+    </li>
   );
 }

@@ -69,3 +69,29 @@ Database first, then the code: the new code reads columns that migration 6 adds.
    (`directory.spec.ts` skips its /admin test on the live site, because that test saves a location.)
 
 To roll back migration 7's rows only: `delete from public.facilities where source = 'nhia';` (their NHIS rows go with them).
+
+## Prompt 10: real staff sign-in (migration 8)
+
+Database first, then the code: the new code reads columns that migration 8 adds.
+
+1. **Supabase dashboard, Authentication → Sign In / Providers:**
+   - Turn **off** "Allow new users to sign up". Only admins make accounts, through the admin API.
+   - Keep Email as the provider. Veriq never asks Supabase to send email: accounts are made with the email already confirmed, and passwords are reset by an admin in the app.
+2. Check, then apply migration 8:
+   ```powershell
+   npx supabase db push --db-url "<SUPABASE_DB_URL from .env.local>" --dry-run   # lists only 20261026000008_staff_admin.sql
+   npx supabase db push --db-url "<SUPABASE_DB_URL from .env.local>"
+   ```
+3. Vercel → Environment Variables (Production): set `DEMO_LOGIN=off` on the real site.
+   - Keep `SESSION_SECRET`; it now signs real staff sessions too.
+   - Never set `VERIQ_LOCAL_ADMIN` or `VERIQ_DATA` on Vercel.
+   - The pitch demo then needs a separate deploy (for example a Preview) without `DEMO_LOGIN=off`.
+4. Make the first admin, on this computer:
+   ```powershell
+   npm run create-admin -- you@example.org
+   ```
+   It prints a one-time password in the terminal and nowhere else. Push the code, wait for Vercel, then sign in at `/staff/sign-in`. You will be asked to set your own password.
+5. Check that it works:
+   - `/admin` shows the three to-do counts.
+   - On `/admin/staff`, make a test hospital account. Sign in as it in a private window and set its password. It should say "Waiting for verification".
+   - Switch the test account off afterwards.

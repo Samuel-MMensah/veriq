@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { CardsAccepted, YourCard } from "@/components/facility/CardsAccepted";
 import { TodayGrid } from "@/components/facility/TodayGrid";
 import { BackLink } from "@/components/ui/BackLink";
+import { buttonClass } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import { Icon } from "@/components/ui/Icon";
 import { SampleDataTag } from "@/components/ui/SampleDataTag";
 import { getFacilityDetail, listInsurers } from "@/lib/db/queries";
@@ -45,7 +47,7 @@ export default async function FacilityPage({
 
   return (
     <div className="min-h-dvh bg-page pb-8">
-      <header className="bg-white px-4 pb-4 pt-4">
+      <header className="border-b border-line bg-surface px-4 pt-4 pb-5">
         <div className="flex items-start gap-2">
           <BackLink fallback="/find" label="Back to results" />
           <div className="min-w-0 flex-1">
@@ -54,11 +56,11 @@ export default async function FacilityPage({
               {/* Rule 1: only for a demo hospital. */}
               {showSampleTag([detail.facility]) && <SampleDataTag className="mt-1 shrink-0" />}
             </div>
-            <p className="mt-1 text-ink/70">{view.subtitle}</p>
+            <p className="mt-1 text-muted">{view.subtitle}</p>
             {/* Rule D1: where each directory fact comes from. */}
-            {view.sourceLine && <p className="mt-1 text-sm text-ink/70">{view.sourceLine}</p>}
+            {view.sourceLine && <p className="mt-1 text-sm text-muted">{view.sourceLine}</p>}
             {view.locationNote && (
-              <p className="text-sm text-ink/70">
+              <p className="text-sm text-muted">
                 {view.locationNote}
                 {view.locationNote.includes("OpenStreetMap") && (
                   <>
@@ -73,10 +75,7 @@ export default async function FacilityPage({
             )}
             <div className="mt-3 flex flex-wrap gap-2">
               {view.phone && (
-                <a
-                  href={`tel:${view.phone.replace(/\s/g, "")}`}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-full bg-brand px-5 font-bold text-white"
-                >
+                <a href={`tel:${view.phone.replace(/\s/g, "")}`} className={buttonClass()}>
                   <Icon name="phone" className="h-5 w-5" /> Call
                 </a>
               )}
@@ -85,13 +84,13 @@ export default async function FacilityPage({
                   href={view.directionsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center rounded-full border border-ink/20 px-5 font-bold"
+                  className={buttonClass({ variant: "secondary" })}
                 >
-                  Directions
+                  <Icon name="map" className="h-5 w-5" /> Directions
                 </a>
               )}
               {!view.phone && view.real && (
-                <span className="inline-flex min-h-11 items-center text-sm text-ink/70">No phone number on the list yet</span>
+                <span className="inline-flex min-h-11 items-center text-sm text-muted">No phone number on the list yet</span>
               )}
             </div>
           </div>
@@ -102,12 +101,9 @@ export default async function FacilityPage({
         {yourCard && <YourCard card={yourCard} />}
         {view.real && view.today.length === 0 ? (
           // Rule D1: the NHIA list names no services, so none are shown or guessed.
-          <section aria-labelledby="today" className="rounded-2xl bg-white p-4 shadow-sm">
-            <h2 id="today" className="text-lg font-bold">
-              Services and opening times
-            </h2>
-            <p className="mt-1 text-ink/80">Not listed yet. Call the hospital to ask before you go.</p>
-          </section>
+          <Card title="Services and opening times" titleId="today">
+            <p className="-mt-1 text-muted">Not listed yet. Call the hospital to ask before you go.</p>
+          </Card>
         ) : (
           <TodayGrid tiles={view.today} updated={view.todayUpdated} />
         )}
@@ -118,15 +114,24 @@ export default async function FacilityPage({
           howWeCheck={!yourCard}
         />
         {!canReport ? (
-          <p className="rounded-2xl bg-page p-4 text-ink/80">{REPORTS_CLOSED_TEXT}</p>
+          <p className="flex items-start gap-3 rounded-(--radius-card) border border-line p-4 text-muted">
+            <Icon name="lock" className="mt-0.5 h-5 w-5" />
+            {REPORTS_CLOSED_TEXT}
+          </p>
         ) : (
-        <Link
-          href={`/facility/${view.id}/report${first(sp.card) ? `?card=${first(sp.card)}` : ""}`}
-          className="flex min-h-14 items-center justify-between gap-3 rounded-2xl border-2 border-dashed border-brand/50 px-4 py-3 font-bold text-brand"
-        >
-          Been here? Tell others if your card worked
-          <Icon name="chevron" className="h-5 w-5" />
-        </Link>
+          <Link
+            href={`/facility/${view.id}/report${first(sp.card) ? `?card=${first(sp.card)}` : ""}`}
+            className="flex min-h-16 items-center gap-3 rounded-(--radius-card) bg-surface px-4 py-3 shadow-card transition-shadow hover:shadow-raised"
+          >
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
+              <Icon name="people" className="h-5 w-5" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-bold">Been here?</span>{" "}
+              <span className="block text-sm text-muted">Tell others if your card worked</span>
+            </span>
+            <Icon name="chevron" className="h-5 w-5 text-brand" />
+          </Link>
         )}
       </main>
     </div>

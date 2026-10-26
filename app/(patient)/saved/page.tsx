@@ -10,12 +10,12 @@ export default function Page() {
   return (
     <main className="px-4 pb-6 pt-6">
       <h1 className="text-3xl font-extrabold">Saved</h1>
-      <p className="mt-1 text-ink/70">Saving hospitals and alerts come in the pilot.</p>
+      <p className="mt-1 text-muted">Saving hospitals and alerts come in the pilot.</p>
       <div className="mt-6 space-y-3">
         <LastSearch />
         <Link
           href="/find"
-          className="flex min-h-14 items-center justify-center rounded-2xl border-2 border-brand font-bold text-brand"
+          className="flex min-h-14 items-center justify-center rounded-(--radius-card) border-2 border-brand font-bold text-brand"
         >
           Start a new search
         </Link>

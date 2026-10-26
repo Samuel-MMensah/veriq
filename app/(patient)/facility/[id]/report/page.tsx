@@ -51,7 +51,7 @@ export default async function ReportPage({
         >
           <Icon name="close" className="h-6 w-6" />
         </Link>
-        <p className="flex-1 truncate text-lg text-ink/70">{displayName(facility.name)}</p>
+        <p className="flex-1 truncate text-lg text-muted">{displayName(facility.name)}</p>
         {showSampleTag([facility]) && <SampleDataTag />}
       </div>
       <div className="mt-4 flex flex-1 flex-col">
@@ -59,13 +59,13 @@ export default async function ReportPage({
         {reportsOpen(facility, reportsLive(process.env.REPORTS_LIVE)) ? (
           <ReportForm facilityId={facility.id} cards={cards} initialCardId={initial.id} />
         ) : (
-          <div className="rounded-2xl bg-page p-5">
+          <div className="rounded-(--radius-card) bg-page p-5">
             <h1 className="text-2xl font-extrabold">Was your card accepted?</h1>
-            <p className="mt-2 text-lg text-ink/80">{REPORTS_CLOSED_TEXT}</p>
+            <p className="mt-2 text-lg text-muted">{REPORTS_CLOSED_TEXT}</p>
             {facility.phone && (
               <a
                 href={`tel:${facility.phone.replace(/\s/g, "")}`}
-                className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-brand px-5 font-bold text-white"
+                className="mt-4 inline-flex min-h-12 items-center rounded-(--radius-control) bg-brand px-5 font-bold text-white"
               >
                 Call the hospital
               </a>

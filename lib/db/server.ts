@@ -14,8 +14,14 @@ export function isLocalData(): boolean {
 // otherwise get its own in-memory database (a report saved by /api/reports would not show on pages).
 const store = globalThis as typeof globalThis & { __veriqLocalDb?: Promise<PGlite> };
 
-async function localDb(): Promise<PGlite> {
-  store.__veriqLocalDb ??= import("./pglite").then((m) => m.createDb());
+/** The in-memory database (local data mode only), for local sign-in (lib/auth/backend.ts). */
+export async function localDb(): Promise<PGlite> {
+  store.__veriqLocalDb ??= import("./pglite").then(async (m) => {
+    const db = await m.createDb();
+    const { seedLocalAdmin } = await import("@/lib/auth/create-admin");
+    await seedLocalAdmin(db);
+    return db;
+  });
   return store.__veriqLocalDb;
 }
 

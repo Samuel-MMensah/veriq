@@ -8,7 +8,7 @@ export default function CardsPage() {
   return (
     <main className="px-4 pb-6 pt-6">
       <h1 className="text-3xl font-extrabold">My cards</h1>
-      <p className="mt-1 text-ink/70">Saved on this phone only</p>
+      <p className="mt-1 text-muted">Saved on this phone only</p>
       <CardsManager />
     </main>
   );

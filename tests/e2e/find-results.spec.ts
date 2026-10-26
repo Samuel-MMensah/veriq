@@ -85,7 +85,7 @@ test("results link to How Veriq checks", async ({ page }) => {
 
 test("a broken results link explains itself", async ({ page }) => {
   await page.goto("/results?card=nhis");
-  await expect(page.getByText("We couldn't read this search.")).toBeVisible();
+  await expect(page.getByText("We couldn't read this search")).toBeVisible();
 });
 
 test("Scan / X-ray searches ultrasound, X-ray and CT, and names the service shown", async ({ page }) => {

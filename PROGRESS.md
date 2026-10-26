@@ -1,6 +1,6 @@
 # Veriq Health progress
-Last updated: 2026-10-26, session 2026-10-26-01
-Current phase: 2 (pilot). Phase 1 gate met on 2026-10-24. Phase 2 gate: not yet (needs DPC registration, real logins, rule A in production, USSD aggregator, admin verification)
+Last updated: 2026-10-26, session 2026-10-26-02
+Current phase: 2 (pilot). Phase 1 gate met on 2026-10-24. Phase 2 gate: not yet (needs DPC registration, real logins live, rule A in production, USSD aggregator; real logins and admin verification are built but not yet deployed)
 Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-west-1)
 
 ## Prompts
@@ -17,7 +17,7 @@ Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-w
 
 ### Phase 2: pilot (each prompt written in full in SPEC section 8 before it runs)
 - [x] Prompt 9: Real NHIA directory for Greater Accra (2026-10-26-01; live and checked on the live site 2026-10-26)
-- [ ] Prompt 10: Real staff auth, admin verification of hospitals, held-report review
+- [x] Prompt 10: Real staff sign-in, admin side, design pass (2026-10-26-02; built and tested locally, not yet deployed: migration 8 and the first admin are your steps)
 - [ ] Prompt 11: Hospital onboarding (screen 15), SMS morning-check reminders
 - [ ] Prompt 12: Map view with Leaflet and OpenStreetMap (screen 8)
 - [ ] Prompt 13: Saved hospitals, alerts, sharing (screens 9 and 10)
@@ -44,11 +44,12 @@ Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-w
 | 13 | Help: USSD and SMS | `/help` | 1 static, 2 live | done (Phase 1) | `/api/ussd` tested (`?demo=1` is the demo line; R1 on the real line); SMS through the console stub until Prompt 15 |
 | 14 | How Veriq checks | `/how-we-check` | 1 | done | |
 | 15 | Hospital: claim your page | `/h/onboard` | 2 | not started | |
-| 16 | Hospital morning check | `/h/check` | 1 | done | demo login (Akoma); reminder via console stub |
+| 16 | Hospital morning check | `/h/check` | 1 | done | real accounts (verified hospitals publish) and the demo login (Akoma); optional till time per service (rule F); reminder via console stub |
 | 17 | Link to national bed system | `/h/national` | 3 | not started | Only after a signed agreement |
-| 18 | Insurer network health | `/i/network` | 1 (read-only) | done | demo login (NHIS); "Add to list" waits for screen 19 |
+| 18 | Insurer network health | `/i/network` | 1 (read-only) | done | real insurer accounts see real facilities; demo login (NHIS) sees the demo; "Add to list" waits for screen 19 |
 | 19 | Insurer list upload | `/i/upload` | 2 | not started | |
-| – | Admin | `/admin` | 2 | in progress | `/admin`: "Needs a location" (360 real facilities, set by hand); `/admin/demo`: Reset demo data, Make this phone fresh; verification of hospitals is Prompt 10 |
+| – | Admin | `/admin` | 2 | done | overview, staff accounts, hospital verification, held reports, locations (search and map preview), admin log, demo data, design sample (`/admin/design`) |
+| – | Staff sign-in | `/staff/sign-in`, `/staff/password` | 2 | done | email and password, accounts made by an admin, nothing emailed |
 
 ## Known bugs
 - none open ("Open till 4 pm" after 4 pm fixed by rule F until_time, and the insurer table stacks at 390 px, both 2026-10-26-01)
@@ -56,6 +57,8 @@ Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-w
 ## Open questions for the team
 - Keep or delete the unused PDF in data/nhia/ (Greater_Accra_Hospitals_Insurance_List.pdf, untracked)?
 - Who asks NHIA for permission to republish the provider list, and for a dated copy with NHIA codes and phone numbers?
+- Two deploys (real site with DEMO_LOGIN=off, and a preview for rehearsals)?
+- Who is the first admin, and who runs `npm run create-admin`?
 
 ## Next prompt
-Prompt 10: Real staff auth, admin side (hospital verification, held-report review), with a UI design pass on admin and patient screens. Before it: write it in full in SPEC section 8 (a draft is in session 2026-10-26-01's follow-up); make sure the Supabase dashboard is reachable (Auth email settings, custom email sender); the team creates the first admin in the app.
+Prompt 11: hospital onboarding (screen 15) and SMS morning-check reminders. Before it: write it in full in SPEC section 8. Apply migration 8, turn off Supabase sign-ups and set DEMO_LOGIN=off in Vercel Production, then deploy and run `npm run create-admin -- you@example.org` (docs/DEPLOY.md, "Prompt 10").

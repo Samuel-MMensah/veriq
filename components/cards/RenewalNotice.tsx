@@ -18,7 +18,7 @@ export function RenewalNotice({ reminder, hasNhisWithoutExpiry }: { reminder: Re
   return (
     <p
       role={urgent ? "alert" : undefined}
-      className={`flex gap-3 rounded-2xl p-4 text-refused-ink ${urgent ? "border-2 border-refused bg-refused-bg font-semibold" : "bg-refused-bg"}`}
+      className={`flex gap-3 rounded-(--radius-card) p-4 text-refused-ink ${urgent ? "border-2 border-refused bg-refused-bg font-semibold" : "bg-refused-bg"}`}
     >
       <Icon name="bell" className="mt-0.5 h-5 w-5" />
       {text}

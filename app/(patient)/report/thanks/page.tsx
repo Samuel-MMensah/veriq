@@ -57,24 +57,24 @@ export default async function ThanksPage({ searchParams }: { searchParams: Promi
         : "Your report is anonymous and is now part of what people see.";
 
   return (
-    <main className="flex min-h-dvh flex-col px-6 pb-6 pt-10">
+    <main className="flex min-h-dvh animate-enter flex-col px-6 pt-10 pb-6">
       <div className="flex items-start justify-between">
-        <span className="flex h-20 w-20 items-center justify-center rounded-full bg-brand/10 text-brand">
+        <span className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-soft text-brand">
           <Icon name={state === "queued" ? "clock" : "check"} className="h-10 w-10" />
         </span>
         {demoFacility && <SampleDataTag />}
       </div>
       <h1 className="mt-6 text-3xl font-extrabold leading-tight">{title}</h1>
-      <p className="mt-2 text-lg text-ink/80">{lead}</p>
+      <p className="mt-2 text-lg text-muted">{lead}</p>
 
       {facilityName && state === "counted" && (
-        <section aria-labelledby="changed" className="mt-6 rounded-2xl bg-page p-5">
-          <h2 id="changed" className="text-sm font-bold uppercase tracking-wide text-ink/70">
+        <section aria-labelledby="changed" className="mt-6 rounded-(--radius-card) border border-line bg-page p-5">
+          <h2 id="changed" className="text-sm font-bold uppercase tracking-wide text-muted">
             What changed
           </h2>
           <ChangeText facilityName={facilityName} change={change} />
           {wasTopUp && (
-            <p className="mt-3 text-sm text-ink/70">
+            <p className="mt-3 text-sm text-muted">
               When 2 or more patients report the same top-up in a week, we ask the hospital to confirm or correct it at
               its morning check.
             </p>
@@ -87,7 +87,7 @@ export default async function ThanksPage({ searchParams }: { searchParams: Promi
       </div>
 
       <div className="mt-auto space-y-3 pt-10">
-        <Link href={back} className="flex min-h-14 w-full items-center justify-center rounded-2xl bg-brand text-lg font-bold text-white">
+        <Link href={back} className="flex min-h-14 w-full items-center justify-center rounded-(--radius-control) bg-brand text-lg font-bold text-white">
           Done
         </Link>
         <a
@@ -119,7 +119,7 @@ function ChangeText({ facilityName, change }: { facilityName: string; change: Ch
       <p className="mt-2 text-lg">
         {facilityName} now shows: <strong>{change.headline}</strong>.
       </p>
-      {change.before && <p className="mt-2 text-ink/70">Before your report: {change.before}.</p>}
+      {change.before && <p className="mt-2 text-muted">Before your report: {change.before}.</p>}
     </>
   );
 }

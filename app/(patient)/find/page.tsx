@@ -12,20 +12,22 @@ export default function FindPage() {
         <div>
           <h1 className="sr-only">Find care</h1>
           <p aria-hidden="true" className="text-3xl font-extrabold leading-none tracking-tight">
-            <span className="text-brand">veriq</span> <span className="font-semibold text-ink/80">health</span>
+            <span className="text-brand">veriq</span> <span className="font-semibold text-muted">health</span>
           </p>
-          <p className="mt-1 text-ink/70">Know before you go</p>
+          <p className="mt-1 text-muted">Know before you go</p>
         </div>
       </header>
 
       <Link
         href="/emergency"
-        className="mt-5 flex items-center gap-3 rounded-2xl bg-emergency-bg p-4 text-emergency"
+        className="mt-5 flex min-h-16 items-center gap-3 rounded-(--radius-card) bg-danger-bg px-4 py-3 text-danger-ink transition-colors hover:bg-[#fbe1de]"
       >
-        <Icon name="alert" className="h-6 w-6" />
-        <span className="flex-1">
-          <span className="block font-bold">Emergency?</span>
-          <span className="block">Open emergency mode. Your card won&apos;t hold you back.</span>
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface">
+          <Icon name="alert" className="h-5 w-5" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-bold">Emergency?</span>{" "}
+          <span className="block text-sm">Open emergency mode. Your card won&apos;t hold you back.</span>
         </span>
         <Icon name="chevron" className="h-5 w-5" />
       </Link>

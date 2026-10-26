@@ -41,9 +41,9 @@ function saveLastArea(place: Place) {
 }
 
 const chip =
-  "inline-flex min-h-12 cursor-pointer items-center rounded-full border border-ink/20 bg-white px-5 text-base font-medium has-[:checked]:border-brand has-[:checked]:bg-brand has-[:checked]:font-bold has-[:checked]:text-white has-[:focus-visible]:outline has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-brand";
+  "inline-flex min-h-12 cursor-pointer items-center rounded-full border border-line-strong bg-surface px-5 text-base font-medium transition-colors hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand has-[:checked]:font-bold has-[:checked]:text-white has-[:focus-visible]:outline has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-brand";
 const cardBox =
-  "flex min-h-16 cursor-pointer flex-col justify-center rounded-xl border border-ink/20 bg-white px-4 py-2 has-[:checked]:border-2 has-[:checked]:border-brand has-[:checked]:bg-brand/10 has-[:focus-visible]:outline has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-brand";
+  "flex min-h-16 cursor-pointer flex-col justify-center rounded-(--radius-control) border border-line-strong bg-surface px-4 py-2 transition-colors hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand-soft has-[:checked]:ring-1 has-[:checked]:ring-brand has-[:focus-visible]:outline has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-brand";
 
 export function FindForm() {
   const [card, setCard] = useState("nhis");
@@ -165,20 +165,20 @@ export function FindForm() {
                 className="sr-only"
               />
               <span className="font-bold leading-tight">{c.name}</span>
-              <span className="text-sm text-ink/70">{c.note}</span>
+              <span className="text-sm text-muted">{c.note}</span>
             </label>
           ))}
         </div>
       </fieldset>
 
-      <div className="rounded-xl border border-ink/15 bg-white p-4">
+      <div className="rounded-(--radius-card) border border-line bg-surface p-4">
         <div className="flex items-center gap-3">
           <Icon name="pin" className="h-6 w-6 text-brand" />
           <div className="flex-1">
             <p className="font-semibold">{place.name === "you" ? "Near you" : `Near ${place.name}, Accra`}</p>
-            <p className="text-sm text-ink/70">
+            <p className="text-sm text-muted">
               Within {radius} km
-              {areaIsDefault && !changing && <span className="font-semibold text-ink/80"> · Not here? Tap Change</span>}
+              {areaIsDefault && !changing && <span className="font-semibold text-muted"> · Not here? Tap Change</span>}
             </p>
           </div>
           <button
@@ -192,18 +192,18 @@ export function FindForm() {
           </button>
         </div>
         {changing && (
-          <div id="area-panel" className="mt-4 space-y-3 border-t border-ink/10 pt-4">
+          <div id="area-panel" className="mt-4 space-y-3 border-t border-line pt-4">
             <button
               type="button"
               onClick={useMyLocation}
               disabled={locating}
-              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-brand font-bold text-brand disabled:opacity-60"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-(--radius-control) border border-brand font-bold text-brand disabled:opacity-60"
             >
               <Icon name="locate" className="h-5 w-5" />
               {locating ? "Finding you…" : "Use my location"}
             </button>
             {locateError && (
-              <p role="alert" className="text-sm text-emergency">
+              <p role="alert" className="text-sm font-semibold text-danger-ink">
                 {locateError}
               </p>
             )}
@@ -218,7 +218,7 @@ export function FindForm() {
                     setAreaIsDefault(false);
                   }
                 }}
-                className="mt-1 block min-h-11 w-full rounded-lg border border-ink/20 bg-white px-3 text-base font-normal"
+                className="mt-1 block min-h-12 w-full rounded-(--radius-control) border border-line-strong bg-surface px-3 text-base font-normal"
               >
                 {place.slug === null && <option value="">Your location</option>}
                 {AREAS.map((a) => (
@@ -233,7 +233,7 @@ export function FindForm() {
               <select
                 value={radius}
                 onChange={(e) => setRadius(Number(e.target.value))}
-                className="mt-1 block min-h-11 w-full rounded-lg border border-ink/20 bg-white px-3 text-base font-normal"
+                className="mt-1 block min-h-12 w-full rounded-(--radius-control) border border-line-strong bg-surface px-3 text-base font-normal"
               >
                 {RADIUS_OPTIONS_KM.map((r) => (
                   <option key={r} value={r}>
@@ -252,11 +252,11 @@ export function FindForm() {
       {place.slug ? <input type="hidden" name="area" value={place.slug} /> : <input type="hidden" name="near" value="me" />}
 
       {/* Always in reach above the bottom bar, even on a small phone (rule 7). */}
-      <div className="sticky bottom-[calc(3.5rem+env(safe-area-inset-bottom))] -mx-4 bg-white/95 px-4 pb-3 pt-2">
+      <div className="sticky bottom-[calc(3.5rem+env(safe-area-inset-bottom))] -mx-4 border-t border-line bg-surface/95 px-4 pt-3 pb-3 backdrop-blur">
         <button
           type="submit"
           aria-busy={submitting}
-          className="min-h-14 w-full rounded-2xl bg-brand px-4 text-lg font-bold text-white aria-busy:opacity-80"
+          className="min-h-14 w-full rounded-(--radius-control) bg-brand px-4 text-lg font-bold text-white transition-colors hover:bg-brand-strong aria-busy:opacity-80"
         >
           {submitting ? "Finding hospitals…" : buttonText}
         </button>

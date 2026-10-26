@@ -9,7 +9,7 @@ const BADGES = [
     n: "1",
     title: "Hospital confirmed",
     text: "Their front desk confirmed it in the last 14 days.",
-    box: "bg-brand/10 text-brand",
+    box: "bg-brand-soft text-brand",
     dot: "bg-brand text-white",
   },
   {
@@ -40,15 +40,15 @@ export default function HowWeCheckPage() {
     <main className="flex min-h-dvh flex-col px-4 pb-8 pt-4">
       <div className="flex items-center gap-2">
         <BackLink fallback="/find" />
-        <p className="text-lg text-ink/70">How Veriq checks</p>
+        <p className="text-lg text-muted">How Veriq checks</p>
       </div>
 
       <h1 className="mt-4 text-3xl font-extrabold leading-tight">Every badge tells you who said so, and when.</h1>
-      <p className="mt-2 text-lg text-ink/80">We never just copy a list. Strongest first:</p>
+      <p className="mt-2 text-lg text-muted">We never just copy a list. Strongest first:</p>
 
       <ol className="mt-5 space-y-3">
         {BADGES.map((b) => (
-          <li key={b.title} className={`flex gap-4 rounded-2xl p-4 ${b.box}`}>
+          <li key={b.title} className={`flex gap-4 rounded-(--radius-card) p-4 ${b.box}`}>
             <span aria-hidden="true" className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-bold ${b.dot}`}>
               {b.n}
             </span>
@@ -60,23 +60,23 @@ export default function HowWeCheckPage() {
         ))}
       </ol>
 
-      <section className="mt-4 rounded-2xl border border-ink/15 p-4">
+      <section className="mt-4 rounded-(--radius-card) border border-line-strong p-4">
         <h2 className="font-bold">Today&apos;s status ages too</h2>
-        <p className="mt-1 text-ink/80">
+        <p className="mt-1 text-muted">
           Under 24 hours: shown normally. 1 to 3 days: marked &quot;may have changed&quot;. Older: greyed out until the
           hospital checks in.
         </p>
       </section>
 
-      <section className="mt-3 rounded-2xl border border-ink/15 p-4">
+      <section className="mt-3 rounded-(--radius-card) border border-line-strong p-4">
         <h2 className="font-bold">Every number says its period</h2>
-        <p className="mt-1 text-ink/80">
+        <p className="mt-1 text-muted">
           Counts always say if they cover the last 7 days, the last 30 days or the last 12 months. We keep the history.
           Reports we hold back or reject are kept, but never counted.
         </p>
       </section>
 
-      <p className="mt-auto pt-10 text-ink/80">
+      <p className="mt-auto pt-10 text-muted">
         Hospitals can&apos;t pay to change a badge. Paid partners get tools and reports, never a better rating.
       </p>
     </main>

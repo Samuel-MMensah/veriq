@@ -9,7 +9,14 @@ const root = join(process.cwd(), "supabase");
 
 const SUPABASE_SHIM = `
   create schema auth;
-  create table auth.users (id uuid primary key);
+  -- The auth.users columns local sign-in uses (lib/auth/backend.ts), named as in Supabase.
+  create table auth.users (
+    id uuid primary key default gen_random_uuid(),
+    email text unique,
+    encrypted_password text,
+    email_confirmed_at timestamptz,
+    banned_until timestamptz
+  );
   create function auth.uid() returns uuid language sql stable as
     $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
   create role anon nologin;

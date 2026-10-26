@@ -1,7 +1,7 @@
-// Phase 1 staff sign-in: a "Demo login" for two seeded demo accounts (SPEC section 5). It is a
-// signed, httpOnly cookie, not a real login. Prompt 9 replaces it with phone and email codes through
-// Supabase Auth, using the row-level security policies already in supabase/migrations.
-import { createHmac, timingSafeEqual } from "node:crypto";
+// The "Demo login" for three seeded demo accounts (SPEC section 5): a signed, httpOnly cookie, not a
+// real login. Since Prompt 10 it is for rehearsals and tests only, and off on the real site
+// (DEMO_LOGIN=off). Real staff sign in with an account (account.ts).
+import { signToken, readToken } from "./token";
 
 export type DemoAccount =
   | { key: "hospital-akoma"; role: "hospital"; facilityId: string; name: string; title: string; phone: string }
@@ -32,28 +32,13 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
 export const SESSION_COOKIE = "veriq_staff";
 export const SESSION_HOURS = 8;
 
-const b64 = (s: string) => Buffer.from(s).toString("base64url");
-const sign = (payload: string, secret: string) => createHmac("sha256", secret).update(payload).digest("base64url");
-
 export function makeSession(key: DemoAccount["key"], secret: string, now: Date): string {
-  if (!secret) throw new Error("SESSION_SECRET is not set.");
-  const payload = b64(JSON.stringify({ key, exp: now.getTime() + SESSION_HOURS * 60 * 60 * 1000 }));
-  return `${payload}.${sign(payload, secret)}`;
+  return signToken({ key, exp: now.getTime() + SESSION_HOURS * 60 * 60 * 1000 }, secret);
 }
 
 /** The signed-in demo account, or null if the cookie is missing, altered, expired or unknown. */
 export function readSession(cookie: string | undefined, secret: string, now: Date): DemoAccount | null {
-  if (!cookie || !secret) return null;
-  const [payload, mac] = cookie.split(".");
-  if (!payload || !mac) return null;
-  const expected = Buffer.from(sign(payload, secret));
-  const given = Buffer.from(mac);
-  if (expected.length !== given.length || !timingSafeEqual(expected, given)) return null;
-  try {
-    const { key, exp } = JSON.parse(Buffer.from(payload, "base64url").toString()) as { key: string; exp: number };
-    if (typeof exp !== "number" || exp <= now.getTime()) return null;
-    return DEMO_ACCOUNTS.find((a) => a.key === key) ?? null;
-  } catch {
-    return null;
-  }
+  const payload = readToken(cookie, secret);
+  if (!payload || typeof payload.exp !== "number" || payload.exp <= now.getTime()) return null;
+  return DEMO_ACCOUNTS.find((a) => a.key === payload.key) ?? null;
 }

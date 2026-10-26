@@ -58,12 +58,12 @@ describe("rule M: one status row per changed or re-confirmed service (team decis
         ],
         now,
       }),
-    ).toEqual([{ serviceId: "antenatal", status: "closed", fromTime: null, note: null }]);
+    ).toEqual([{ serviceId: "antenatal", status: "closed", fromTime: null, untilTime: null, note: null }]);
   });
 
   it("a new specialist time is a change", () => {
     const rows = planStatusRows({ current, submitted: [{ serviceId: "obstetrician", status: "from_time", fromTime: "15:30" }], now });
-    expect(rows).toEqual([{ serviceId: "obstetrician", status: "from_time", fromTime: "15:30", note: null }]);
+    expect(rows).toEqual([{ serviceId: "obstetrician", status: "from_time", fromTime: "15:30", untilTime: null, note: null }]);
   });
 
   it("a service never set before is a change", () => {
@@ -74,7 +74,7 @@ describe("rule M: one status row per changed or re-confirmed service (team decis
   it("every confirmation is dated: an unchanged status is re-confirmed after 10 minutes, keeping its note (threshold)", () => {
     const old = [{ ...current[0]!, created_at: ago(10 * 60_000 + 1) }];
     expect(planStatusRows({ current: old, submitted: [{ serviceId: "antenatal", status: "open", fromTime: null }], now })).toEqual([
-      { serviceId: "antenatal", status: "open", fromTime: null, note: "Open till 4 pm" },
+      { serviceId: "antenatal", status: "open", fromTime: null, untilTime: null, note: "Open till 4 pm" },
     ]);
     const ten = [{ ...current[0]!, created_at: ago(10 * 60_000) }];
     expect(planStatusRows({ current: ten, submitted: [{ serviceId: "antenatal", status: "open", fromTime: null }], now })).toEqual([]);
@@ -171,5 +171,37 @@ describe("rule M: the 07:30 SMS reminder", () => {
     expect(reminderDue(new Date("2026-10-24T07:30:00Z"), null)).toBe(true);
     expect(reminderDue(new Date("2026-10-24T09:00:00Z"), "2026-10-24")).toBe(false);
     expect(reminderDue(new Date("2026-10-24T09:00:00Z"), "2026-10-23")).toBe(true);
+  });
+});
+
+describe("rule F: an optional till time per service (Prompt 10)", () => {
+  // now is 7:40 am in Accra.
+  const base = { serviceId: "antenatal", status: "open" as const, fromTime: null };
+
+  it("saves a till time later today", () => {
+    expect(planStatusRows({ current: [], submitted: [{ ...base, untilTime: "16:00" }], now })).toEqual([
+      { serviceId: "antenatal", status: "open", fromTime: null, untilTime: "16:00", note: null },
+    ]);
+  });
+
+  it("no till time is fine, and is stored as none", () => {
+    expect(planStatusRows({ current: [], submitted: [{ ...base, untilTime: "" }], now })[0]!.untilTime).toBeNull();
+  });
+
+  it("refuses a till time that has already passed today, or comes before the 'from' time", () => {
+    expect(() => planStatusRows({ current: [], submitted: [{ ...base, untilTime: "07:30" }], now })).toThrow(/already passed/);
+    expect(() =>
+      planStatusRows({ current: [], submitted: [{ serviceId: "obstetrician", status: "from_time", fromTime: "14:00", untilTime: "13:00" }], now }),
+    ).toThrow(/after the "from" time/);
+    expect(() => planStatusRows({ current: [], submitted: [{ ...base, untilTime: "4pm" }], now })).toThrow(/till/);
+  });
+
+  it("a changed till time is a change, even within 10 minutes", () => {
+    const current: CurrentStatusLike[] = [
+      { service_id: "antenatal", status: "open", from_time: null, until_time: "16:00:00", note: null, created_at: ago(5 * 60_000) },
+    ];
+    expect(planStatusRows({ current, submitted: [{ ...base, untilTime: "16:00" }], now })).toEqual([]);
+    expect(planStatusRows({ current, submitted: [{ ...base, untilTime: "17:00" }], now })).toHaveLength(1);
+    expect(planStatusRows({ current, submitted: [{ ...base, untilTime: null }], now })).toHaveLength(1);
   });
 });

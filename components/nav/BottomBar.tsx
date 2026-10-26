@@ -24,7 +24,7 @@ export function BottomBar() {
       <div aria-hidden="true" className="h-[calc(3.5rem+env(safe-area-inset-bottom))]" />
       <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-10 border-t border-ink/10 bg-white pb-[env(safe-area-inset-bottom)]"
+      className="fixed inset-x-0 bottom-0 z-10 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]"
     >
       <ul className="mx-auto flex max-w-md">
         {tabs.map((tab) => {

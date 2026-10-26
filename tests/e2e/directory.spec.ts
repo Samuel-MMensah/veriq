@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { resetDemo } from "./helpers";
+import { resetDemo, signInAdmin } from "./helpers";
 
 // Prompt 9: the real NHIA directory, outside demo mode (rules 1, D1–D3, S2, R1), and the Call
 // button on "Call first" cards. Item 9 of the prompt runs this file against the live site:
@@ -130,31 +130,33 @@ test("a 'Call first' card has a Call button beside its link, not inside it", asy
   await expect(akoma.getByRole("link", { name: /^Call / })).toHaveCount(0);
 });
 
-test("/admin lists real facilities under 'Needs a location', and an admin can set one", async ({ page }) => {
+test("/admin/locations lists real facilities with no location; search, preview on the map, then save (rule D1)", async ({ page }) => {
   // It saves a location, so it never runs against the live site.
   test.skip(Boolean(process.env.E2E_BASE_URL), "changes real data");
-  await page.goto("/admin");
-  await page.getByRole("button", { name: "Demo login" }).click();
-  const section = page.getByRole("region", { name: /Needs a location/ });
-  await expect(section).toBeVisible();
-  const heading = await section.getByRole("heading", { level: 2 }).textContent();
-  const before = Number(heading!.match(/\((\d+)\)/)![1]);
+  await signInAdmin(page, "/admin/locations");
+  const count = async () => Number((await page.getByText(/without a location/).textContent())!.match(/(\d+) without/)![1]);
+  const before = await count();
   expect(before).toBeGreaterThan(0);
   await expect(page.getByText("SAMPLE DATA", { exact: true })).toHaveCount(0);
 
-  // A typo is refused; a point in Accra is saved as location_source = admin.
-  const district = section.locator("details").first();
-  await district.locator("summary").click();
-  const input = district.getByRole("textbox").first();
-  await input.fill("-0.26, 5.56");
-  await district.getByRole("button", { name: "Save" }).first().click();
-  await expect(page.getByText(/That point is outside Greater Accra/)).toBeVisible();
+  // Search by district opens the matching groups.
+  const firstName = (await page.locator("details li p.font-semibold").first().textContent())!;
+  await page.getByRole("searchbox", { name: "Search by name or district" }).fill(firstName);
+  await page.getByRole("button", { name: "Search" }).click();
+  await expect(page.getByText(new RegExp(`match "${firstName}"`))).toBeVisible();
+  const item = page.locator("details li").first();
+  await expect(item).toContainText(firstName);
 
-  await section.locator("details").first().locator("summary").click();
-  await section.locator("details").first().getByRole("textbox").first().fill("5.5612, -0.2601");
-  await section.locator("details").first().getByRole("button", { name: "Save" }).first().click();
-  await expect(page.getByRole("status")).toContainText("Location saved.");
-  await expect(page.getByRole("region", { name: /Needs a location/ }).getByRole("heading", { level: 2 })).toHaveText(
-    `Needs a location (${before - 1})`,
-  );
+  // A typo is refused before saving; a point in Accra shows on the map, then saves as location_source = admin.
+  const input = item.getByRole("textbox");
+  await input.fill("-0.26, 5.56");
+  await expect(item.getByText(/That point is outside Greater Accra/)).toBeVisible();
+  await expect(item.getByRole("button", { name: "Save" })).toBeDisabled();
+  await input.fill("5.5612, -0.2601");
+  await expect(item.getByRole("img", { name: /Map preview/ })).toBeVisible();
+  await expect(item.getByRole("link", { name: "OpenStreetMap contributors" })).toBeVisible();
+  await item.getByRole("button", { name: "Save" }).click();
+  await expect(page.getByRole("status")).toContainText(`Location saved for ${firstName}.`);
+  await page.goto("/admin/locations");
+  expect(await count()).toBe(before - 1);
 });

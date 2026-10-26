@@ -4,6 +4,9 @@ import { after } from "next/server";
 import { BadgeLegend } from "@/components/badges/BadgeLine";
 import { ResultCardView, UnlistedCardView } from "@/components/facility/ResultCardView";
 import { BackLink } from "@/components/ui/BackLink";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { SampleDataTag } from "@/components/ui/SampleDataTag";
 import { getInsurerBySlug, getSearchCandidates, getUnlistedCandidates, listServices, logSearch } from "@/lib/db/queries";
 import { readDb, serviceDb } from "@/lib/db/server";
@@ -81,7 +84,7 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
 
   return (
     <div className="min-h-dvh bg-page">
-      <header className="border-b border-ink/10 bg-white px-4 pb-3 pt-4">
+      <header className="border-b border-line bg-surface px-4 pb-3 pt-4">
         <div className="flex items-start gap-2">
           <BackLink fallback="/find" label="Back to search" />
           <div className="min-w-0 flex-1">
@@ -90,7 +93,7 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
                 ? `Near ${search.areaName}: services not listed yet`
                 : `${count} ${count === 1 ? "hospital" : "hospitals"} near ${search.areaName}`}
             </h1>
-            <p className="text-sm text-ink/70">
+            <p className="text-sm text-muted">
               {serviceLabel} · {card} · within {search.radiusKm} km
             </p>
           </div>
@@ -101,10 +104,10 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
 
       <main className="space-y-3 px-4 py-4">
         {count > 0 &&
-          (withCard ? <BadgeLegend /> : <p className="text-sm text-ink/80">Without a card, every hospital nearby is shown.</p>)}
+          (withCard ? <BadgeLegend /> : <p className="text-sm text-muted">Without a card, every hospital nearby is shown.</p>)}
 
         {count === 0 && unlisted.length > 0 ? (
-          <p className="text-ink/80">
+          <p className="text-muted">
             No hospital near here has told us its services yet. The places below are on the NHIA list. Call to ask
             before you go.
           </p>
@@ -118,9 +121,10 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
           />
         ) : (
           <ul className="space-y-3">
-            {results.cards.map((c) => (
+            {results.cards.map((c, i) => (
               <ResultCardView
                 key={c.id}
+                index={i}
                 card={c}
                 href={`/facility/${c.id}?${facilityQuery}`}
                 cardName={withCard ? card : null}
@@ -135,7 +139,7 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
               Services not listed. Call to ask
             </h2>
             {/* Rule D3 sorts this group by distance only (rule 4: say how it is sorted). */}
-            <p className="text-sm text-ink/80">Sorted by distance only. Pharmacies are not shown.</p>
+            <p className="text-sm text-muted">Sorted by distance only. Pharmacies are not shown.</p>
             <ul className="space-y-3" aria-labelledby="not-listed">
               {unlistedShown.map((c) => (
                 <UnlistedCardView
@@ -147,18 +151,15 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
               ))}
             </ul>
             {unlisted.length > unlistedShown.length && (
-              <Link
-                href={moreHref}
-                className="flex min-h-12 items-center justify-center rounded-xl border border-brand px-4 font-bold text-brand"
-              >
+              <Button href={moreHref} variant="secondary" full>
                 Show more ({unlisted.length - unlistedShown.length} more)
-              </Link>
+              </Button>
             )}
           </section>
         )}
 
         {results.hiddenCount > 0 && (
-          <p className="text-sm text-ink/80">
+          <p className="text-sm text-muted">
             {results.hiddenCount} more {results.hiddenCount === 1 ? "hospital" : "hospitals"} nearby{" "}
             {results.hiddenCount === 1 ? "doesn't" : "don't"} take {card} or {results.hiddenCount === 1 ? "hasn't" : "haven't"} been
             checked.{" "}
@@ -168,7 +169,7 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
           </p>
         )}
 
-        <p className="pt-2 text-center text-sm text-ink/70">
+        <p className="pt-2 text-center text-sm text-muted">
           {/* Says what rules S1 and the no-card sort really do (rule 4); only when they sorted something. */}
           {count > 0 && (
             <>
@@ -201,50 +202,36 @@ function EmptyResults({
 }) {
   const wider = RADIUS_OPTIONS_KM.filter((r) => r > radiusKm);
   return (
-    <div className="rounded-2xl bg-white p-4 text-ink/80 shadow-sm">
-      <p className="font-semibold text-ink">
-        No hospitals within {radiusKm} km {withCard ? `that we know take ${card}` : "offer this"}.
-      </p>
-      <p className="mt-1 text-sm">
+    <Card>
+      <EmptyState icon="search" title={`No hospitals within ${radiusKm} km ${withCard ? `that we know take ${card}` : "offer this"}`}>
         That doesn&apos;t mean none do: we may not have checked them yet. Try one of these:
-      </p>
-      <div className="mt-3 flex flex-col gap-2">
-        {wider.slice(0, 2).map((r) => (
-          <Link
-            key={r}
-            href={widerHref(r)}
-            className="inline-flex min-h-12 items-center justify-center rounded-xl bg-brand px-4 font-bold text-white"
-          >
+      </EmptyState>
+      <div className="flex flex-col gap-2">
+        {wider.slice(0, 2).map((r, i) => (
+          <Button key={r} href={widerHref(r)} variant={i === 0 ? "primary" : "secondary"}>
             Search within {r} km
-          </Link>
+          </Button>
         ))}
         {cashHref && (
-          <Link
-            href={cashHref}
-            className="inline-flex min-h-12 items-center justify-center rounded-xl border border-brand px-4 font-bold text-brand"
-          >
+          <Button href={cashHref} variant="secondary">
             See every hospital nearby
-          </Link>
+          </Button>
         )}
-        <Link href="/find" className="inline-flex min-h-11 items-center justify-center font-semibold text-brand underline">
+        <Button href="/find" variant="quiet">
           Change the search
-        </Link>
+        </Button>
       </div>
-    </div>
+    </Card>
   );
 }
 
 function BrokenSearch() {
   return (
-    <main className="px-4 pt-6">
-      <h1 className="text-2xl font-extrabold">Results</h1>
-      <p className="mt-2 text-ink/80">We couldn&apos;t read this search. Please start again.</p>
-      <Link
-        href="/find"
-        className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-brand px-5 font-bold text-white"
-      >
-        Find care
-      </Link>
+    <main className="px-4 pt-10">
+      <h1 className="sr-only">Results</h1>
+      <EmptyState icon="search" title="We couldn't read this search" action={<Button href="/find">Find care</Button>}>
+        Please start again.
+      </EmptyState>
     </main>
   );
 }

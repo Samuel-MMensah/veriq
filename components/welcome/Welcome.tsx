@@ -47,7 +47,7 @@ export function Welcome() {
         {/* Someone may open Veriq for the first time in an emergency: one tap, no welcome to read. */}
         <Link
           href="/emergency"
-          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 font-bold text-emergency"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-surface px-4 font-bold text-emergency"
         >
           <Icon name="alert" className="h-5 w-5" />
           Emergency
@@ -56,14 +56,14 @@ export function Welcome() {
       <p aria-hidden="true" className="mt-2 text-lg font-semibold tracking-[0.3em] text-white/85">
         HEALTH
       </p>
-      <h1 className="mt-4 text-3xl font-extrabold">Know before you go.</h1>
+      <h1 className="mt-6 animate-enter text-3xl font-extrabold">Know before you go.</h1>
       <p className="mt-3 text-lg text-white/85">
         See which hospitals really take your card, what&apos;s open today, and what other patients paid.
       </p>
 
       <ul className="mt-8 space-y-5">
-        {POINTS.map((p) => (
-          <li key={p.title} className="flex gap-4">
+        {POINTS.map((p, i) => (
+          <li key={p.title} className="flex animate-enter gap-4" style={{ animationDelay: `${80 + i * 60}ms` }}>
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/15">
               <Icon name={p.icon} className="h-6 w-6" />
             </span>
@@ -78,7 +78,7 @@ export function Welcome() {
       <fieldset className="mt-8">
         <legend className="font-bold">Language</legend>
         <div className="mt-3 flex items-center gap-3">
-          <span className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-white px-5 font-bold text-brand" aria-current="true">
+          <span className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-surface px-5 font-bold text-brand" aria-current="true">
             English
           </span>
           <span className="text-sm text-white/85">{LANGUAGES} coming soon</span>
@@ -89,7 +89,7 @@ export function Welcome() {
         <Link
           href="/find"
           onClick={markSeen}
-          className="flex min-h-14 w-full items-center justify-center rounded-2xl bg-white text-lg font-bold text-brand"
+          className="flex min-h-14 w-full items-center justify-center rounded-(--radius-control) bg-surface text-lg font-bold text-brand transition-colors hover:bg-brand-soft"
         >
           Get started
         </Link>

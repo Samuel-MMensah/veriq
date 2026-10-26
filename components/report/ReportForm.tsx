@@ -17,11 +17,11 @@ const ITEMS: { value: ReportItem; label: string }[] = [
 ];
 
 const OPTION =
-  "block cursor-pointer rounded-2xl border border-ink/20 bg-white p-4 has-[:checked]:border-2 has-[:checked]:border-brand has-[:checked]:bg-brand/10 has-[:focus-visible]:outline has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-brand";
+  "block cursor-pointer rounded-(--radius-card) border border-line-strong bg-surface p-4 transition-colors hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand-soft has-[:checked]:ring-1 has-[:checked]:ring-brand has-[:focus-visible]:outline has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-brand";
 const RADIO_DOT =
-  "h-7 w-7 shrink-0 appearance-none rounded-full border-2 border-ink/30 bg-white checked:border-[9px] checked:border-brand";
+  "h-7 w-7 shrink-0 appearance-none rounded-full border-2 border-line-strong bg-surface transition-[border-width,border-color] duration-150 checked:border-[9px] checked:border-brand";
 const CHIP =
-  "inline-flex min-h-11 cursor-pointer items-center rounded-full border border-ink/20 bg-white px-4 has-[:checked]:border-brand has-[:checked]:bg-brand has-[:checked]:font-bold has-[:checked]:text-white has-[:focus-visible]:outline has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-brand";
+  "inline-flex min-h-11 cursor-pointer items-center rounded-full border border-line-strong bg-surface px-4 transition-colors hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand has-[:checked]:font-bold has-[:checked]:text-white has-[:focus-visible]:outline has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-brand";
 
 /** Parses "80", "GH¢ 80" or "80.50". Empty is fine (the amount is optional); anything else is null. */
 export function parseCedis(text: string): number | "empty" | null {
@@ -80,17 +80,17 @@ export function ReportForm({
 
   if (queued) {
     return (
-      <div role="status" className="flex flex-1 flex-col">
-        <span className="flex h-20 w-20 items-center justify-center rounded-full bg-brand/10 text-brand">
+      <div role="status" className="flex flex-1 animate-enter flex-col">
+        <span className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-soft text-brand">
           <Icon name="clock" className="h-10 w-10" />
         </span>
         <h1 className="mt-6 text-3xl font-extrabold leading-tight">Saved on your phone.</h1>
-        <p className="mt-2 text-lg text-ink/80">
+        <p className="mt-2 text-lg text-muted">
           You&apos;re offline right now. We&apos;ll send your report as soon as you&apos;re back online. Nothing else to do.
         </p>
         <Link
           href={`/facility/${facilityId}?card=${card.slug}`}
-          className="mt-auto flex min-h-14 w-full items-center justify-center rounded-2xl bg-brand text-lg font-bold text-white"
+          className="mt-auto flex min-h-14 w-full items-center justify-center rounded-(--radius-control) bg-brand text-lg font-bold text-white transition-colors hover:bg-brand-strong"
         >
           Done
         </Link>
@@ -101,14 +101,14 @@ export function ReportForm({
   return (
     <form onSubmit={send} className="flex flex-1 flex-col">
       <h1 className="text-3xl font-extrabold leading-tight">Was your {card.name} card accepted?</h1>
-      <p className="mt-2 text-lg text-ink/80">Your answer helps the next person decide where to go. Takes 10 seconds.</p>
+      <p className="mt-2 text-lg text-muted">Your answer helps the next person decide where to go. Takes 10 seconds.</p>
       {cards.length > 1 && (
-        <label className="mt-3 flex items-center gap-2 text-sm text-ink/80">
+        <label className="mt-3 flex items-center gap-2 text-sm text-muted">
           Another card?
           <select
             value={cardId}
             onChange={(e) => setCardId(e.target.value)}
-            className="min-h-11 rounded-lg border border-ink/20 bg-white px-3 text-base"
+            className="min-h-11 rounded-(--radius-control) border border-line-strong bg-surface px-3 text-base"
           >
             {cards.map((c) => (
               <option key={c.id} value={c.id}>
@@ -135,10 +135,10 @@ export function ReportForm({
           </label>
           {outcome === "topup" && (
             <div className="mt-4 space-y-4 pl-11">
-              <label className="block text-sm font-semibold text-ink/80">
+              <label className="block text-sm font-semibold text-muted">
                 How much? (optional)
-                <span className="mt-1 flex min-h-12 items-center rounded-xl border border-ink/20 bg-white px-4 text-lg font-normal focus-within:outline focus-within:outline-3 focus-within:outline-brand">
-                  <span aria-hidden="true" className="mr-2 text-ink/70">
+                <span className="mt-1 flex min-h-12 items-center rounded-(--radius-control) border border-line-strong bg-surface px-4 text-lg font-normal focus-within:outline focus-within:outline-3 focus-within:outline-brand">
+                  <span aria-hidden="true" className="mr-2 text-muted">
                     GH¢
                   </span>
                   <input
@@ -152,7 +152,7 @@ export function ReportForm({
                 </span>
               </label>
               <fieldset>
-                <legend className="text-sm font-semibold text-ink/80">For what?</legend>
+                <legend className="text-sm font-semibold text-muted">For what?</legend>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {ITEMS.map((i) => (
                     <label key={i.value} className={CHIP}>
@@ -181,7 +181,7 @@ export function ReportForm({
         </label>
       </fieldset>
 
-      <p className="mt-5 flex gap-3 text-ink/80">
+      <p className="mt-5 flex gap-3 text-muted">
         <Icon name="lock" className="mt-0.5 h-5 w-5" />
         Anonymous. We never ask for your name or card number. Hospitals see totals, not people.
       </p>
@@ -189,7 +189,7 @@ export function ReportForm({
       {notice && (
         <div
           role={notice.tone === "error" ? "alert" : "status"}
-          className={`mt-4 rounded-xl p-4 ${notice.tone === "error" ? "bg-emergency-bg text-emergency" : "bg-brand/10 text-brand"}`}
+          className={`mt-4 animate-enter rounded-(--radius-card) p-4 ${notice.tone === "error" ? "bg-danger-bg text-danger-ink" : "bg-good-bg text-good-ink"}`}
         >
           <p className="font-semibold">{notice.text}</p>
           {notice.tone === "info" && (
@@ -204,11 +204,11 @@ export function ReportForm({
         <button
           type="submit"
           disabled={!outcome || busy}
-          className="min-h-14 w-full rounded-2xl bg-brand text-lg font-bold text-white disabled:bg-ink/30"
+          className="min-h-14 w-full rounded-(--radius-control) bg-brand text-lg font-bold text-white transition-colors hover:bg-brand-strong disabled:bg-ink/30"
         >
           {busy ? "Sending…" : "Send"}
         </button>
-        {!outcome && <p className="mt-2 text-center text-sm text-ink/70">Choose an answer to send.</p>}
+        {!outcome && <p className="mt-2 text-center text-sm text-muted">Choose an answer to send.</p>}
       </div>
     </form>
   );

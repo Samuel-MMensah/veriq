@@ -43,16 +43,29 @@ export type CurrentStatusLike = {
   service_id: string;
   status: ServiceStatus;
   from_time: string | null;
+  until_time?: string | null;
   note: string | null;
   created_at: string;
 };
 
-export type SubmittedStatus = { serviceId: string; status: ServiceStatus; fromTime: string | null };
-export type PlannedStatusRow = { serviceId: string; status: ServiceStatus; fromTime: string | null; note: string | null };
+/** untilTime: the optional "till" time (rule F), "HH:MM" Accra time, e.g. open till 16:00. */
+export type SubmittedStatus = { serviceId: string; status: ServiceStatus; fromTime: string | null; untilTime?: string | null };
+export type PlannedStatusRow = {
+  serviceId: string;
+  status: ServiceStatus;
+  fromTime: string | null;
+  untilTime: string | null;
+  note: string | null;
+};
 
 /** An identical status submitted again within this many minutes is a double submit, not a new confirmation. */
 export const DOUBLE_SUBMIT_MINUTES = 10;
 const HH_MM = /^([01]\d|2[0-3]):([0-5]\d)$/;
+
+/** "HH:MM" now in Accra (GMT all year, no daylight saving). */
+function accraHHMM(now: Date): string {
+  return now.toISOString().slice(11, 16);
+}
 
 /**
  * rule M: one status_updates row per changed service. Team decision 2026-10-24: every confirmation
@@ -77,11 +90,19 @@ export function planStatusRows({
       throw new Error(`Choose a time for ${s.serviceId}.`);
     }
     const fromTime = s.status === "from_time" ? s.fromTime : null;
+    const untilTime = s.untilTime || null;
+    // rule F: a till time is a time of day later today, and after the "from" time.
+    if (untilTime) {
+      if (!HH_MM.test(untilTime)) throw new Error(`Choose a "till" time for ${s.serviceId}, or leave it empty.`);
+      if (untilTime <= accraHHMM(now)) throw new Error(`The "till" time for ${s.serviceId} has already passed today.`);
+      if (fromTime && untilTime <= fromTime) throw new Error(`The "till" time for ${s.serviceId} must be after the "from" time.`);
+    }
     const existing = current.find((c) => c.service_id === s.serviceId);
-    const sameTime = (existing?.from_time ?? "").slice(0, 5) === (fromTime ?? "");
+    const sameTime =
+      (existing?.from_time ?? "").slice(0, 5) === (fromTime ?? "") && (existing?.until_time ?? "").slice(0, 5) === (untilTime ?? "");
     const unchanged = existing && existing.status === s.status && sameTime;
     if (unchanged && ageMs(existing.created_at, now) <= DOUBLE_SUBMIT_MINUTES * MINUTE_MS) return [];
-    return [{ serviceId: s.serviceId, status: s.status, fromTime, note: unchanged ? existing.note : null }];
+    return [{ serviceId: s.serviceId, status: s.status, fromTime, untilTime, note: unchanged ? existing.note : null }];
   });
 }
 

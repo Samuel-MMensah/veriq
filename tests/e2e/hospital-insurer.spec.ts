@@ -19,7 +19,7 @@ test("the hospital marks antenatal Closed, and the results page shows it (demo s
   await expect(akoma).toContainText(/Antenatal clinic: Open till \d{1,2}(:\d{2})? (am|pm)/); // rule F: until_time
 
   await page.goto("/h/check");
-  await expect(page.getByText("Demo only.")).toBeVisible();
+  await expect(page.getByText("Rehearsal only")).toBeVisible();
   await page.getByRole("button", { name: "Demo login" }).click();
   await expect(page.getByText("Front desk · Esi")).toBeVisible();
   await expect(page.getByText("Akoma Mission Hospital · about 30 seconds")).toBeVisible();

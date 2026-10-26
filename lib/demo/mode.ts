@@ -17,5 +17,6 @@ export async function isDemoMode(searchParams?: SearchParams): Promise<boolean> 
   if (param === "1" || param === "0") return param === "1";
   const demoCookie = (await cookies()).get(DEMO_COOKIE)?.value;
   if (demoCookie === "1") return true;
-  return demoModeFrom({ param, demoCookie, staffSignedIn: (await currentStaff()) !== null });
+  // Only the demo login turns demo mode on; a real account sees real facilities (rule D2).
+  return demoModeFrom({ param, demoCookie, staffSignedIn: (await currentStaff())?.kind === "demo" });
 }

@@ -31,3 +31,12 @@ describe("displayName (rule 9: plain to read; rule D1: same words)", () => {
     expect(displayPlace("OSU KLOTTEY")).toBe("Osu Klottey");
   });
 });
+
+describe("whenText (staff screens, rule 4)", () => {
+  it("says today for today, and the date otherwise, in Ghana time", async () => {
+    const { whenText } = await import("./when");
+    const now = new Date("2026-10-26T15:00:00Z");
+    expect(whenText("2026-10-26T14:04:00Z", now)).toBe("today, 2:04 pm");
+    expect(whenText("2026-10-24T09:15:00Z", now)).toBe("24 Oct 2026, 9:15 am");
+  });
+});

@@ -9,12 +9,12 @@ const sentence = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
  */
 export function HistoryTable({ history }: { history: ReportHistory }) {
   if (history.year.accepted === 0 && history.year.refused === 0) {
-    return <p className="mt-1 text-sm text-ink/70">No patient reports in the {PERIOD_LABEL.year}.</p>;
+    return <p className="mt-1 text-sm text-muted">No patient reports in the {PERIOD_LABEL.year}.</p>;
   }
   const { accepted, refused } = history.month;
   return (
     <details className="group mt-1">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm text-ink/80 [&::-webkit-details-marker]:hidden">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm text-muted [&::-webkit-details-marker]:hidden">
         <span>
           Patients, {PERIOD_LABEL.month}: <strong className="font-semibold text-ink">{accepted} card worked</strong> ·{" "}
           <strong className={`font-semibold ${refused ? "text-refused-ink" : "text-ink"}`}>{refused} refused</strong>
@@ -29,7 +29,7 @@ export function HistoryTable({ history }: { history: ReportHistory }) {
 
 function Table({ history }: { history: ReportHistory }) {
   return (
-    <table className="mt-1 w-full table-fixed text-left text-sm text-ink/70">
+    <table className="mt-1 w-full table-fixed text-left text-sm text-muted">
       <caption className="sr-only">Patient reports by period</caption>
       <thead>
         <tr>
@@ -43,9 +43,9 @@ function Table({ history }: { history: ReportHistory }) {
           ))}
         </tr>
       </thead>
-      <tbody className="font-semibold text-ink/80">
+      <tbody className="font-semibold text-muted">
         <tr>
-          <th scope="row" className="font-medium text-ink/70">
+          <th scope="row" className="font-medium text-muted">
             Card worked
           </th>
           {PERIODS.map((p) => (
@@ -53,7 +53,7 @@ function Table({ history }: { history: ReportHistory }) {
           ))}
         </tr>
         <tr>
-          <th scope="row" className="font-medium text-ink/70">
+          <th scope="row" className="font-medium text-muted">
             Refused
           </th>
           {PERIODS.map((p) => (

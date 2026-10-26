@@ -2,14 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { currentStaff } from "@/lib/auth/session";
+import { requireStaff } from "@/lib/auth/session";
 import { serviceDb } from "@/lib/db/server";
 import { parseMorningForm, publishMorningCheck } from "@/lib/staff/morning-check";
 
-/** "Confirm and publish" (rule M). Writes only for the signed-in hospital's facility. */
+/**
+ * "Confirm and publish" (rule M). Writes only for the signed-in hospital's own facility, and only
+ * once Veriq has verified it (publishMorningCheck refuses otherwise, Prompt 10).
+ */
 export async function publishAction(formData: FormData): Promise<void> {
-  const staff = await currentStaff();
-  if (staff?.role !== "hospital") redirect("/h/check");
+  const staff = await requireStaff("hospital", "/h/check");
+  if (!staff.facilityId) redirect("/h/check");
 
   const entries = [...formData.entries()].filter((e): e is [string, string] => typeof e[1] === "string");
   let target: string;
@@ -17,6 +20,7 @@ export async function publishAction(formData: FormData): Promise<void> {
     const result = await publishMorningCheck({
       db: await serviceDb(),
       facilityId: staff.facilityId,
+      createdBy: staff.userId,
       form: parseMorningForm(entries),
       now: new Date(),
     });

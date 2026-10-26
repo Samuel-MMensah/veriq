@@ -404,7 +404,7 @@ End-of-session protocol.
 | Prompt | Scope |
 | --- | --- |
 | 9 | Real NHIA directory for Greater Accra (written in full below) |
-| 10 | Real staff auth (phone and email codes), admin verification of hospitals, held-report review |
+| 10 | Real staff sign-in (email and password, accounts made by an admin), admin side, design pass on admin and patient screens |
 | 11 | Screen 15, hospital onboarding, plus SMS morning-check reminders |
 | 12 | Screen 8, map view with Leaflet and OpenStreetMap |
 | 13 | Screens 9 and 10: saved hospitals, alerts, sharing |
@@ -443,6 +443,62 @@ Start-of-session protocol first. Then build Prompt 9 from SPEC.md: real NHIA dir
 Do not touch auth, admin verification of hospitals or USSD going live: those are later prompts.
 End-of-session protocol.
 ```
+
+**Prompt 10: real staff sign-in, the admin side, and a top-notch patient side**
+
+```text
+Start-of-session protocol first. Then build Prompt 10 from SPEC.md: real staff sign-in, a complete
+admin side, and a design pass that makes Veriq look and feel like a finished product.
+
+Design goal for this prompt and every one after it: real, professional, minimal and outstanding.
+Calm and confident, never busy. One clear action per screen, generous white space, a strict type
+scale, and colour used for meaning (badges, status), not decoration. It must feel trustworthy to a
+patient on a cheap Android phone and efficient to an admin on a laptop. Rules 4, 7 and 9 still
+win over looks: every fact keeps its source, targets stay at least 44 px, words stay plain.
+
+1. Design system first: one set of tokens in app/globals.css (colour roles, type scale, spacing,
+   radius, shadow, motion) and a small set of shared components (button, card, list row, badge,
+   status line, empty state, toast, dialog, form field with error). Every screen touched in this
+   prompt uses them. Record the choices in docs/DESIGN.md with a one-page visual sample.
+2. Sign-in without any outside messaging: Supabase Auth with email and password. No email or SMS is
+   sent by Veriq or Supabase. An admin creates staff accounts in the app (Supabase admin API with
+   the service role, email already confirmed) and gives the person a one-time password by hand;
+   on first sign-in the person must set their own password. An admin can reset a password the same
+   way. Roles come from profiles (admin, hospital, insurer) and the row-level security already in
+   the migrations. The first admin is created by a one-off script (npm run create-admin) that
+   reads an email from the command line, never from a migration. Messaging stays behind
+   lib/messaging (console stub), so email codes or SMS can be added later without changing screens.
+   The demo login stays for rehearsals and tests only, and is off on the real site (DEMO_LOGIN=off).
+3. Admin home (/admin): a calm overview with to-do counts (facilities needing a location, hospitals
+   waiting for verification, held reports), each opening its list. Works at 390 px and uses the
+   width well on a laptop (side navigation, wider tables). Every list shows its source and time
+   (rule 4).
+4. Staff accounts (/admin/staff): list, create, disable, reset password; link a hospital account to
+   its facility and an insurer account to its insurer.
+5. Verify hospitals: an admin checks a hospital's claim (name against the NHIA list, call back on a
+   known number) and marks it verified, with who and when. Only a verified hospital's staff can
+   publish a morning check or hospital answers. Every admin action (who, what, when, why) goes in
+   an append-only admin_actions table, shown as a history on each hospital.
+6. Held reports (rule A): list reports held by the burst rule; release or reject each with a
+   reason, after a confirmation. A released report counts from then on; a rejected one never does.
+7. Needs a location: keep the Prompt 9 list; add search by name or district, and a map preview of
+   the typed point (OpenStreetMap tiles, credited) before saving.
+8. Patient side, top notch: a design pass on First open, Find, Results, Hospital, Report, Thanks,
+   Emergency, Cards and Help with the new tokens and components: the answer first, tidy cards,
+   consistent spacing, polished empty and loading states, subtle motion that respects
+   reduced-motion settings. No new features and no removed facts or source lines.
+9. Proof: screenshots before and after of every touched screen at 390 px, plus the admin screens at
+   1280 px, in docs/sessions/. axe (WCAG 2.1 AA) and the 44 px check pass on every screen, and
+   first content stays under 3 s on 3G.
+10. Real staff sign-in (email and password, accounts made by an admin), admin side, design pass on admin and patient screens.
+11. Morning check (rule F): verified hospital staff can set an optional "till" time per service
+    (e.g. open till 4 pm), saved as until_time; after it passes, patients see "Was {status} till
+    {time}. Call to check". Test it.
+Do not touch USSD going live, SMS or email sending, insurer list upload or the map view: those are
+later prompts.
+End-of-session protocol.
+```
+
 
 ### Phase 3: scale (outline only)
 

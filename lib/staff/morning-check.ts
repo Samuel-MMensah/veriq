@@ -14,6 +14,7 @@ import {
   type SubmittedStatus,
   type TopUpPrompt,
 } from "@/lib/rules/morning";
+import { untilPassed } from "@/lib/rules/freshness";
 import { agoText, ageMs } from "@/lib/rules/time";
 
 const ITEM_LABEL: Record<ReportItem, string> = { scan: "scan", drugs: "drugs", lab: "lab test", registration: "registration" };
@@ -22,7 +23,18 @@ const MAX_AMOUNT_GHS = 100_000;
 
 export type MorningCheckView = {
   facilityName: string;
-  services: { serviceId: string; label: string; options: StatusOption[]; status: ServiceStatus | null; fromTime: string | null }[];
+  facilityId: string;
+  /** Prompt 10: only a verified hospital's staff publish. */
+  verified: boolean;
+  services: {
+    serviceId: string;
+    label: string;
+    options: StatusOption[];
+    status: ServiceStatus | null;
+    fromTime: string | null;
+    /** The current row's "till" time (rule F), "HH:MM". */
+    untilTime: string | null;
+  }[];
   cards: { insurerId: string; name: string; says: HospitalSays | null; due: boolean; confirmedText: string | null }[];
   prompts: (TopUpPrompt & { cardName: string; itemLabel: string })[];
   /** "people found you" over the last 7 days (reach_daily views). */
@@ -34,6 +46,8 @@ export function buildMorningCheckView({ check, insurers, now }: { check: Morning
   const statusBy = new Map(check.statuses.map((s) => [s.service_id, s]));
   return {
     facilityName: check.facility.name,
+    facilityId: check.facility.id,
+    verified: check.facility.verified,
     services: check.services
       .map((s) => {
         const current = statusBy.get(s.service_id);
@@ -43,6 +57,8 @@ export function buildMorningCheckView({ check, insurers, now }: { check: Morning
           options: optionsFor(s.service_id),
           status: current?.status ?? null,
           fromTime: current?.from_time?.slice(0, 5) ?? null,
+          // Rule F: a till time that has passed isn't offered again (it would be refused).
+          untilTime: current?.until_time && !untilPassed(current, now) ? current.until_time.slice(0, 5) : null,
         };
       })
       // Emergency first, then services with a status today, then the rest (screen 16).
@@ -79,7 +95,8 @@ export type PromptAnswer = { insurerId: string; item: ReportItem; answer: "confi
 export type MorningForm = { statuses: SubmittedStatus[]; cards: CardAnswer[]; prompts: PromptAnswer[] };
 
 /**
- * Reads the form: status:{serviceId}, time:{serviceId}, card:{insurerId},
+ * Reads the form: status:{serviceId}, time:{serviceId}, until:{serviceId} (with status_was and
+ * until_was, what the form was shown with), card:{insurerId},
  * prompt:{insurerId}:{item} = confirm|correct, amount:{insurerId}:{item}.
  */
 export function parseMorningForm(entries: Iterable<[string, string]>): MorningForm {
@@ -88,7 +105,17 @@ export function parseMorningForm(entries: Iterable<[string, string]>): MorningFo
   for (const [name, value] of fields) {
     const [kind, a, b] = name.split(":");
     if (kind === "status" && a && value) {
-      form.statuses.push({ serviceId: a, status: value as ServiceStatus, fromTime: fields.get(`time:${a}`) || null });
+      // Rule F: a prefilled "till" time belongs to the status it was shown with. If the status changed
+      // and the till time was left as it was, it is dropped (no "Closed till 4 pm" by accident).
+      const until = fields.get(`until:${a}`) || null;
+      const keptPrefill = until !== null && until === (fields.get(`until_was:${a}`) || null);
+      const statusChanged = value !== (fields.get(`status_was:${a}`) ?? value);
+      form.statuses.push({
+        serviceId: a,
+        status: value as ServiceStatus,
+        fromTime: fields.get(`time:${a}`) || null,
+        untilTime: keptPrefill && statusChanged ? null : until,
+      });
     } else if (kind === "card" && a && SAYS.includes(value as HospitalSays)) {
       form.cards.push({ insurerId: a, says: value as HospitalSays });
     } else if (kind === "prompt" && a && b && (value === "confirm" || value === "correct")) {
@@ -105,20 +132,29 @@ const must = (r: { error: { message: string } | null }, what: string) => {
   if (r.error) throw new Error(`Could not save ${what}: ${r.error.message}`);
 };
 
-/** rule M: publish the morning check for this facility only. `db` is the server's service access. */
+export const NOT_VERIFIED =
+  "Your hospital isn't verified yet, so patients can't see your answers. Veriq will call your hospital back on a known number to check.";
+
+/**
+ * rule M: publish the morning check for this facility only. `db` is the server's service access;
+ * `createdBy` is the staff account (null for the demo login). Only a verified hospital publishes.
+ */
 export async function publishMorningCheck({
   db,
   facilityId,
+  createdBy = null,
   form,
   now,
 }: {
   db: Db;
   facilityId: string;
+  createdBy?: string | null;
   form: MorningForm;
   now: Date;
 }): Promise<PublishResult> {
   const check = await getMorningCheck(db, facilityId, now);
   if (!check) throw new Error("Unknown hospital.");
+  if (!check.facility.verified) throw new Error(NOT_VERIFIED);
 
   const offered = new Set(check.services.map((s) => s.service_id));
   const notOffered = form.statuses.find((s) => !offered.has(s.serviceId));
@@ -133,8 +169,10 @@ export async function publishMorningCheck({
         service_id: r.serviceId,
         status: r.status,
         from_time: r.fromTime,
+        until_time: r.untilTime ? `${r.untilTime}:00` : null,
         note: r.note,
         source: "hospital",
+        created_by: createdBy,
         created_at: now.toISOString(),
       }),
       "a status",
@@ -170,6 +208,7 @@ export async function publishMorningCheck({
         kind: p.answer === "confirm" ? "confirm_topup" : "correct_topup",
         item: p.item,
         amount_ghs: p.answer === "confirm" ? prompt.amountGhs : p.amountGhs,
+        created_by: createdBy,
         created_at: now.toISOString(),
       }),
       "an answer",

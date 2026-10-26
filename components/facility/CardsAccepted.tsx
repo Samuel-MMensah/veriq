@@ -5,16 +5,16 @@ import { Icon } from "@/components/ui/Icon";
 import type { CardRow } from "@/lib/view/facility";
 
 const ANSWER_STYLE: Record<CardRow["answer"], string> = {
-  Yes: "bg-brand/10 text-brand",
-  Unsure: "bg-ink/[0.06] text-ink/80",
-  Refused: "bg-refused-bg text-refused-ink",
-  No: "bg-ink/[0.06] text-ink/80",
-  Unknown: "bg-ink/[0.06] text-ink/70",
+  Yes: "bg-good-bg text-good-ink",
+  Unsure: "bg-neutral-bg text-neutral-ink",
+  Refused: "bg-warn-bg text-warn-ink",
+  No: "bg-neutral-bg text-neutral-ink",
+  Unknown: "bg-neutral-bg text-neutral-ink",
 };
 
 function TopUps({ topUps }: { topUps: string[] }) {
   return topUps.map((t) => (
-    <p key={t} className="mt-2 flex items-start gap-2 rounded-lg bg-page p-2 text-sm text-ink/80">
+    <p key={t} className="mt-2 flex items-start gap-2 rounded-(--radius-control) bg-page px-3 py-2 text-sm text-muted">
       <Icon name="info" className="mt-0.5 h-4 w-4" />
       {t}
     </p>
@@ -24,7 +24,7 @@ function TopUps({ topUps }: { topUps: string[] }) {
 /** The card the person searched with: the answer (rule B), what patients said, and top-ups (rule T). */
 export function YourCard({ card }: { card: CardRow }) {
   return (
-    <section aria-labelledby="your-card" className="rounded-2xl bg-white p-4 shadow-sm">
+    <section aria-labelledby="your-card" className="rounded-(--radius-card) bg-surface p-4 shadow-card">
       <div className="flex items-center justify-between gap-3">
         <h2 id="your-card" className="text-lg font-bold">
           Your card here
@@ -33,7 +33,9 @@ export function YourCard({ card }: { card: CardRow }) {
           How we check
         </Link>
       </div>
-      <BadgeLine badge={card.badge} cardName={card.insurer.name} />
+      <div className="mt-1">
+        <BadgeLine badge={card.badge} cardName={card.insurer.name} />
+      </div>
       <HistoryTable history={card.badge.history} />
       <TopUps topUps={card.topUps} />
     </section>
@@ -44,7 +46,7 @@ export function YourCard({ card }: { card: CardRow }) {
 export function CardsAccepted({ cards, title, howWeCheck }: { cards: CardRow[]; title: string; howWeCheck: boolean }) {
   if (cards.length === 0 && !howWeCheck) return null;
   return (
-    <section aria-labelledby="cards" className="rounded-2xl bg-white p-4 shadow-sm">
+    <section aria-labelledby="cards" className="rounded-(--radius-card) bg-surface p-4 shadow-card">
       <div className="flex min-h-11 items-center justify-between gap-3">
         <h2 id="cards" className="text-lg font-bold">
           {title}
@@ -56,18 +58,18 @@ export function CardsAccepted({ cards, title, howWeCheck }: { cards: CardRow[]; 
         )}
       </div>
       {cards.length === 0 ? (
-        <p className="mt-2 text-sm text-ink/70">No card information yet. Call first.</p>
+        <p className="mt-2 text-sm text-muted">No card information yet. Call first.</p>
       ) : (
-        <ul className="divide-y divide-ink/10">
+        <ul className="divide-y divide-line">
           {cards.map((c) => (
             <li key={c.insurer.id} className="py-3">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="text-base font-bold">{c.insurer.name}</h3>
                   {/* Rule 4: every fact says who said so and when. */}
-                  <p className="text-sm text-ink/70">{c.badge.text}</p>
+                  <p className="text-sm text-muted">{c.badge.text}</p>
                 </div>
-                <span className={`shrink-0 rounded-lg px-3 py-1 text-sm font-bold ${ANSWER_STYLE[c.answer]}`}>
+                <span className={`shrink-0 rounded-full px-3 py-0.5 text-sm font-bold ${ANSWER_STYLE[c.answer]}`}>
                   {c.answer}
                 </span>
               </div>

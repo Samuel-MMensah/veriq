@@ -2,6 +2,7 @@
 
 import { deleteDB } from "idb";
 import { useState } from "react";
+import { buttonClass } from "@/components/ui/Button";
 import { LOCAL_STORAGE_KEYS, clearSeenCookie } from "@/lib/local/prefs";
 
 /** For rehearsals: forget everything this app kept on this phone, so first open shows again. */
@@ -22,12 +23,12 @@ export function FreshPhone() {
           }
           setDone(true);
         }}
-        className="min-h-12 w-full rounded-2xl border-2 border-brand px-4 font-bold text-brand"
+        className={buttonClass({ variant: "secondary", full: true })}
       >
         Make this phone fresh
       </button>
       {done && (
-        <p role="status" className="mt-2 text-sm text-brand">
+        <p role="status" className="mt-2 text-sm font-semibold text-good-ink">
           Done. Open the app&apos;s start page to see first open again.
         </p>
       )}

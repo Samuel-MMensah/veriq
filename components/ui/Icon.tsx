@@ -18,6 +18,13 @@ const PATHS = {
   close: "M6 6l12 12M18 6L6 18",
   bell: "M6 16V11a6 6 0 1 1 12 0v5l2 2H4l2-2Zm4 4a2 2 0 0 0 4 0",
   plus: "M12 5v14M5 12h14",
+  home: "M4 11 12 4l8 7v9a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1v-9Z",
+  hospital: "M4 21V7l8-4 8 4v14H4Zm8-12v6m-3-3h6M9 21v-3h6v3",
+  flag: "M5 21V4m0 0h11l-2 4 2 4H5",
+  shield: "M12 3 5 6v5c0 4.5 3 8.5 7 10 4-1.5 7-5.5 7-10V6l-7-3Zm-3 9 2 2 4-4",
+  search: "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14Zm5-2 4 4",
+  history: "M3 12a9 9 0 1 0 3-6.7M3 4v4h4m5-1v5l3 2",
+  beaker: "M9 3h6m-5 0v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3M7 15h10",
 } as const;
 
 export type IconName = keyof typeof PATHS;

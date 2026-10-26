@@ -20,34 +20,34 @@ export default function HelpPage() {
   return (
     // Help is a bottom-bar tab, so it has no back arrow.
     <main className="flex min-h-full flex-col px-4 pb-6 pt-6">
-      <p className="text-lg text-ink/70">Help</p>
+      <p className="text-lg text-muted">Help</p>
       <h1 className="mt-2 text-3xl font-extrabold leading-tight">No smartphone? No data? Dial Veriq.</h1>
-      <p className="mt-2 text-lg text-ink/80">
+      <p className="mt-2 text-lg text-muted">
         Works on any phone, any network. The answer comes back by SMS so you can keep it.
       </p>
 
       <div className="mt-5 grid grid-cols-2 gap-3">
         {SCREENS.map((s) => (
-          <figure key={s.title} className="rounded-2xl bg-ink p-4 font-mono text-sm leading-relaxed text-white">
+          <figure key={s.title} className="rounded-(--radius-card) bg-ink p-4 font-mono text-sm leading-relaxed text-white">
             <figcaption className="font-bold text-patient">{s.title}</figcaption>
             <pre className="mt-2 whitespace-pre-wrap font-mono">{s.body}</pre>
           </figure>
         ))}
       </div>
 
-      <h2 className="mt-6 text-sm font-bold uppercase tracking-wide text-ink/70">Then an SMS like this</h2>
-      <pre className="mt-2 whitespace-pre-wrap rounded-2xl border border-ink/15 bg-page p-4 font-sans text-base text-ink">
+      <h2 className="mt-6 text-sm font-bold uppercase tracking-wide text-muted">Then an SMS like this</h2>
+      <pre className="mt-2 whitespace-pre-wrap rounded-(--radius-card) border border-line-strong bg-page p-4 font-sans text-base text-ink">
         {SMS}
       </pre>
 
-      <p className="mt-4 flex gap-3 rounded-2xl bg-refused-bg p-4 text-refused-ink">
+      <p className="mt-4 flex gap-3 rounded-(--radius-card) bg-refused-bg p-4 text-refused-ink">
         <Icon name="info" className="mt-0.5 h-5 w-5" />
         Code not yet registered. A short code comes through a USSD aggregator after the pilot.
       </p>
 
       <a
         href="tel:112"
-        className="mt-6 flex min-h-14 w-full items-center justify-center rounded-2xl bg-emergency text-lg font-bold text-white"
+        className="mt-6 flex min-h-14 w-full items-center justify-center rounded-(--radius-control) bg-emergency text-lg font-bold text-white"
       >
         Emergency? Call 112
       </a>

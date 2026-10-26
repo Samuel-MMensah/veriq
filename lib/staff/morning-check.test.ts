@@ -8,7 +8,8 @@ import { getFacilityDetail, getSearchCandidates, listServices } from "@/lib/db/q
 import { badge } from "@/lib/rules/badge";
 import { topUps } from "@/lib/rules/topup";
 import { buildResults } from "@/lib/view/results";
-import { loadMorningCheck, parseMorningForm, publishMorningCheck } from "./morning-check";
+import { statusView } from "@/lib/view/status";
+import { NOT_VERIFIED, loadMorningCheck, parseMorningForm, publishMorningCheck } from "./morning-check";
 
 const AKOMA = "f0000000-0000-4000-8000-000000000001";
 const NHIS = "a0000000-0000-4000-8000-000000000001";
@@ -58,8 +59,8 @@ describe("parseMorningForm", () => {
       ]),
     ).toEqual({
       statuses: [
-        { serviceId: "antenatal", status: "closed", fromTime: null },
-        { serviceId: "obstetrician", status: "from_time", fromTime: "15:30" },
+        { serviceId: "antenatal", status: "closed", fromTime: null, untilTime: null },
+        { serviceId: "obstetrician", status: "from_time", fromTime: "15:30", untilTime: null },
       ],
       cards: [{ insurerId: "abc", says: "partial" }],
       prompts: [{ insurerId: "abc", item: "scan", answer: "correct", amountGhs: 60 }],
@@ -154,5 +155,63 @@ describe("publishMorningCheck (rule M)", () => {
       [SIKA],
     );
     expect(other.rows.map((r) => r.hospital_says)).toEqual(["partial"]);
+  });
+});
+
+describe("Prompt 10: verified hospitals and till times (rules M and F)", () => {
+  it("an unverified hospital can't publish anything", async () => {
+    const real = (await pg.query<{ id: string }>("select id from public.facilities where source = 'nhia' and not verified limit 1")).rows[0]!.id;
+    const before = (await pg.query<{ n: number }>("select count(*)::int n from public.status_updates")).rows[0]!.n;
+    await expect(
+      publishMorningCheck({ db: service(), facilityId: real, form: { statuses: [], cards: [], prompts: [] }, now: new Date() }),
+    ).rejects.toThrow(NOT_VERIFIED);
+    expect((await pg.query<{ n: number }>("select count(*)::int n from public.status_updates")).rows[0]!.n).toBe(before);
+  });
+
+  it("'Open till 4 pm' is saved as until_time; after 4 pm patients see 'Was open till 4 pm. Call to check'", async () => {
+    const morning = new Date();
+    morning.setUTCHours(7, 0, 0, 0);
+    const form = parseMorningForm([
+      ["status:antenatal", "open"],
+      ["until:antenatal", "16:00"],
+    ]);
+    expect(form.statuses[0]).toMatchObject({ untilTime: "16:00" });
+    await publishMorningCheck({ db: service(), facilityId: AKOMA, form, now: morning });
+    const row = (
+      await pg.query<{ status: string; until_time: string; created_at: Date; note: string | null; from_time: string | null; source: "hospital" }>(
+        "select * from public.status_updates where facility_id = $1 and service_id = 'antenatal' and created_at = $2",
+        [AKOMA, morning.toISOString()],
+      )
+    ).rows[0]!;
+    expect(row.until_time).toBe("16:00:00");
+    const asRow = { ...row, status: "open" as const, created_at: new Date(row.created_at).toISOString() };
+    const at = (h: number) => new Date(new Date(morning).setUTCHours(h));
+    expect(statusView(asRow, at(10)).word).toBe("Open till 4 pm");
+    const after = statusView(asRow, at(17));
+    expect(after.word).toBe("Was open till 4 pm. Call to check");
+    expect(after.tone).toBe("unknown");
+  });
+
+  it("a prefilled till time is dropped when the status changes, kept when it stays or was retyped", () => {
+    const parse = (status: string, until: string) =>
+      parseMorningForm([
+        ["status:antenatal", status],
+        ["status_was:antenatal", "open"],
+        ["until:antenatal", until],
+        ["until_was:antenatal", "16:00"],
+      ]).statuses[0]!.untilTime;
+    expect(parse("closed", "16:00")).toBeNull(); // no "Closed till 4 pm" by accident
+    expect(parse("open", "16:00")).toBe("16:00");
+    expect(parse("closed", "18:00")).toBe("18:00");
+  });
+
+  it("the loaded check shows the current till time", async () => {
+    await pg.query(
+      "insert into public.status_updates (facility_id, service_id, status, until_time, source) values ($1, 'antenatal', 'open', '23:59', 'hospital')",
+      [AKOMA],
+    );
+    const view = await loadMorningCheck(service(), AKOMA, new Date());
+    expect(view?.verified).toBe(true);
+    expect(view?.services.find((s) => s.serviceId === "antenatal")?.untilTime).toBe("23:59");
   });
 });
