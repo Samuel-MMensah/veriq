@@ -10,6 +10,7 @@ import {
   serviceExists,
 } from "@/lib/db/reports";
 import type { ReportItem, ReportOutcome } from "@/lib/db/types";
+import { REPORTS_CLOSED_TEXT, reportsOpen } from "@/lib/rules/directory";
 import { checkReport, deviceHash } from "@/lib/rules/limits";
 import { DAY_MS, HOUR_MS } from "@/lib/rules/time";
 
@@ -26,7 +27,9 @@ export type ReportInput = {
 export type SubmitResult =
   | { status: "counted" | "held"; reportId: string }
   | { status: "already_counted"; message: string }
-  | { status: "invalid"; message: string };
+  | { status: "invalid"; message: string }
+  /** Rule R1: reports on real facilities are closed while REPORTS_LIVE is off. */
+  | { status: "closed"; message: string };
 
 const ALLOWED = new Set(["deviceId", "facilityId", "insurerId", "outcome", "amountGhs", "item", "serviceId"]);
 const OUTCOMES: ReportOutcome[] = ["covered", "topup", "refused"];
@@ -80,21 +83,25 @@ export async function submitReport({
   body,
   secret,
   now,
+  reportsLive,
 }: {
   /** Service-role access: card_reports has no public policies. */
   db: Db;
   body: unknown;
   secret: string;
   now: Date;
+  /** Rule R1: REPORTS_LIVE=on (lib/rules/directory.ts reportsLive). */
+  reportsLive: boolean;
 }): Promise<SubmitResult> {
   if (!secret) throw new Error("REPORT_HASH_SECRET is not set.");
   const checked = validateReport(body);
   if (!checked.ok) return { status: "invalid", message: checked.message };
   const r = checked.value;
 
-  if (!(await facilityAndInsurerExist(db, r.facilityId, r.insurerId))) {
-    return { status: "invalid", message: "Unknown hospital or card." };
-  }
+  const facility = await facilityAndInsurerExist(db, r.facilityId, r.insurerId);
+  if (!facility) return { status: "invalid", message: "Unknown hospital or card." };
+  // rule R1: nothing is saved for a real facility while reports are closed.
+  if (!reportsOpen(facility, reportsLive)) return { status: "closed", message: REPORTS_CLOSED_TEXT };
   if (r.serviceId && !(await serviceExists(db, r.serviceId))) return { status: "invalid", message: "Unknown service." };
 
   // rule A: the stored id is SHA-256 of the device id plus the server secret.

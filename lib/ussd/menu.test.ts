@@ -18,11 +18,12 @@ afterAll(async () => {
   await pg?.close();
 });
 
-function dial(text: string, phone = PHONE) {
+/** The demo line (rule D2), with REPORTS_LIVE off (rule R1): demo hospitals keep reporting. */
+function dial(text: string, phone = PHONE, mode: { demoMode: boolean; reportsLive: boolean } = { demoMode: true, reportsLive: false }) {
   const messenger = memoryMessenger();
   const reply = handleUssd(
     { text, phone },
-    { readDb: fakeDb(pg, "anon"), serviceDb: fakeDb(pg, "owner"), messenger, secret: "ussd-test", now: new Date() },
+    { readDb: fakeDb(pg, "anon"), serviceDb: fakeDb(pg, "owner"), messenger, secret: "ussd-test", now: new Date(), ...mode },
   );
   return reply.then((r) => ({ reply: r, sms: messenger.sent }));
 }
@@ -49,7 +50,7 @@ describe("USSD menu (screen 13)", () => {
     const text = sms[0]!.text;
     expect(text).toMatch(/^VERIQ \(sample data\): Antenatal \/ maternity, NHIS, near Dansoman\n/);
     expect(text).toContain("1) AKOMA MISSION HOSPITAL, Kaneshie 1.8km. NHIS: Confirmed by hospital 2 days ago.");
-    expect(text).toContain("Antenatal clinic: Open till 4 pm");
+    expect(text).toMatch(/Antenatal clinic: Open till \d{1,2}(:\d{2})? (am|pm)/); // rule F: until_time
     expect(text).toContain("Scan top-up about GHS 80"); // SMS can't show ¢
     expect(text.indexOf("2) LAKESIDE")).toBeGreaterThan(text.indexOf("1) AKOMA"));
     expect(text.indexOf("3) GBAWE")).toBeGreaterThan(text.indexOf("2) LAKESIDE"));
@@ -101,5 +102,31 @@ describe("USSD menu (screen 13)", () => {
 describe("console SMS stub (rule 2)", () => {
   it("masks the phone number to its last 3 digits", () => {
     expect(maskPhone("+233244123456")).toBe("***456");
+  });
+});
+
+describe("USSD on the real directory (rules D2, R1 and 1)", () => {
+  const real = { demoMode: false, reportsLive: false };
+
+  it("3 Report refusal is closed on real hospitals while REPORTS_LIVE=off", async () => {
+    // NHIS, then Dansoman: closed before any hospital is listed, and nothing is saved.
+    const before = (await pg.query<{ n: number }>("select count(*)::int n from public.card_reports")).rows[0]!.n;
+    const { reply } = await dial("3*1*1", PHONE, real);
+    expect(reply).toBe("END Reporting opens soon. Call the hospital to check your card.");
+    const after = (await pg.query<{ n: number }>("select count(*)::int n from public.card_reports")).rows[0]!.n;
+    expect(after).toBe(before);
+  });
+
+  it("the demo line keeps reporting", async () => {
+    expect((await dial("3*1*1")).reply).toMatch(/^CON Which hospital\?/);
+  });
+
+  it("never shows demo hospitals outside demo mode, and the SMS doesn't say sample data", async () => {
+    const { reply, sms } = await dial("2*1*1", PHONE, real);
+    expect(reply).not.toContain("Akoma");
+    for (const m of sms) {
+      expect(m.text).not.toContain("sample data");
+      expect(m.text).not.toContain("AKOMA");
+    }
   });
 });

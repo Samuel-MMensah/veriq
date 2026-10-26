@@ -2,20 +2,26 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { after } from "next/server";
 import { BadgeLegend } from "@/components/badges/BadgeLine";
-import { ResultCardView } from "@/components/facility/ResultCardView";
+import { ResultCardView, UnlistedCardView } from "@/components/facility/ResultCardView";
 import { BackLink } from "@/components/ui/BackLink";
 import { SampleDataTag } from "@/components/ui/SampleDataTag";
-import { getInsurerBySlug, getSearchCandidates, listServices, logSearch } from "@/lib/db/queries";
+import { getInsurerBySlug, getSearchCandidates, getUnlistedCandidates, listServices, logSearch } from "@/lib/db/queries";
 import { readDb, serviceDb } from "@/lib/db/server";
+import { isDemoMode } from "@/lib/demo/mode";
 import { areaCell } from "@/lib/geo";
+import { NOT_LISTED_PAGE, servicesNotListedApplies, showSampleTag } from "@/lib/rules/directory";
 import { CASH, RADIUS_OPTIONS_KM, cardName, parseSearch, type SearchParams } from "@/lib/view/catalog";
-import { buildResults } from "@/lib/view/results";
+import { buildNotListed, buildResults } from "@/lib/view/results";
 
 export const metadata: Metadata = { title: "Results" };
 
+const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
+
 export default async function ResultsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const search = parseSearch(await searchParams);
+  const sp = await searchParams;
+  const search = parseSearch(sp);
   if (!search) return <BrokenSearch />;
+  const demoMode = await isDemoMode(sp);
 
   const db = await readDb();
   // Read the clock once the database is ready (local mode seeds on first use).
@@ -27,15 +33,25 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
   if (known.length === 0 || (withCard && !insurer)) return <BrokenSearch />;
   const serviceLabel = search.serviceLabel ?? serviceNames.get(known[0]!)!;
 
-  const candidates = await getSearchCandidates(db, {
-    serviceIds: known,
+  const query = {
     insurerId: insurer?.id ?? null,
     lat: search.origin.lat,
     lng: search.origin.lng,
     radiusKm: search.radiusKm,
     now,
-  });
+    demoMode,
+  };
+  // Rule D3: the "Services not listed" group, for NHIS and No card / cash only.
+  const withUnlisted = servicesNotListedApplies({ cardSlug: search.card, insurerKind: insurer?.kind ?? null });
+  const [candidates, unlistedCandidates] = await Promise.all([
+    getSearchCandidates(db, { ...query, serviceIds: known }),
+    withUnlisted ? getUnlistedCandidates(db, query) : Promise.resolve([]),
+  ]);
   const results = buildResults({ candidates, serviceNames, withCard, origin: search.origin, radiusKm: search.radiusKm, now });
+  const unlisted = buildNotListed({ candidates: unlistedCandidates, withCard, origin: search.origin, radiusKm: search.radiusKm, now });
+  // Rule D3: the 10 nearest, then "Show more" (10 more each time).
+  const pages = Math.max(1, Math.min(50, Math.floor(Number(first(sp.more)) || 1)));
+  const unlistedShown = unlisted.slice(0, pages * NOT_LISTED_PAGE);
 
   // Rule K: count the search (card, ~2 km cell, found a confirmed hospital). Runs after the page is
   // sent, so a patient on 3G never waits for it; a failure is only logged.
@@ -61,6 +77,7 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
     ...(search.areaSlug ? { area: search.areaSlug } : search.areaName === "you" ? { near: "me" } : {}),
   };
   const cashHref = `/results?${new URLSearchParams({ ...searchQuery, card: CASH })}`;
+  const moreHref = `/results?${new URLSearchParams({ ...searchQuery, more: String(pages + 1) })}`;
 
   return (
     <div className="min-h-dvh bg-page">
@@ -69,13 +86,16 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
           <BackLink fallback="/find" label="Back to search" />
           <div className="min-w-0 flex-1">
             <h1 className="text-xl font-extrabold leading-tight">
-              {count} {count === 1 ? "hospital" : "hospitals"} near {search.areaName}
+              {count === 0 && unlisted.length > 0
+                ? `Near ${search.areaName}: services not listed yet`
+                : `${count} ${count === 1 ? "hospital" : "hospitals"} near ${search.areaName}`}
             </h1>
             <p className="text-sm text-ink/70">
               {serviceLabel} · {card} · within {search.radiusKm} km
             </p>
           </div>
-          <SampleDataTag className="mt-1 shrink-0" />
+          {/* Rule 1: only while a demo hospital is on the screen. */}
+          {showSampleTag(results.cards) && <SampleDataTag className="mt-1 shrink-0" />}
         </div>
       </header>
 
@@ -83,7 +103,12 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
         {count > 0 &&
           (withCard ? <BadgeLegend /> : <p className="text-sm text-ink/80">Without a card, every hospital nearby is shown.</p>)}
 
-        {count === 0 ? (
+        {count === 0 && unlisted.length > 0 ? (
+          <p className="text-ink/80">
+            No hospital near here has told us its services yet. The places below are on the NHIA list. Call to ask
+            before you go.
+          </p>
+        ) : count === 0 ? (
           <EmptyResults
             withCard={withCard}
             card={card}
@@ -104,6 +129,34 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
           </ul>
         )}
 
+        {unlisted.length > 0 && (
+          <section aria-labelledby="not-listed" className="space-y-3 pt-2">
+            <h2 id="not-listed" className="text-lg font-bold">
+              Services not listed. Call to ask
+            </h2>
+            {/* Rule D3 sorts this group by distance only (rule 4: say how it is sorted). */}
+            <p className="text-sm text-ink/80">Sorted by distance only. Pharmacies are not shown.</p>
+            <ul className="space-y-3" aria-labelledby="not-listed">
+              {unlistedShown.map((c) => (
+                <UnlistedCardView
+                  key={c.id}
+                  card={c}
+                  href={`/facility/${c.id}?${facilityQuery}`}
+                  cardName={withCard ? card : null}
+                />
+              ))}
+            </ul>
+            {unlisted.length > unlistedShown.length && (
+              <Link
+                href={moreHref}
+                className="flex min-h-12 items-center justify-center rounded-xl border border-brand px-4 font-bold text-brand"
+              >
+                Show more ({unlisted.length - unlistedShown.length} more)
+              </Link>
+            )}
+          </section>
+        )}
+
         {results.hiddenCount > 0 && (
           <p className="text-sm text-ink/80">
             {results.hiddenCount} more {results.hiddenCount === 1 ? "hospital" : "hospitals"} nearby{" "}
@@ -116,9 +169,13 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
         )}
 
         <p className="pt-2 text-center text-sm text-ink/70">
-          {/* Says what rules S1 and the no-card sort really do (rule 4). */}
-          {withCard ? "Sorted by how sure we are, then today's status, then distance" : "Sorted by today's status, then distance"}{" "}
-          ·{" "}
+          {/* Says what rules S1 and the no-card sort really do (rule 4); only when they sorted something. */}
+          {count > 0 && (
+            <>
+              {withCard ? "Sorted by how sure we are, then today's status, then distance" : "Sorted by today's status, then distance"}{" "}
+              ·{" "}
+            </>
+          )}
           <Link href="/how-we-check" className="font-semibold text-brand underline">
             How Veriq checks
           </Link>

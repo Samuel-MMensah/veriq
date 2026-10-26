@@ -9,6 +9,7 @@ export function StaffHeader({
   title,
   subtitle,
   path,
+  sample = true,
 }: {
   product: "hospitals" | "insurers" | "admins";
   staff: DemoAccount | null;
@@ -16,6 +17,8 @@ export function StaffHeader({
   subtitle?: string;
   /** Where to land after signing out. */
   path: string;
+  /** Rule 1: the hospital and insurer views show demo hospitals; set false for a screen with real ones only. */
+  sample?: boolean;
 }) {
   return (
     <header className="bg-ink px-4 pb-5 pt-4 text-white">
@@ -42,7 +45,7 @@ export function StaffHeader({
           <h1 className="text-3xl font-extrabold leading-tight">{title}</h1>
           {subtitle && <p className="mt-1 text-white/80">{subtitle}</p>}
         </div>
-        {staff && <SampleDataTag onDark className="mt-2 shrink-0" />}
+        {staff && sample && <SampleDataTag onDark className="mt-2 shrink-0" />}
       </div>
     </header>
   );

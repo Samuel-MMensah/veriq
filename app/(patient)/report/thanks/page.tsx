@@ -6,6 +6,7 @@ import { Icon } from "@/components/ui/Icon";
 import { SampleDataTag } from "@/components/ui/SampleDataTag";
 import { getFacilityDetail, getInsurerBySlug } from "@/lib/db/queries";
 import { readDb } from "@/lib/db/server";
+import { showSampleTag } from "@/lib/rules/directory";
 import type { SearchParams } from "@/lib/view/catalog";
 import { whatChanged, type Change } from "@/lib/view/thanks";
 
@@ -23,6 +24,7 @@ export default async function ThanksPage({ searchParams }: { searchParams: Promi
   const reportId = first(sp.report) ?? "";
 
   let facilityName: string | null = null;
+  let demoFacility = false;
   let change: Change = { kind: "none" };
   let wasTopUp = false;
   if (UUID.test(facilityId)) {
@@ -30,6 +32,7 @@ export default async function ThanksPage({ searchParams }: { searchParams: Promi
     const now = new Date();
     const [detail, insurer] = await Promise.all([getFacilityDetail(db, facilityId, now), getInsurerBySlug(db, cardSlug)]);
     facilityName = detail?.facility.name ?? null;
+    demoFacility = detail ? showSampleTag([detail.facility]) : false;
     if (detail && insurer && state === "counted" && UUID.test(reportId)) {
       change = whatChanged({ detail, insurerId: insurer.id, cardName: insurer.name, reportId, now });
       wasTopUp = detail.reports.some((r) => r.id === reportId && r.outcome === "topup");
@@ -59,7 +62,7 @@ export default async function ThanksPage({ searchParams }: { searchParams: Promi
         <span className="flex h-20 w-20 items-center justify-center rounded-full bg-brand/10 text-brand">
           <Icon name={state === "queued" ? "clock" : "check"} className="h-10 w-10" />
         </span>
-        <SampleDataTag />
+        {demoFacility && <SampleDataTag />}
       </div>
       <h1 className="mt-6 text-3xl font-extrabold leading-tight">{title}</h1>
       <p className="mt-2 text-lg text-ink/80">{lead}</p>

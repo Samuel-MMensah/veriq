@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
-import { resetDemo } from "./helpers";
+import { demoModeInEveryTest, resetDemo } from "./helpers";
+
+demoModeInEveryTest();
 
 // UX audit fixes (session 2026-10-24-04): emergency reachable from first open, call buttons in
 // emergency mode, no dead ends on empty results or the Saved tab, the card's answer first.

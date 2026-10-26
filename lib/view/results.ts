@@ -1,19 +1,29 @@
-// Screen 2: turns search candidates into result cards using rules B, F, T and S1 from lib/rules.
+// Screen 2: turns search candidates into result cards using rules B, F, T, S1 and D3 from lib/rules.
 // No ranking or badge logic lives here (rule 6).
-import type { SearchCandidate } from "@/lib/db/queries";
+import type { LocatedFacility, SearchCandidate, UnlistedCandidate } from "@/lib/db/queries";
 import type { LatLng } from "@/lib/geo";
 import { badge, type Badge } from "@/lib/rules/badge";
+import { servicesNotListed, sourceLine, type FacilitySource } from "@/lib/rules/directory";
 import { hadConfirmedResult } from "@/lib/rules/kpi";
 import { bestStatus, sortNoCard, sortResults } from "@/lib/rules/sort";
 import { topUps } from "@/lib/rules/topup";
+import { displayName, displayPlace } from "./names";
 import { statusView, type StatusView } from "./status";
 
 export type ResultCard = {
   id: string;
   name: string;
-  /** The neighbourhood, e.g. "Kaneshie". */
-  area: string;
+  /** The neighbourhood, e.g. "Kaneshie", or null when the source doesn't say. */
+  area: string | null;
   distanceKm: number;
+  /** Rule D1: "From the NHIA list, October 2026" for a real facility; null for a demo one. */
+  sourceLine: string | null;
+  /** "demo" shows the SAMPLE DATA tag (rule 1). */
+  source: FacilitySource;
+  /** To call ahead, or null when we have no number. */
+  phone: string | null;
+  /** The badge says "Call first" (rule B4): the card offers a Call button. */
+  callFirst: boolean;
   /** null for "No card/cash". */
   badge: Badge | null;
   /** The searched service shown, e.g. "Ultrasound scan": the one with the best status today (rule S1). */
@@ -56,6 +66,7 @@ export function buildResults({
         ...s,
         status: s.status?.status ?? null,
         statusUpdatedAt: s.status?.created_at ?? null,
+        statusUntil: s.status?.until_time ?? null,
         row: s.status,
       })),
       now,
@@ -70,6 +81,7 @@ export function buildResults({
         shown,
         status: shown.status,
         statusUpdatedAt: shown.statusUpdatedAt,
+        statusUntil: shown.statusUntil,
         badgeResult: withCard ? badge({ link: c.link, reports: c.reports, now }) : null,
       },
     ];
@@ -77,9 +89,13 @@ export function buildResults({
 
   const toCard = (r: (typeof items)[number] & { distanceKm: number }): ResultCard => ({
     id: r.id,
-    name: r.candidate.facility.name,
-    area: r.candidate.facility.area,
+    name: displayName(r.candidate.facility.name),
+    area: displayPlace(r.candidate.facility.area),
     distanceKm: r.distanceKm,
+    sourceLine: sourceLine(r.candidate.facility),
+    source: r.candidate.facility.source,
+    phone: r.candidate.facility.phone,
+    callFirst: r.badgeResult?.id === "B4",
     badge: r.badgeResult,
     serviceName: serviceNames.get(r.shown.serviceId) ?? r.shown.serviceId,
     status: statusView(r.shown.row, now),
@@ -101,4 +117,64 @@ export function buildResults({
     hiddenCount: inRadius - sorted.length,
     hadConfirmedResult: hadConfirmedResult(sorted),
   };
+}
+
+/** A rule D3 card: no service information, so no status line; the NHIA type as the file writes it. */
+export type UnlistedCard = {
+  id: string;
+  name: string;
+  area: string | null;
+  distanceKm: number;
+  /** As the file writes it, e.g. "CLINIC", "POLY2005" (rule D3). */
+  nhiaType: string | null;
+  /** Rule B for NHIS (B4 for an NHIA listing); null for No card / cash. */
+  badge: Badge | null;
+  /** Rule D1: "From the NHIA list, October 2026". */
+  sourceLine: string | null;
+  phone: string | null;
+};
+
+const unlistedCard = (f: LocatedFacility, distanceKm: number, b: Badge | null): UnlistedCard => ({
+  id: f.id,
+  name: displayName(f.name),
+  area: displayPlace(f.area),
+  distanceKm,
+  nhiaType: f.nhia_type,
+  badge: b,
+  sourceLine: sourceLine(f),
+  phone: f.phone,
+});
+
+/**
+ * Rule D3: "Services not listed. Call to ask". Real facilities with no confirmed services in the
+ * radius, by distance only, pharmacies left out. The caller decides whether the group applies
+ * (servicesNotListedApplies) and shows the first NOT_LISTED_PAGE.
+ */
+export function buildNotListed({
+  candidates,
+  withCard,
+  origin,
+  radiusKm,
+  now,
+}: {
+  candidates: UnlistedCandidate[];
+  /** true for NHIS: each card shows its rule B badge. */
+  withCard: boolean;
+  origin: LatLng;
+  radiusKm: number;
+  now: Date;
+}): UnlistedCard[] {
+  const items = candidates.map((c) => ({
+    id: c.facility.id,
+    lat: c.facility.lat,
+    lng: c.facility.lng,
+    source: c.facility.source,
+    locationSource: c.facility.location_source,
+    nhiaType: c.facility.nhia_type,
+    hasServices: c.hasServices,
+    candidate: c,
+  }));
+  return servicesNotListed(items, { origin, radiusKm }).map((r) =>
+    unlistedCard(r.candidate.facility, r.distanceKm, withCard ? badge({ link: r.candidate.link, reports: r.candidate.reports, now }) : null),
+  );
 }

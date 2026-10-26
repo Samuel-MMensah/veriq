@@ -50,7 +50,7 @@ export default async function DemoAdminPage({ searchParams }: { searchParams: Pr
           <p className="mt-1 text-ink/80">
             Puts all 18 sample hospitals back as the demo script expects: Akoma confirmed 2 days ago and open, Pinecrest
             with 9 refusals, the GH¢ 80 scan top-up, and fresh times. It removes every report, morning check and search
-            made since. Real hospitals are never touched (sample data only).
+            made since. Real hospitals from the NHIA list are never touched.
           </p>
           <form action={resetDemoAction} className="mt-4">
             <button type="submit" className="min-h-14 w-full rounded-2xl bg-brand px-4 text-lg font-bold text-white">
@@ -65,8 +65,11 @@ export default async function DemoAdminPage({ searchParams }: { searchParams: Pr
           <FreshPhone />
         </section>
 
-        <Link href="/" className="flex min-h-12 items-center justify-center font-bold text-brand underline">
-          Open the app&apos;s start page
+        <Link href="/admin" className="flex min-h-12 items-center justify-center font-bold text-brand underline">
+          Real facilities: needs a location
+        </Link>
+        <Link href="/?demo=1" className="flex min-h-12 items-center justify-center font-bold text-brand underline">
+          Open the app in demo mode
         </Link>
       </main>
     </div>

@@ -3,8 +3,10 @@ import type { FacilityDetail } from "@/lib/db/queries";
 import type { FacilityType, InsurerRow } from "@/lib/db/types";
 import { haversineKm, roundKm, type LatLng } from "@/lib/geo";
 import { badge, verdict, type Badge, type BadgeId, type Verdict } from "@/lib/rules/badge";
+import { hasLocation, sourceLine } from "@/lib/rules/directory";
 import { agoText, ageMs } from "@/lib/rules/time";
 import { topUps } from "@/lib/rules/topup";
+import { displayName, displayPlace } from "./names";
 import { SOURCE_LABEL, accraClock, statusView, type StatusView } from "./status";
 
 export const TYPE_LABEL: Record<FacilityType, string> = {
@@ -27,10 +29,17 @@ export type CardRow = {
 export type FacilityView = {
   id: string;
   name: string;
-  /** "Mission · Kaneshie · 1.8 km" */
+  /** "Mission · Kaneshie · 1.8 km"; for a real facility, the NHIA type, area and district. */
   subtitle: string;
   phone: string | null;
-  directionsUrl: string;
+  /** null when we don't know where it is (rule D1). */
+  directionsUrl: string | null;
+  /** Rule D1: "From the NHIA list, October 2026"; null for a demo facility. */
+  sourceLine: string | null;
+  /** Where the location came from, for a real facility (rule 4), or null for a demo one. */
+  locationNote: string | null;
+  /** A real facility: no service or status is known yet unless a row says so. */
+  real: boolean;
   /** "Updated by hospital 7:40 am", or null when no service has an update. */
   todayUpdated: string | null;
   today: TodayTile[];
@@ -58,7 +67,8 @@ export function buildFacilityView({
   now: Date;
 }): FacilityView {
   const f = detail.facility;
-  const distance = origin ? `${roundKm(haversineKm(origin, f))} km` : null;
+  const located = hasLocation(f) ? { lat: f.lat!, lng: f.lng! } : null;
+  const distance = origin && located ? `${roundKm(haversineKm(origin, located))} km` : null;
 
   const statusBy = new Map(detail.statuses.map((s) => [s.service_id, s]));
   const today = detail.services
@@ -96,12 +106,25 @@ export function buildFacilityView({
         a.insurer.name.localeCompare(b.insurer.name),
     );
 
+  const real = f.source !== "demo";
+  // Rule D1: a real facility's type is the file's own words; ownership is only shown when known.
+  const kind = real ? f.nhia_type : f.type ? TYPE_LABEL[f.type] : null;
+  const district = real ? displayPlace(f.district) : null;
   return {
     id: f.id,
-    name: f.name,
-    subtitle: [TYPE_LABEL[f.type], f.area, distance].filter(Boolean).join(" · "),
+    name: displayName(f.name),
+    subtitle: [kind, displayPlace(f.area), district, distance].filter(Boolean).join(" · "),
     phone: f.phone,
-    directionsUrl: directionsUrl(f),
+    directionsUrl: located ? directionsUrl(located) : null,
+    sourceLine: sourceLine(f),
+    locationNote: !real
+      ? null
+      : f.location_source === "osm"
+        ? "Map location from OpenStreetMap"
+        : f.location_source === "admin"
+          ? "Map location set by Veriq"
+          : "Map location not checked yet",
+    real,
     todayUpdated,
     today,
     cards,

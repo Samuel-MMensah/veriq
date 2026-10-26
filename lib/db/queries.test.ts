@@ -64,7 +64,7 @@ describe("getSearchCandidates (input to rules B, F, T and S1)", () => {
   it("returns the antenatal facilities near Dansoman with their NHIS facts", async () => {
     const db = fakeDb(pg);
     const found = await anon(() =>
-      getSearchCandidates(db, { serviceIds: ["antenatal"], insurerId: NHIS, ...DANSOMAN, radiusKm: 5, now }),
+      getSearchCandidates(db, { serviceIds: ["antenatal"], insurerId: NHIS, ...DANSOMAN, radiusKm: 5, now, demoMode: true }),
     );
     expect(found.map((c) => c.facility.name).sort()).toEqual([
       "Akoma Mission Hospital",
@@ -93,7 +93,7 @@ describe("getSearchCandidates (input to rules B, F, T and S1)", () => {
   it("returns no card facts for No card/cash", async () => {
     const db = fakeDb(pg);
     const found = await anon(() =>
-      getSearchCandidates(db, { serviceIds: ["antenatal"], insurerId: null, ...DANSOMAN, radiusKm: 5, now }),
+      getSearchCandidates(db, { serviceIds: ["antenatal"], insurerId: null, ...DANSOMAN, radiusKm: 5, now, demoMode: true }),
     );
     expect(found).toHaveLength(6);
     expect(found.every((c) => c.link === null && c.reports.length === 0)).toBe(true);
@@ -102,7 +102,7 @@ describe("getSearchCandidates (input to rules B, F, T and S1)", () => {
   it("returns nothing when no facility is near", async () => {
     const db = fakeDb(pg);
     const found = await anon(() =>
-      getSearchCandidates(db, { serviceIds: ["antenatal"], insurerId: NHIS, lat: 9.4, lng: -0.85, radiusKm: 5, now }),
+      getSearchCandidates(db, { serviceIds: ["antenatal"], insurerId: NHIS, lat: 9.4, lng: -0.85, radiusKm: 5, now, demoMode: true }),
     );
     expect(found).toEqual([]);
   });
@@ -128,7 +128,7 @@ describe("getFacilityDetail (screen 3)", () => {
 describe("getEmergencyCandidates (input to rule S2)", () => {
   it("returns the emergency units in the 15 km box with all their card links", async () => {
     const db = fakeDb(pg);
-    const found = await anon(() => getEmergencyCandidates(db, { ...DANSOMAN, now }));
+    const found = await anon(() => getEmergencyCandidates(db, { ...DANSOMAN, now, demoMode: true }));
     // The box is a square, so its corners reach past 15 km: Madina (17.5 km) is in it.
     // Rule S2's exact 15 km cut is done with haversine in lib/rules.
     expect(found.map((c) => [c.facility.name, c.status?.status]).sort()).toEqual([
@@ -171,7 +171,7 @@ describe("logSearch (rule K)", () => {
 describe("getInsurerNetwork (input to rule K)", () => {
   it("returns NHIS links, 30-day reports and its own search counts", async () => {
     const db = fakeDb(pg);
-    const network = await as(pg, "authenticated", INSURER_USER, () => getInsurerNetwork(db, NHIS, now));
+    const network = await as(pg, "authenticated", INSURER_USER, () => getInsurerNetwork(db, NHIS, now, true));
     const refused = network!.reports.filter((r) => r.outcome === "refused");
     expect(refused).toHaveLength(23);
     expect(new Set(refused.map((r) => r.facility_id)).size).toBe(6);
@@ -181,7 +181,7 @@ describe("getInsurerNetwork (input to rule K)", () => {
 
   it("shows anon no search counts", async () => {
     const db = fakeDb(pg);
-    const network = await anon(() => getInsurerNetwork(db, NHIS, now));
+    const network = await anon(() => getInsurerNetwork(db, NHIS, now, true));
     expect(network!.searches).toEqual([]);
   });
 });

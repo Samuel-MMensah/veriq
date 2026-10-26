@@ -70,11 +70,13 @@ async function badgeFacts(facilityId: string, insurerSlug: string): Promise<Badg
   );
 }
 
+// Rule 1 as changed (Prompt 9): demo hospitals are invented and source = demo; the real NHIA list
+// sits beside them (source = nhia, checked in supabase/tests/directory.test.ts).
 describe("sample data (rule 1)", () => {
-  it("has 18 facilities, all sample, all in Greater Accra", async () => {
+  it("has 18 demo facilities, all sample, all in Greater Accra", async () => {
     const r = await one<{ n: number; sample: number; accra: number }>(
       `select count(*)::int n, count(*) filter (where is_sample)::int sample,
-              count(*) filter (where region = 'Greater Accra')::int accra from public.facilities`,
+              count(*) filter (where region = 'Greater Accra')::int accra from public.facilities where source = 'demo'`,
     );
     expect(r).toEqual({ n: 18, sample: 18, accra: 18 });
   });
@@ -85,7 +87,7 @@ describe("sample data (rule 1)", () => {
       "tema general", "pentecost hospital", "ussher", "princess marie louise", "la general", "police hospital",
       "achimota hospital", "mamprobi polyclinic", "kaneshie polyclinic", "weija gbawe municipal",
     ];
-    const names = (await rows<{ name: string }>("select name from public.facilities")).map((r) => r.name.toLowerCase());
+    const names = (await rows<{ name: string }>("select name from public.facilities where source = 'demo'")).map((r) => r.name.toLowerCase());
     for (const name of names) for (const r of real) expect(name).not.toContain(r);
   });
 
@@ -194,11 +196,13 @@ describe("every freshness state appears (rule F)", () => {
 
   it("under 24 hours: Akoma antenatal, and the newest row wins", async () => {
     expect(await ageHours(F.akoma, "antenatal")).toBeLessThan(24);
-    const r = await one<{ status: string; note: string }>(
-      "select status, note from public.current_status where facility_id = $1 and service_id = 'antenatal'",
+    const r = await one<{ status: string; note: string | null; until_time: string }>(
+      "select status, note, until_time::text from public.current_status where facility_id = $1 and service_id = 'antenatal'",
       [F.akoma],
     );
-    expect(r).toEqual({ status: "open", note: "Open till 4 pm" });
+    // Rule F: "Open till 4 pm" is an until_time, so it stops counting once that time has passed.
+    expect(r).toMatchObject({ status: "open", note: null });
+    expect(r.until_time).toMatch(/^\d{2}:00:00$/);
   });
 
   it("24 to 72 hours: Lakeside antenatal", async () => {
@@ -352,7 +356,7 @@ describe("access rules (section 3)", () => {
   it("anyone can read facilities, current status, insurer links and live reports", async () => {
     await as(db, "anon", null, async () => {
       const r = await one<{ f: number; s: number; l: number; p: number }>(
-        `select (select count(*) from public.facilities)::int f, (select count(*) from public.current_status)::int s,
+        `select (select count(*) from public.facilities where source = 'demo')::int f, (select count(*) from public.current_status)::int s,
                 (select count(*) from public.facility_insurers)::int l, (select count(*) from public.public_card_reports)::int p`,
       );
       expect(r.f).toBe(18);

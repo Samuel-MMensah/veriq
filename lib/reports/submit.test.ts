@@ -29,7 +29,9 @@ const service = () => fakeDb(pg, "owner");
 let n = 0;
 const device = () => `device-${++n}-${Math.random().toString(36).slice(2)}`;
 
-const send = (body: Record<string, unknown>) => submitReport({ db: service(), body, secret: SECRET, now: new Date() });
+// REPORTS_LIVE is off in these tests: demo hospitals keep reporting (rule R1).
+const send = (body: Record<string, unknown>) =>
+  submitReport({ db: service(), body, secret: SECRET, now: new Date(), reportsLive: false });
 
 async function nhisBadge(facilityId: string) {
   const detail = (await getFacilityDetail(fakeDb(pg, "anon"), facilityId, new Date()))!;
@@ -140,6 +142,44 @@ describe("validateReport", () => {
   });
 
   it("needs a server secret", async () => {
-    await expect(submitReport({ db: service(), body: { ...ok, deviceId: device() }, secret: "", now })).rejects.toThrow();
+    await expect(submitReport({ db: service(), body: { ...ok, deviceId: device() }, secret: "", now, reportsLive: false })).rejects.toThrow();
+  });
+});
+
+describe("rule R1: reports on real facilities", () => {
+  const realFacility = async () =>
+    (await pg.query<{ id: string }>("select id from public.facilities where source = 'nhia' order by name limit 1")).rows[0]!.id;
+  const realReports = async (id: string) =>
+    (await pg.query<{ n: number }>("select count(*)::int n from public.card_reports where facility_id = $1", [id])).rows[0]!.n;
+
+  it("REPORTS_LIVE=off closes reports on a real facility, and nothing is saved", async () => {
+    const id = await realFacility();
+    const result = await submitReport({
+      db: service(),
+      body: { deviceId: device(), facilityId: id, insurerId: NHIS, outcome: "refused" },
+      secret: SECRET,
+      now: new Date(),
+      reportsLive: false,
+    });
+    expect(result).toEqual({ status: "closed", message: "Reporting opens soon. Call the hospital to check your card." });
+    expect(await realReports(id)).toBe(0);
+  });
+
+  it("demo facilities keep reporting with REPORTS_LIVE=off", async () => {
+    const result = await send({ deviceId: device(), facilityId: SUNRISE, insurerId: NHIS, outcome: "covered" });
+    expect(result.status).toBe("counted");
+  });
+
+  it("REPORTS_LIVE=on opens reports on a real facility (rule A still applies)", async () => {
+    const id = await realFacility();
+    const result = await submitReport({
+      db: service(),
+      body: { deviceId: device(), facilityId: id, insurerId: NHIS, outcome: "covered" },
+      secret: SECRET,
+      now: new Date(),
+      reportsLive: true,
+    });
+    expect(result.status).toBe("counted");
+    await pg.query("delete from public.card_reports where facility_id = $1", [id]);
   });
 });

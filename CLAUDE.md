@@ -5,7 +5,7 @@ Build only the scope of the prompt pasted in this session. One prompt per sessio
 
 ## Non-negotiable rules (SPEC section 1)
 
-1. **Sample data only until Phase 2.** Every screen with data shows a "SAMPLE DATA" tag. Use invented hospital names only; never real hospitals in seed data.
+1. **Real facilities only from a named public source; demo facilities only in demo mode.** Real facilities come only from a named public source, for now the NHIA list of accredited providers. Demo facilities (`source = demo`) are invented and show only in demo mode (rule D2). The "SAMPLE DATA" tag shows whenever a demo facility is on the screen, and only then.
 2. **Never store patient identity.** No names or card numbers on the server. Saved cards live in the browser (IndexedDB). Reports carry only a random device ID and a hash.
 3. **The card never hides a hospital in emergency mode.** Emergency results sort by status and distance only.
 4. **Every fact has a source and a timestamp**, and the screen says which. No unsourced "available".
@@ -26,6 +26,8 @@ Out of scope in all phases: appointment booking, patient payments, medical recor
 - **A** report limits
 - **K** insurer figures
 - **M** morning check
+- **D** directory: D1 directory facts, D2 demo separation, D3 services not listed
+- **R** reports on real facilities: R1 reports closed until DPC registration
 
 All rules live in `lib/rules/` as pure functions that take `now` as an argument, with unit tests.
 **Code comments and tests must cite the rule id they implement** (for example `// rule B1`).
@@ -37,7 +39,7 @@ A phase is finished only when its gate passes. Do not start the next phase's wor
 | Phase | Prompts | Gate (all must be true) |
 | --- | --- | --- |
 | 1. Pitch demo | 0–8 | Demo script (section 9) passes as a Playwright test and by hand on a phone; all rule tests pass; deployed URL works on 3G throttling; every data screen shows SAMPLE DATA |
-| 2. Pilot | 9–16 | Data Protection Commission registration done; real hospital logins; reports pass rule A in production; USSD works through an aggregator; admin can verify hospitals |
+| 2. Pilot | 9–17 | Data Protection Commission registration done; real hospital logins; reports pass rule A in production; USSD works through an aggregator; admin can verify hospitals |
 | 3. Scale | 17+ | Signed data-sharing agreement with GHS and NAS before any national-link code goes live |
 
 ## Session protocol (SPEC section 7, word for word)

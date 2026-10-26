@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
-import { resetDemo } from "./helpers";
+import { demoModeInEveryTest, resetDemo } from "./helpers";
+
+demoModeInEveryTest();
 
 // Prompt 4: find antenatal with NHIS, see 4 results in the right order, open Akoma (demo steps 1 to 4).
 // The server runs with VERIQ_DATA=local, so the seed is fresh on every start.
@@ -46,7 +48,7 @@ test("first open, find antenatal with NHIS, 4 results in order, open Akoma", asy
   await expect(page.getByRole("link", { name: "Call" })).toHaveAttribute("href", /^tel:/);
   await expect(page.getByRole("link", { name: "Directions" })).toHaveAttribute("href", /google\.com\/maps\/dir/);
   await expect(page.getByText(/^Updated by hospital \d{1,2}:\d{2} (am|pm)$/)).toBeVisible();
-  await expect(page.getByText("Open till 4 pm")).toBeVisible();
+  await expect(page.getByText(/^Open till \d{1,2}(:\d{2})? (am|pm)$/)).toBeVisible(); // rule F: until_time
   await expect(page.getByText("From 2 pm")).toBeVisible();
   await expect(page.getByText(/^Scan top-up about GH¢ 80 \(\d patients, last 60 days\)$/)).toBeVisible();
   await expect(page.getByRole("link", { name: "Been here? Tell others if your card worked" })).toBeVisible();

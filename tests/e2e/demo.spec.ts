@@ -2,15 +2,16 @@ import { expect, test } from "@playwright/test";
 import { resetDemo } from "./helpers";
 
 // SPEC section 9: the 90-second demo, step by step. This is the Phase 1 acceptance test.
-// It starts from "Reset demo data" (Prompt 8), on a phone-sized screen with a fresh phone.
+// It starts from "Reset demo data" (Prompt 8), on a phone-sized screen with a fresh phone, and opens
+// the app in demo mode with ?demo=1 (rule D2), as the presenter does.
 
 test.beforeAll(async ({ browser }) => {
   await resetDemo(browser);
 });
 
 test("the 90-second demo (SPEC section 9)", async ({ page }) => {
-  // 1. Open the app on a phone and tap through the first-open screen.
-  await page.goto("/");
+  // 1. Open the app on a phone (in demo mode) and tap through the first-open screen.
+  await page.goto("/?demo=1");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Know before you go.");
   await page.getByRole("link", { name: "Get started" }).click();
 
@@ -40,7 +41,8 @@ test("the 90-second demo (SPEC section 9)", async ({ page }) => {
   await cards.nth(0).getByRole("link").click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Akoma Mission Hospital");
   await expect(page.getByText(/^Updated by hospital \d{1,2}:\d{2} (am|pm)$/)).toBeVisible();
-  await expect(page.getByText("Open till 4 pm")).toBeVisible();
+  // Rule F: the till time is an until_time; before 3 pm it is 4 pm, later it is two hours ahead.
+  await expect(page.getByText(/^Open till \d{1,2}(:\d{2})? (am|pm)$/)).toBeVisible();
   await expect(page.getByText("Accepting")).toBeVisible();
   await expect(page.getByText("Confirmed by hospital 2 days ago").first()).toBeVisible();
   await expect(page.getByText("On insurer list, not checked yet. Call first")).toBeVisible();

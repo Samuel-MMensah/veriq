@@ -1,7 +1,7 @@
 // Report reads and writes for /api/reports. Server only: these use the service role, because
 // card_reports has no public read or insert policy (rule A).
 import type { Db } from "./supabase";
-import type { CardReportRow, ReportItem, ReportOutcome, ReportState } from "./types";
+import type { CardReportRow, FacilityRow, FacilitySource, ReportItem, ReportOutcome, ReportState } from "./types";
 
 type Result<T> = { data: T | null; error: { message: string } | null };
 
@@ -26,13 +26,18 @@ export async function facilityReportsSince(db: Db, facilityId: string, since: st
   ) as Pick<CardReportRow, "created_at">[];
 }
 
-export async function facilityAndInsurerExist(db: Db, facilityId: string, insurerId: string): Promise<boolean> {
+/** The facility's source (for rule R1) when both the facility and the insurer exist, otherwise null. */
+export async function facilityAndInsurerExist(
+  db: Db,
+  facilityId: string,
+  insurerId: string,
+): Promise<{ source: FacilitySource } | null> {
   const [f, i] = await Promise.all([
     db.from("facilities").select("*").eq("id", facilityId).maybeSingle(),
     db.from("insurers").select("*").eq("id", insurerId).maybeSingle(),
   ]);
   if (f.error || i.error) throw new Error(`Could not check the report: ${(f.error ?? i.error)!.message}`);
-  return Boolean(f.data && i.data);
+  return f.data && i.data ? { source: (f.data as FacilityRow).source } : null;
 }
 
 export async function serviceExists(db: Db, serviceId: string): Promise<boolean> {

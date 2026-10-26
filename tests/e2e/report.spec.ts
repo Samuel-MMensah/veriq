@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
-import { resetDemo } from "./helpers";
+import { demoModeInEveryTest, resetDemo } from "./helpers";
+
+demoModeInEveryTest();
 
 // Prompt 5: the report loop (demo step 5). Local data mode: a fresh seed on every server start, and
 // each test gets a fresh browser, so a fresh phone (device id) too.

@@ -3,19 +3,29 @@ import type { PGlite } from "@electric-sql/pglite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { fakeDb } from "@/lib/db/fake-postgrest";
 import { createDb } from "@/lib/db/pglite";
-import { getEmergencyCandidates, getFacilityDetail, getSearchCandidates, listInsurers, listServices } from "@/lib/db/queries";
+import {
+  getEmergencyCandidates,
+  getEmergencyNotChecked,
+  getFacilityDetail,
+  getSearchCandidates,
+  getUnlistedCandidates,
+  listInsurers,
+  listServices,
+} from "@/lib/db/queries";
 import { HOUR_MS } from "@/lib/rules/time";
 import { DEFAULT_AREA, parseSearch } from "./catalog";
 import { buildFacilityView, directionsUrl } from "./facility";
 import { submitReport } from "@/lib/reports/submit";
-import { buildEmergency, cardNote } from "./emergency";
-import { buildResults } from "./results";
+import { buildEmergency, buildNotChecked, cardNote } from "./emergency";
+import { buildNotListed, buildResults } from "./results";
 import { whatChanged } from "./thanks";
 import { clockFromTime, statusView } from "./status";
 
 const NHIS = "a0000000-0000-4000-8000-000000000001";
 const AKOMA = "f0000000-0000-4000-8000-000000000001";
 const DANSOMAN = { lat: 5.545, lng: -0.265 };
+/** Rule F: the demo seed sets Akoma's till time to 4 pm, or two hours ahead after 3 pm. */
+const OPEN_TILL = /^Open till \d{1,2}(:\d{2})? (am|pm)$/;
 let pg: PGlite;
 let serviceNames = new Map<string, string>();
 // Taken after seeding: the seed's times are relative to the moment it runs.
@@ -90,6 +100,7 @@ describe("buildResults (screen 2)", () => {
       ...DANSOMAN,
       radiusKm: 5,
       now,
+      demoMode: true,
     });
     const results = buildResults({ candidates, serviceNames, withCard: true, origin: DANSOMAN, radiusKm: 5, now });
     expect(results.cards.map((c) => [c.name, c.badge?.id, c.distanceKm])).toEqual([
@@ -100,7 +111,7 @@ describe("buildResults (screen 2)", () => {
     ]);
     expect(results.hiddenCount).toBe(2);
     expect(results.hadConfirmedResult).toBe(true);
-    expect(results.cards[0]!.status.word).toBe("Open till 4 pm");
+    expect(results.cards[0]!.status.word).toMatch(OPEN_TILL); // rule F: the seed's until_time
     expect(results.cards[0]!.topUps).toEqual(["Scan top-up about GH¢ 80 (3 patients, last 60 days)"]);
     expect(results.cards[1]!.usualHours).toBe("Tue and Thu");
     expect(results.cards[2]!.status.word).toBe("No update yet");
@@ -113,6 +124,7 @@ describe("buildResults (screen 2)", () => {
       ...DANSOMAN,
       radiusKm: 5,
       now,
+      demoMode: true,
     });
     const results = buildResults({ candidates, serviceNames, withCard: false, origin: DANSOMAN, radiusKm: 5, now });
     expect(results.cards).toHaveLength(6);
@@ -124,7 +136,7 @@ describe("buildResults (screen 2)", () => {
 describe("buildResults with a chip that covers several services", () => {
   const search = async (serviceIds: string[], insurerId: string | null) =>
     buildResults({
-      candidates: await getSearchCandidates(fakeDb(pg, "anon"), { serviceIds, insurerId, ...DANSOMAN, radiusKm: 5, now }),
+      candidates: await getSearchCandidates(fakeDb(pg, "anon"), { serviceIds, insurerId, ...DANSOMAN, radiusKm: 5, now, demoMode: true }),
       serviceNames,
       withCard: insurerId !== null,
       origin: DANSOMAN,
@@ -141,7 +153,7 @@ describe("buildResults with a chip that covers several services", () => {
       "Pinecrest Specialist Hospital",
     ]);
     // Akoma offers all three; the antenatal clinic has the best status today.
-    expect(results.cards[0]).toMatchObject({ serviceName: "Antenatal clinic", status: { word: "Open till 4 pm" } });
+    expect(results.cards[0]).toMatchObject({ serviceName: "Antenatal clinic", status: { word: expect.stringMatching(OPEN_TILL) } });
   });
 
   it("Scan / X-ray (ultrasound, X-ray, CT) shows each hospital's best scan service and names it", async () => {
@@ -170,11 +182,11 @@ describe("buildFacilityView (screen 3)", () => {
     const view = buildFacilityView({ detail, insurers: await listInsurers(db), origin: DANSOMAN, cardSlug: "nhis", now });
 
     expect(view.subtitle).toBe("Mission · Kaneshie · 1.8 km");
-    expect(view.directionsUrl).toBe(directionsUrl(detail.facility));
+    expect(view.directionsUrl).toBe(directionsUrl({ lat: detail.facility.lat!, lng: detail.facility.lng! }));
     expect(view.todayUpdated).toMatch(/^Updated by hospital \d{1,2}:\d{2} (am|pm)$/);
     const words = Object.fromEntries(view.today.map((t) => [t.label, t.status.word]));
     expect(words).toMatchObject({
-      "Antenatal clinic": "Open till 4 pm",
+      "Antenatal clinic": expect.stringMatching(OPEN_TILL),
       "Emergency unit": "Accepting",
       "Ultrasound scan": "Available",
       Obstetrician: "From 2 pm",
@@ -198,7 +210,7 @@ describe("buildFacilityView (screen 3)", () => {
 
 describe("whatChanged (screen 11, recalculated with rules B and T)", () => {
   const send = (body: Record<string, unknown>) =>
-    submitReport({ db: fakeDb(pg, "owner"), body, secret: "s", now: new Date() });
+    submitReport({ db: fakeDb(pg, "owner"), body, secret: "s", now: new Date(), reportsLive: false });
   const changedAt = async (facilityId: string, reportId: string) => {
     const t = new Date();
     const detail = (await getFacilityDetail(fakeDb(pg, "anon"), facilityId, t))!;
@@ -247,7 +259,7 @@ describe("buildEmergency (screen 6, rule S2)", () => {
     const db = fakeDb(pg, "anon");
     const t = new Date();
     return buildEmergency({
-      candidates: await getEmergencyCandidates(db, { ...DANSOMAN, now: t }),
+      candidates: await getEmergencyCandidates(db, { ...DANSOMAN, now: t, demoMode: true }),
       insurers: await listInsurers(db),
       origin: DANSOMAN,
       now: t,
@@ -286,5 +298,87 @@ describe("buildEmergency (screen 6, rule S2)", () => {
     expect(note("Westhills District Hospital", ["nhis", "cosmopolitan"])).toBe("Takes your NHIS card · Cosmopolitan Health not checked");
     expect(note("Pinecrest Specialist Hospital", ["nhis"])).toBe("NHIS reported refused");
     expect(note("Akoma Mission Hospital", [])).toBeNull();
+  });
+});
+
+describe("statusView with until_time (rule F)", () => {
+  const row = { status: "open" as const, from_time: null, note: null, source: "hospital" as const, created_at: "2026-10-22T07:40:00Z", until_time: "16:00:00" };
+
+  it("before the time: 'Open till 4 pm'", () => {
+    expect(statusView(row, new Date("2026-10-22T12:00:00Z"))).toMatchObject({ word: "Open till 4 pm", tone: "good" });
+  });
+
+  it("after the time: 'Was open till 4 pm. Call to check', greyed and unknown", () => {
+    const v = statusView(row, new Date("2026-10-22T16:30:00Z"));
+    expect(v).toMatchObject({ word: "Was open till 4 pm. Call to check", tone: "unknown" });
+    expect(v.freshness.greyed).toBe(true);
+  });
+});
+
+describe("the real directory near Dansoman (rules D1, D3 and S2)", () => {
+  it("results outside demo mode show no demo hospital (rule D2)", async () => {
+    const candidates = await getSearchCandidates(fakeDb(pg, "anon"), {
+      serviceIds: ["antenatal"],
+      insurerId: NHIS,
+      ...DANSOMAN,
+      radiusKm: 5,
+      now,
+      demoMode: false,
+    });
+    expect(candidates.every((c) => c.facility.source === "nhia")).toBe(true);
+  });
+
+  it("rule D3: NHIA facilities with no services, by distance, B4 for NHIS, no pharmacies, with the source line", async () => {
+    const candidates = await getUnlistedCandidates(fakeDb(pg, "anon"), {
+      insurerId: NHIS,
+      ...DANSOMAN,
+      radiusKm: 5,
+      now,
+      demoMode: false,
+    });
+    const cards = buildNotListed({ candidates, withCard: true, origin: DANSOMAN, radiusKm: 5, now });
+    expect(cards.length).toBeGreaterThan(0);
+    expect(cards.map((c) => c.name)).toContain("Dansoman Polyclinic");
+    expect(cards.every((c) => !/pharmacy|chemical/i.test(c.nhiaType ?? ""))).toBe(true);
+    expect(cards.every((c) => c.badge?.id === "B4")).toBe(true);
+    expect(cards.every((c) => c.sourceLine === "From the NHIA list, October 2026")).toBe(true);
+    expect(cards.map((c) => c.distanceKm)).toEqual([...cards.map((c) => c.distanceKm)].sort((a, b) => a - b));
+    // Rule D1: no number the file doesn't have.
+    expect(cards.every((c) => c.phone === null)).toBe(true);
+  });
+
+  it("rule D3 in demo mode: no real facility is listed", async () => {
+    const candidates = await getUnlistedCandidates(fakeDb(pg, "anon"), { insurerId: NHIS, ...DANSOMAN, radiusKm: 5, now, demoMode: true });
+    expect(candidates).toEqual([]);
+  });
+
+  it("rule S2 addition: hospitals and polyclinics with no emergency status, by distance, with the source line", async () => {
+    const db = fakeDb(pg, "anon");
+    const insurers = await listInsurers(db);
+    const notChecked = buildNotChecked({
+      candidates: await getEmergencyNotChecked(db, { ...DANSOMAN, now, demoMode: false }),
+      insurers,
+      origin: DANSOMAN,
+      now,
+    });
+    expect(notChecked.map((u) => u.name)).toContain("Dansoman Polyclinic");
+    expect(notChecked.every((u) => /hospital|poly/i.test(u.nhiaType ?? ""))).toBe(true);
+    expect(notChecked.every((u) => u.distanceKm <= 15)).toBe(true);
+    expect(notChecked.every((u) => u.sourceLine === "From the NHIA list, October 2026")).toBe(true);
+    // Outside demo mode there is no demo emergency unit (rule D2).
+    expect(await getEmergencyCandidates(db, { ...DANSOMAN, now, demoMode: false })).toEqual([]);
+  });
+
+  it("the hospital page of a real facility: NHIA type, source line, OpenStreetMap credit, no invented services", async () => {
+    const [row] = (await pg.query<{ id: string }>("select id from public.facilities where name = 'DANSOMAN POLYCLINIC'")).rows;
+    const detail = (await getFacilityDetail(fakeDb(pg, "anon"), row!.id, now))!;
+    const view = buildFacilityView({ detail, insurers: await listInsurers(fakeDb(pg, "anon")), origin: DANSOMAN, cardSlug: "nhis", now });
+    expect(view.name).toBe("Dansoman Polyclinic");
+    expect(view.subtitle).toMatch(/^POLY2005 · Dansoman · Ablekuma · \d+(\.\d)? km$/);
+    expect(view.sourceLine).toBe("From the NHIA list, October 2026");
+    expect(view.locationNote).toBe("Map location from OpenStreetMap");
+    expect(view.today).toEqual([]);
+    expect(view.cards.map((c) => [c.insurer.slug, c.badge.id])).toEqual([["nhis", "B4"]]);
+    expect(view.phone).toBeNull();
   });
 });

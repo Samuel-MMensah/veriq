@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FindForm } from "@/components/find/FindForm";
 import { Icon } from "@/components/ui/Icon";
-import { SampleDataTag } from "@/components/ui/SampleDataTag";
 
 export const metadata: Metadata = { title: "Find care" };
 
@@ -17,7 +16,6 @@ export default function FindPage() {
           </p>
           <p className="mt-1 text-ink/70">Know before you go</p>
         </div>
-        <SampleDataTag className="mt-1" />
       </header>
 
       <Link

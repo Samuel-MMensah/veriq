@@ -1,4 +1,4 @@
-import { bestStatus, sortEmergency, sortNoCard, sortResults, type EmergencyItem, type ResultItem } from "./sort";
+import { bestStatus, emergencyNotChecked, isHospitalOrPolyclinic, sortEmergency, sortNoCard, sortResults, type EmergencyItem, type NotCheckedItem, type ResultItem } from "./sort";
 import { HOUR_MS, MINUTE_MS } from "./time";
 
 const now = new Date("2026-10-22T12:00:00Z");
@@ -156,5 +156,91 @@ describe("rule S1 with several services: the status shown is the best known one"
 
   it("is null for no services", () => {
     expect(bestStatus([], now)).toBeNull();
+  });
+});
+
+describe("rule S2 addition: real hospitals with no emergency status", () => {
+  const realUnit = (id: string, km: number | null, nhiaType: string, hasEmergencyStatus = false): NotCheckedItem => ({
+    id,
+    ...(km === null ? { lat: null, lng: null } : north(km)),
+    source: "nhia",
+    nhiaType,
+    hasEmergencyStatus,
+  });
+
+  it("lists hospitals and polyclinics as the file names them, sorted by distance", () => {
+    const got = emergencyNotChecked(
+      [realUnit("poly", 3, "POLY2005"), realUnit("primary", 1, "PRIMARY HOSPITAL"), realUnit("secondary", 2, "SECONDARY HOSPITAL")],
+      { origin: DANSOMAN },
+    );
+    expect(got.map((g) => g.id)).toEqual(["primary", "secondary", "poly"]);
+  });
+
+  it("only the NHIA type decides, never the name", () => {
+    expect(isHospitalOrPolyclinic("POLY2005")).toBe(true);
+    expect(isHospitalOrPolyclinic("PRIMARY HOSPITAL")).toBe(true);
+    expect(isHospitalOrPolyclinic("CLINIC")).toBe(false);
+    expect(isHospitalOrPolyclinic(null)).toBe(false);
+  });
+
+  it("leaves out pharmacies, clinics, labs and maternity homes", () => {
+    const got = emergencyNotChecked(
+      [realUnit("ph", 1, "Pharmacy"), realUnit("cl", 1, "CLINIC"), realUnit("lab", 1, "LABORATORY"), realUnit("mat", 1, "Maternity")],
+      { origin: DANSOMAN },
+    );
+    expect(got).toEqual([]);
+  });
+
+  it("leaves out facilities with no location (rule D1)", () => {
+    expect(emergencyNotChecked([realUnit("lost", null, "PRIMARY HOSPITAL")], { origin: DANSOMAN })).toEqual([]);
+  });
+
+  it("leaves out hospitals that have an emergency status: rule S2 already sorts them", () => {
+    expect(emergencyNotChecked([realUnit("known", 1, "PRIMARY HOSPITAL", true)], { origin: DANSOMAN })).toEqual([]);
+  });
+
+  it("keeps 15 km", () => {
+    const got = emergencyNotChecked([realUnit("near", 14.9, "PRIMARY HOSPITAL"), realUnit("far", 15.1, "PRIMARY HOSPITAL")], {
+      origin: DANSOMAN,
+    });
+    expect(got.map((g) => g.id)).toEqual(["near"]);
+  });
+
+  it("leaves out demo facilities (they are sorted by rule S2 with their status)", () => {
+    const demo = { ...realUnit("demo", 1, "PRIMARY HOSPITAL"), source: "demo" as const };
+    expect(emergencyNotChecked([demo], { origin: DANSOMAN })).toEqual([]);
+  });
+
+  it("never filters or reorders by card (rule 3)", () => {
+    const units = [realUnit("a", 2, "PRIMARY HOSPITAL"), realUnit("b", 1, "PRIMARY HOSPITAL")];
+    const carded = units.map((u, i) => ({ ...u, badge: (["B5", "B1"] as const)[i], card: "nhis" }));
+    expect(emergencyNotChecked(carded, { origin: DANSOMAN }).map((g) => g.id)).toEqual(
+      emergencyNotChecked(units, { origin: DANSOMAN }).map((g) => g.id),
+    );
+  });
+});
+
+describe("rule F until_time in sorting (rules S1 and S2)", () => {
+  // now is 12:00 in Accra. A row from 7:40 am that says "till 11 am" has passed.
+  const morning = "2026-10-22T07:40:00Z";
+
+  it("a status whose until_time has passed sorts as unknown in rule S1", () => {
+    const passed = { ...item("passed", 1, "B3", "open", morning), statusUntil: "11:00:00" };
+    const unknown = item("unknown", 2, "B3", null);
+    const sorted = sortResults([passed, unknown], { origin: DANSOMAN, radiusKm: 5, now });
+    expect(sorted[0]!.statusRank).toBe(sorted[1]!.statusRank);
+    expect(sorted.map((r) => r.id)).toEqual(["passed", "unknown"]);
+  });
+
+  it("a status before its until_time still sorts as open", () => {
+    const open = { ...item("open", 2, "B3", "open", morning), statusUntil: "16:00:00" };
+    const unknown = item("unknown", 1, "B3", null);
+    expect(sortResults([unknown, open], { origin: DANSOMAN, radiusKm: 5, now }).map((r) => r.id)).toEqual(["open", "unknown"]);
+  });
+
+  it("an emergency status whose until_time has passed sorts as unknown in rule S2", () => {
+    const passed = { id: "passed", ...north(1), status: "accepting" as const, statusUpdatedAt: morning, statusUntil: "10:00:00" };
+    const accepting = { id: "accepting", ...north(3), status: "accepting" as const, statusUpdatedAt: fresh };
+    expect(sortEmergency([passed, accepting], { origin: DANSOMAN, now }).map((r) => r.id)).toEqual(["accepting", "passed"]);
   });
 });

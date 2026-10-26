@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
-import { resetDemo } from "./helpers";
+import { demoModeInEveryTest, resetDemo } from "./helpers";
+
+demoModeInEveryTest();
 
 // Prompt 7: screen 16 (morning check, rule M) and screen 18 (insurer network health, rule K).
 // Runs after find-results.spec.ts (files run in order), because it closes Akoma's antenatal clinic.
@@ -14,7 +16,7 @@ const RESULTS = "/results?service=antenatal&card=nhis&lat=5.545&lng=-0.265&area=
 test("the hospital marks antenatal Closed, and the results page shows it (demo step 6)", async ({ page }) => {
   await page.goto(RESULTS);
   const akoma = page.getByRole("link", { name: /Akoma Mission Hospital/ });
-  await expect(akoma).toContainText("Antenatal clinic: Open till 4 pm");
+  await expect(akoma).toContainText(/Antenatal clinic: Open till \d{1,2}(:\d{2})? (am|pm)/); // rule F: until_time
 
   await page.goto("/h/check");
   await expect(page.getByText("Demo only.")).toBeVisible();

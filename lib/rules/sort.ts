@@ -3,6 +3,7 @@
 import type { ServiceStatus } from "@/lib/db/types";
 import { haversineKm, roundKm, type LatLng } from "@/lib/geo";
 import type { BadgeId } from "./badge";
+import { isPharmacy, type FacilitySource } from "./directory";
 import { freshness } from "./freshness";
 
 export type ResultItem = LatLng & {
@@ -11,12 +12,15 @@ export type ResultItem = LatLng & {
   /** Newest status for the searched service, or null if never updated. */
   status: ServiceStatus | null;
   statusUpdatedAt: string | null;
+  /** The row's until_time, "HH:MM:SS" (rule F). */
+  statusUntil?: string | null;
 };
 
 export type EmergencyItem = LatLng & {
   id: string;
   status: ServiceStatus | null;
   statusUpdatedAt: string | null;
+  statusUntil?: string | null;
 };
 
 export type Sorted<T> = T & { distanceKm: number; statusRank: number };
@@ -25,15 +29,25 @@ const BADGE_ORDER: Partial<Record<BadgeId, number>> = { B2: 0, B3: 1, B4: 2, B1:
 const GOOD: ServiceStatus[] = ["open", "accepting", "working", "from_time"];
 const BAD: ServiceStatus[] = ["closed", "full", "down"];
 
-/** 0 open or accepting, 1 unknown, 2 closed or full. Over 72 hours old counts as unknown (rule F). */
-function statusRank(status: ServiceStatus | null, updatedAt: string | null, now: Date): number {
-  if (!status || !updatedAt || freshness({ created_at: updatedAt }, now).state === "stale") return 1;
+/**
+ * 0 open or accepting, 1 unknown, 2 closed or full. Over 72 hours old, or past its until_time,
+ * counts as unknown (rule F).
+ */
+function statusRank(status: ServiceStatus | null, updatedAt: string | null, now: Date, until: string | null = null): number {
+  if (!status || !updatedAt) return 1;
+  const state = freshness({ created_at: updatedAt, until_time: until }, now).state;
+  if (state === "stale" || state === "ended") return 1;
   if (GOOD.includes(status)) return 0;
   if (BAD.includes(status)) return 2;
   return 1;
 }
 
-export type ServiceStatusEntry = { serviceId: string; status: ServiceStatus | null; statusUpdatedAt: string | null };
+export type ServiceStatusEntry = {
+  serviceId: string;
+  status: ServiceStatus | null;
+  statusUpdatedAt: string | null;
+  statusUntil?: string | null;
+};
 
 /** Which status to show: good first, then a known bad one, then unknown (a known fact beats "no update"). */
 const SHOW_ORDER = [0, 2, 1];
@@ -44,7 +58,7 @@ const SHOW_ORDER = [0, 2, 1];
  * 72 hours old), the newest among equals.
  */
 export function bestStatus<T extends ServiceStatusEntry>(entries: T[], now: Date): T | null {
-  const ranked = entries.map((e) => ({ e, rank: SHOW_ORDER.indexOf(statusRank(e.status, e.statusUpdatedAt, now)) }));
+  const ranked = entries.map((e) => ({ e, rank: SHOW_ORDER.indexOf(statusRank(e.status, e.statusUpdatedAt, now, e.statusUntil)) }));
   ranked.sort((a, b) => a.rank - b.rank || (b.e.statusUpdatedAt ?? "").localeCompare(a.e.statusUpdatedAt ?? ""));
   return ranked[0]?.e ?? null;
 }
@@ -69,7 +83,7 @@ export function sortResults<T extends ResultItem>(
     .filter((item) => BADGE_ORDER[item.badge] !== undefined)
     .map((item) => ({ item, km: haversineKm(origin, item) }))
     .filter(({ km }) => km <= radiusKm)
-    .map(({ item, km }) => ({ ...item, distanceKm: km, statusRank: statusRank(item.status, item.statusUpdatedAt, now) }))
+    .map(({ item, km }) => ({ ...item, distanceKm: km, statusRank: statusRank(item.status, item.statusUpdatedAt, now, item.statusUntil) }))
     .sort(byRankThenDistance((r) => BADGE_ORDER[r.badge]!))
     .map((r) => ({ ...r, distanceKm: roundKm(r.distanceKm) }));
 }
@@ -85,7 +99,7 @@ export function sortNoCard<T extends EmergencyItem>(
   return items
     .map((item) => ({ item, km: haversineKm(origin, item) }))
     .filter(({ km }) => km <= radiusKm)
-    .map(({ item, km }) => ({ ...item, distanceKm: km, statusRank: statusRank(item.status, item.statusUpdatedAt, now) }))
+    .map(({ item, km }) => ({ ...item, distanceKm: km, statusRank: statusRank(item.status, item.statusUpdatedAt, now, item.statusUntil) }))
     .sort(byRankThenDistance(() => 0))
     .map((r) => ({ ...r, distanceKm: roundKm(r.distanceKm) }));
 }
@@ -103,7 +117,45 @@ export function sortEmergency<T extends EmergencyItem>(
   return items
     .map((item) => ({ item, km: haversineKm(origin, item) }))
     .filter(({ km }) => km <= radiusKm)
-    .map(({ item, km }) => ({ ...item, distanceKm: km, statusRank: statusRank(item.status, item.statusUpdatedAt, now) }))
+    .map(({ item, km }) => ({ ...item, distanceKm: km, statusRank: statusRank(item.status, item.statusUpdatedAt, now, item.statusUntil) }))
     .sort(byRankThenDistance(() => 0))
     .map((r) => ({ ...r, distanceKm: roundKm(r.distanceKm) }));
+}
+
+/** A real facility for the rule S2 addition. lat and lng are null when it has no location (rule D1). */
+export type NotCheckedItem = {
+  id: string;
+  lat: number | null;
+  lng: number | null;
+  source: FacilitySource;
+  /** The facility type as the NHIA file writes it. */
+  nhiaType: string | null;
+  /** Has a row for the emergency service with a status: then rule S2 sorts it with the others. */
+  hasEmergencyStatus: boolean;
+};
+
+/**
+ * Rule S2 addition: is this NHIA type a hospital or polyclinic? The file writes "PRIMARY HOSPITAL",
+ * "SECONDARY HOSPITAL" and "POLY2005" (polyclinics). Only the type decides, never the name.
+ */
+export function isHospitalOrPolyclinic(nhiaType: string | null): boolean {
+  if (isPharmacy(nhiaType)) return false;
+  return /hospital|poly/i.test(nhiaType ?? "");
+}
+
+/**
+ * rule S2 addition: real hospitals and polyclinics within 15 km with no emergency status, listed
+ * after the units with one as "Emergency not checked. Call first", sorted by distance. Pharmacies,
+ * clinics and facilities with no location are left out (rule D1). No card field is read (rule 3).
+ */
+export function emergencyNotChecked<T extends NotCheckedItem>(
+  items: T[],
+  { origin, radiusKm = EMERGENCY_RADIUS_KM }: { origin: LatLng; radiusKm?: number },
+): (T & { distanceKm: number })[] {
+  return items
+    .filter((item) => item.source !== "demo" && !item.hasEmergencyStatus && isHospitalOrPolyclinic(item.nhiaType))
+    .flatMap((item) => (item.lat === null || item.lng === null ? [] : [{ item, km: haversineKm(origin, { lat: item.lat, lng: item.lng }) }]))
+    .filter(({ km }) => km <= radiusKm)
+    .sort((a, b) => a.km - b.km || a.item.id.localeCompare(b.item.id))
+    .map(({ item, km }) => ({ ...item, distanceKm: roundKm(km) }));
 }

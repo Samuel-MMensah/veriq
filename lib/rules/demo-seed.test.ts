@@ -33,6 +33,7 @@ describe("demo step 3: antenatal + NHIS near Dansoman (rules B, F, T, S1)", () =
       ...DANSOMAN,
       radiusKm: 5,
       now,
+      demoMode: true,
     });
     const items = candidates.map((c) => ({
       id: c.facility.id,
@@ -64,7 +65,7 @@ describe("demo step 3: antenatal + NHIS near Dansoman (rules B, F, T, S1)", () =
 
 describe("demo step 7: emergency mode (rule S2)", () => {
   it("lists Akoma, Westhills, then Pinecrest (full), within 15 km", async () => {
-    const candidates = await getEmergencyCandidates(fakeDb(pg), { ...DANSOMAN, now });
+    const candidates = await getEmergencyCandidates(fakeDb(pg), { ...DANSOMAN, now, demoMode: true });
     const sorted = sortEmergency(
       candidates.map((c) => ({
         id: c.facility.id,
@@ -87,7 +88,7 @@ describe("demo step 7: emergency mode (rule S2)", () => {
 describe("demo step 8: insurer view (rule K)", () => {
   it("NHIS members were refused 23 times at 6 hospitals; Pinecrest leads", async () => {
     // Read as the table owner here; Prompt 7 adds the insurer login that RLS expects.
-    const network = await getInsurerNetwork(fakeDb(pg), NHIS, now);
+    const network = await getInsurerNetwork(fakeDb(pg), NHIS, now, true);
     const figures = insurerFigures({
       facilities: network!.facilities,
       links: network!.links,

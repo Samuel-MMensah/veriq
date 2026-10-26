@@ -12,7 +12,7 @@ beforeAll(async () => {
 
 const dial = (text: string) =>
   POST(
-    new Request("http://localhost/api/ussd", {
+    new Request("http://localhost/api/ussd?demo=1", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({ sessionId: "s1", serviceCode: "*000#", phoneNumber: "+233244000111", text }).toString(),

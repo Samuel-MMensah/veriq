@@ -4,7 +4,8 @@ import { cellCentre, haversineKm } from "@/lib/geo";
 import { badge, type BadgeId } from "./badge";
 import { DAY_MS, withinDays } from "./time";
 
-export type KpiFacility = { id: string; name: string; area: string; lat: number; lng: number };
+/** area, lat and lng may be unknown for a real facility (rule D1). */
+export type KpiFacility = { id: string; name: string; area: string | null; lat: number | null; lng: number | null };
 export type KpiLink = {
   facility_id: string;
   listed_by: ListedBy;
@@ -125,7 +126,8 @@ function nearestArea(cell: string, facilities: KpiFacility[]): string | null {
   const centre = cellCentre(cell);
   let best: { area: string; km: number } | null = null;
   for (const f of facilities) {
-    const km = haversineKm(centre, f);
+    if (f.lat === null || f.lng === null || f.area === null) continue;
+    const km = haversineKm(centre, { lat: f.lat, lng: f.lng });
     if (km <= NAME_GAP_WITHIN_KM && (!best || km < best.km)) best = { area: f.area, km };
   }
   return best?.area ?? null;

@@ -73,6 +73,8 @@ async function attempt(q: QueuedReport, fetchImpl: typeof fetch): Promise<Attemp
   }
   if (data.status === "already_counted") return { kind: "already", message: data.message ?? "Already counted." };
   if (data.status === "invalid") return { kind: "rejected", message: data.message ?? "The report was not accepted." };
+  // Rule R1: reports on this hospital are closed, so the queued report is dropped, not retried.
+  if (data.status === "closed") return { kind: "rejected", message: data.message ?? "Reporting opens soon." };
   return { kind: "retry" }; // server problem: keep it for later
 }
 

@@ -1,5 +1,8 @@
 // Typed reads for the Phase 1 screens. These only fetch rows; badges, freshness, top-ups and
 // sorting are worked out from them in lib/rules (rule 6). No payment or plan field is read here (rule 5).
+// Distance searches see only facilities with a location (rule D1) from the world on screen: demo
+// hospitals in demo mode, real ones otherwise (rule D2).
+import { hasLocation, visibleInMode } from "@/lib/rules/directory";
 import type { Db } from "./supabase";
 import type {
   CurrentStatusRow,
@@ -70,6 +73,9 @@ export async function getInsurerBySlug(db: Db, slug: string): Promise<InsurerRow
 
 // Shared pieces ------------------------------------------------------------------------
 
+/** A facility with a location: the only kind a distance search returns (rule D1). */
+export type LocatedFacility = FacilityRow & { lat: number; lng: number };
+
 async function facilitiesInBox(db: Db, box: BoundingBox): Promise<FacilityRow[]> {
   return rows(
     await db
@@ -80,6 +86,13 @@ async function facilitiesInBox(db: Db, box: BoundingBox): Promise<FacilityRow[]>
       .gte("lng", box.minLng)
       .lte("lng", box.maxLng),
     "facilities",
+  );
+}
+
+/** Facilities in the box with a location (rule D1), from this mode's world (rule D2). */
+async function nearby(db: Db, box: BoundingBox, demoMode: boolean): Promise<LocatedFacility[]> {
+  return (await facilitiesInBox(db, box)).filter(
+    (f): f is LocatedFacility => hasLocation(f) && visibleInMode(f, demoMode),
   );
 }
 
@@ -164,7 +177,7 @@ export type CandidateService = {
 };
 
 export type SearchCandidate = {
-  facility: FacilityRow;
+  facility: LocatedFacility;
   /** Every searched service this facility offers (a chip such as Scan / X-ray covers several). */
   services: CandidateService[];
   /** The facility's row for the chosen card, or null (B5). Always null for "No card/cash". */
@@ -184,11 +197,13 @@ export type SearchInput = {
   lng: number;
   radiusKm: number;
   now: Date;
+  /** Rule D2: demo hospitals in demo mode, real ones otherwise. */
+  demoMode: boolean;
 };
 
 /** Facilities near the point that offer any of the services, with everything rules B, F, T and S1 need. */
 export async function getSearchCandidates(db: Db, input: SearchInput): Promise<SearchCandidate[]> {
-  const near = await facilitiesInBox(db, boundingBox(input.lat, input.lng, input.radiusKm));
+  const near = await nearby(db, boundingBox(input.lat, input.lng, input.radiusKm), input.demoMode);
   const offered = await offering(db, near.map((f) => f.id), input.serviceIds);
   const offeredBy = groupBy(offered, (o) => o.facility_id);
   const ids = [...offeredBy.keys()];
@@ -225,6 +240,49 @@ export async function getSearchCandidates(db: Db, input: SearchInput): Promise<S
       },
     ];
   });
+}
+
+// Screen 2, rule D3: real facilities with no confirmed services ----------------------------
+
+export type UnlistedCandidate = {
+  facility: LocatedFacility;
+  /** Any offered facility_services row? Then rule S1 searches it and rule D3 leaves it out. */
+  hasServices: boolean;
+  /** The chosen card's row (NHIS: listed by NHIA, badge B4), or null for No card / cash. */
+  link: FacilityInsurerRow | null;
+  reports: PublicReportRow[];
+};
+
+/** Real facilities near the point, with whether they have any service on record (rule D3). */
+export async function getUnlistedCandidates(
+  db: Db,
+  input: Omit<SearchInput, "serviceIds">,
+): Promise<UnlistedCandidate[]> {
+  const near = (await nearby(db, boundingBox(input.lat, input.lng, input.radiusKm), input.demoMode)).filter(
+    (f) => f.source !== "demo",
+  );
+  const ids = near.map((f) => f.id);
+  if (ids.length === 0) return [];
+  const card = input.insurerId ?? undefined;
+  const [offered, links, reports] = await Promise.all([
+    db
+      .from("facility_services")
+      .select("*")
+      .eq("offered", true)
+      .in("facility_id", ids)
+      .then((res) => rows(res, "services offered")),
+    card ? linksFor(db, ids, card) : Promise.resolve([]),
+    card ? reportsFor(db, ids, daysBefore(input.now, REPORT_WINDOW_DAYS), card) : Promise.resolve([]),
+  ]);
+  const withServices = new Set(offered.map((o) => o.facility_id));
+  const linkBy = new Map(links.map((l) => [l.facility_id, l]));
+  const reportsBy = groupBy(reports, (r) => r.facility_id);
+  return near.map((facility) => ({
+    facility,
+    hasServices: withServices.has(facility.id),
+    link: linkBy.get(facility.id) ?? null,
+    reports: reportsBy.get(facility.id) ?? [],
+  }));
 }
 
 // Screen 3: hospital detail ------------------------------------------------------------------
@@ -276,7 +334,7 @@ export async function getFacilityDetail(db: Db, facilityId: string, now: Date): 
 // Screen 6: emergency mode (rule S2) -----------------------------------------------------------
 
 export type EmergencyCandidate = {
-  facility: FacilityRow;
+  facility: LocatedFacility;
   /** Newest emergency status, or null (rule F). */
   status: CurrentStatusRow | null;
   /** Every card link, shown as information only. Never used to filter or order (rules 3 and S2). */
@@ -284,11 +342,10 @@ export type EmergencyCandidate = {
   reports: PublicReportRow[];
 };
 
-export async function getEmergencyCandidates(
-  db: Db,
-  input: { lat: number; lng: number; now: Date; radiusKm?: number },
-): Promise<EmergencyCandidate[]> {
-  const near = await facilitiesInBox(db, boundingBox(input.lat, input.lng, input.radiusKm ?? EMERGENCY_RADIUS_KM));
+export type EmergencyInput = { lat: number; lng: number; now: Date; radiusKm?: number; demoMode: boolean };
+
+export async function getEmergencyCandidates(db: Db, input: EmergencyInput): Promise<EmergencyCandidate[]> {
+  const near = await nearby(db, boundingBox(input.lat, input.lng, input.radiusKm ?? EMERGENCY_RADIUS_KM), input.demoMode);
   const offered = await offering(db, near.map((f) => f.id), ["emergency"]);
   const ids = offered.map((o) => o.facility_id);
   const [statuses, links, reports] = await Promise.all([
@@ -308,6 +365,46 @@ export async function getEmergencyCandidates(
       { facility, status: statusBy.get(id) ?? null, links: linksBy.get(id) ?? [], reports: reportsBy.get(id) ?? [] },
     ];
   });
+}
+
+export type NotCheckedCandidate = {
+  facility: LocatedFacility;
+  /** Has an emergency status row? Then rule S2 already lists it. */
+  hasEmergencyStatus: boolean;
+  /** Every card link, information only (rules 3 and S2). */
+  links: FacilityInsurerRow[];
+  reports: PublicReportRow[];
+};
+
+/** Rule S2 addition: real facilities near the point, and whether each has an emergency status. */
+export async function getEmergencyNotChecked(db: Db, input: EmergencyInput): Promise<NotCheckedCandidate[]> {
+  const near = (
+    await nearby(db, boundingBox(input.lat, input.lng, input.radiusKm ?? EMERGENCY_RADIUS_KM), input.demoMode)
+  ).filter((f) => f.source !== "demo");
+  const ids = near.map((f) => f.id);
+  if (ids.length === 0) return [];
+  const [statuses, links, reports] = await Promise.all([
+    statusFor(db, ids, ["emergency"]),
+    linksFor(db, ids),
+    reportsFor(db, ids, daysBefore(input.now, REPORT_WINDOW_DAYS)),
+  ]);
+  const withStatus = new Set(statuses.map((st) => st.facility_id));
+  const linksBy = groupBy(links, (l) => l.facility_id);
+  const reportsBy = groupBy(reports, (r) => r.facility_id);
+  return near.map((facility) => ({
+    facility,
+    hasEmergencyStatus: withStatus.has(facility.id),
+    links: linksBy.get(facility.id) ?? [],
+    reports: reportsBy.get(facility.id) ?? [],
+  }));
+}
+
+/** /admin "Needs a location": real facilities with location_source = none (rule D1). */
+export async function listNeedsLocation(db: Db): Promise<FacilityRow[]> {
+  return rows(
+    await db.from("facilities").select("*").eq("source", "nhia").eq("location_source", "none").order("name"),
+    "facilities that need a location",
+  );
 }
 
 // Screen 16: hospital morning check (rule M) ---------------------------------------------------------
@@ -342,7 +439,12 @@ export type InsurerNetwork = {
   searches: SearchDailyRow[];
 };
 
-export async function getInsurerNetwork(db: Db, insurerId: string, now: Date): Promise<InsurerNetwork | null> {
+export async function getInsurerNetwork(
+  db: Db,
+  insurerId: string,
+  now: Date,
+  demoMode: boolean,
+): Promise<InsurerNetwork | null> {
   const insurer = maybe<InsurerRow>(await db.from("insurers").select("*").eq("id", insurerId).maybeSingle(), "insurer");
   if (!insurer) return null;
   const since = daysBefore(now, INSURER_WINDOW_DAYS);
@@ -360,10 +462,17 @@ export async function getInsurerNetwork(db: Db, insurerId: string, now: Date): P
   ]);
 
   const ids = [...new Set([...links.map((l) => l.facility_id), ...reports.map((r) => r.facility_id)])];
-  const facilities = ids.length
-    ? rows(await db.from("facilities").select("*").in("id", ids), "facilities")
-    : [];
-  return { insurer, links, facilities, reports, searches };
+  const loaded = ids.length ? rows(await db.from("facilities").select("*").in("id", ids), "facilities") : [];
+  // Rule D2: the figures cover one world. The insurer view has only a demo login so far.
+  const facilities = loaded.filter((f) => visibleInMode(f, demoMode));
+  const shown = new Set(facilities.map((f) => f.id));
+  return {
+    insurer,
+    links: links.filter((l) => shown.has(l.facility_id)),
+    facilities,
+    reports: reports.filter((r) => shown.has(r.facility_id)),
+    searches,
+  };
 }
 
 // Search log (rule K) ---------------------------------------------------------------------------

@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
-import { resetDemo } from "./helpers";
+import { demoModeInEveryTest, resetDemo } from "./helpers";
+
+demoModeInEveryTest();
 
 // Prompt 6: screens 5, 6 and 13. Each test gets a fresh browser, so an empty phone.
 

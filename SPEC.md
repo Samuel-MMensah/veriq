@@ -39,7 +39,7 @@ If a session runs out of room mid-prompt, type **"Wrap up now: write the session
 
 **Non-negotiable rules**
 
-1. **Sample data only until Phase 2.** Every screen with data shows a "SAMPLE DATA" tag. Use invented hospital names only; never real hospitals in seed data.
+1. **Real facilities only from a named public source; demo facilities only in demo mode.** Real facilities come only from a named public source, for now the NHIA list of accredited providers. Demo facilities (`source = demo`) are invented and show only in demo mode (rule D2). The "SAMPLE DATA" tag shows whenever a demo facility is on the screen, and only then.
 2. **Never store patient identity.** No names or card numbers on the server. Saved cards live in the browser (IndexedDB). Reports carry only a random device ID and a hash.
 3. **The card never hides a hospital in emergency mode.** Emergency results sort by status and distance only.
 4. **Every fact has a source and a timestamp**, and the screen says which. No unsourced "available".
@@ -61,7 +61,7 @@ If a session runs out of room mid-prompt, type **"Wrap up now: write the session
 | --- | --- | --- | --- | --- |
 | 7 | First open | `/` (first visit only, then `/find`) | 1 | Promise, three points, language picker (English live, others marked "coming soon" until Phase 2), Get started, link to How we check |
 | 1 | Find care | `/find` | 1 | SAMPLE DATA tag; emergency banner to `/emergency`; service chips (Antenatal/maternity, See a doctor, Scan/X-ray, Lab test, Specialist, Dental); card picker (saved cards first, then NHIS, Cosmopolitan Health, Prudential, No card/cash); area from GPS or typed, default 5 km; button "Show hospitals that take {card}" |
-| 2 | Results | `/results?service=&card=&lat=&lng=` | 1 | Count and filters; badge legend; one card per hospital: name, distance, badge line (rule B), today's status for the chosen service, top-up (rule T); sort by rule S1; "How Veriq checks" link; Map button (Phase 2) |
+| 2 | Results | `/results?service=&card=&lat=&lng=` | 1 | Count and filters; badge legend; one card per hospital: name, distance, badge line (rule B), today's status for the chosen service, top-up (rule T); sort by rule S1; Call button on "Call first" cards; when nothing is found, a wider search and "See every hospital nearby"; "How Veriq checks" link; Map button (Phase 2) |
 | 3 | Hospital detail | `/facility/[id]` | 1 | Name, type, area, distance; Call (`tel:`), Directions (Google Maps URL); "Today" grid with status and update time; cards accepted, each with badge and source line; top-up note; button to report |
 | 4 | Was your card accepted? | `/facility/[id]/report` | 1 | Three options: fully covered, paid extra (optional amount and item chips: Scan, Drugs, Lab, Registration), refused; privacy note; Send queues the report (works offline) |
 | 11 | After a report | `/report/thanks` | 1 | What changed on the hospital page; counts of the user's reports (local) |
@@ -72,7 +72,7 @@ If a session runs out of room mid-prompt, type **"Wrap up now: write the session
 | 18 | Insurer network health | `/i/network` | 1 (read-only) | Four KPI tiles (rule K), "where members were turned away" table, coverage gaps |
 | 13 | Help: USSD and SMS | `/help` | 1 static, 2 live | Phase 1: explain the USSD menu and SMS reply, code shown as a placeholder, plus a tested `/api/ussd` handler. Phase 2: live through an aggregator. |
 | 8 | Map view | `/results/map` | 2 | OpenStreetMap (Leaflet) pins coloured by badge; bottom sheet for the selected hospital |
-| 9 | Saved and alerts | `/saved` | 2 | Saved hospitals (local); alerts when a saved hospital's badge or status changes; SMS alerts option |
+| 9 | Saved and alerts | `/saved` | 2 | Saved hospitals (local); alerts when a saved hospital's badge or status changes; SMS alerts option. Until then the Saved tab shows the last search (rule 8) |
 | 10 | Share with family | `/facility/[id]/share` | 2 | Plain-text plan; WhatsApp (`https://wa.me/?text=`), SMS (`sms:?body=`), copy |
 | 12 | Offline | global state | 2 | Offline banner, last saved area, queued reports, low-data mode |
 | 15 | Hospital: claim your page | `/h/onboard` | 2 | Three steps: details, services and cards, hours; names the morning-check contact; "verified" only after admin approval |
@@ -104,10 +104,10 @@ If a session runs out of room mid-prompt, type **"Wrap up now: write the session
 
 | Table | Key fields | Notes |
 | --- | --- | --- |
-| `facilities` | name, type (`public`, `mission`, `private`, `quasi`), region, district, area, lat, lng, phone, verified (bool), verified\_at, nhia\_listed (bool), is\_sample (bool) | Seed 15–20 invented Greater Accra facilities, all `is_sample = true` |
+| `facilities` | name, type (`public`, `mission`, `private`, `quasi`), region, district, area, lat, lng, phone, verified (bool), verified\_at, nhia\_listed (bool), is\_sample (bool), source (`nhia`, `demo`), source\_ref (the row or code in the source file), source\_date, nhia\_type (the facility type as the file writes it), location\_source (`osm`, `admin`, `none`), location\_checked\_at | Demo: 15–20 invented Greater Accra facilities, `source = demo`, `is_sample = true`. Real: imported from the NHIA list (Prompt 9), `source = nhia` (rules D1–D3) |
 | `services` | id (slug, e.g. `antenatal`), name, category | Seed: antenatal, delivery, c\_section, emergency, ultrasound, xray, ct, lab, gp, paediatrics, dental, obstetrician |
 | `facility_services` | facility\_id, service\_id, offered (bool), usual\_hours (text) | What a facility offers at all |
-| `status_updates` | facility\_id, service\_id, status (`open`, `closed`, `accepting`, `full`, `working`, `down`, `from_time`), from\_time, note, source (`hospital`, `admin`), created\_by | Append-only. Current status = newest row per facility and service. |
+| `status_updates` | facility\_id, service\_id, status (`open`, `closed`, `accepting`, `full`, `working`, `down`, `from_time`), from\_time, until\_time (nullable), note, source (`hospital`, `admin`), created\_by | Append-only. Current status = newest row per facility and service, until its `until_time` passes (rule F). |
 | `insurers` | name, kind (`public`, `private`) | Seed: NHIS, Cosmopolitan Health, Prudential, plus two invented private insurers |
 | `facility_insurers` | facility\_id, insurer\_id, listed\_by (`nhia`, `insurer`, `none`), hospital\_says (`accepts`, `does_not`, `partial`, null), hospital\_confirmed\_at | One row per pair. The hospital's own answer and the lists live here. |
 | `card_reports` | facility\_id, insurer\_id, service\_id (nullable), outcome (`covered`, `topup`, `refused`), amount\_ghs (nullable), item (`scan`, `drugs`, `lab`, `registration`, nullable), device\_hash, state (`live`, `held`, `rejected`) | No names, no card numbers, no IP addresses stored |
@@ -128,26 +128,38 @@ If a session runs out of room mid-prompt, type **"Wrap up now: write the session
 
 **B. Card badge for a facility and insurer.** Look at live reports from the last 30 days. Check in order; the first match wins.
 
-1. **B1 Reported refused:** at least 3 `refused` reports newer than `hospital_confirmed_at`, and more refused than accepted (`covered` + `topup`). Orange. Text: "Listed, but {n} patients were refused".
+1. **B1 Reported refused:** at least 3 `refused` reports newer than `hospital_confirmed_at`, and more refused than accepted (`covered` + `topup`). Orange. Text: "Listed, but {n} patients were refused in the last 30 days" ({n} counts every refusal in the last 30 days).
 2. **B2 Hospital confirmed:** `hospital_says` is `accepts` or `partial`, confirmed within 14 days. Dark green. Text: "Confirmed by hospital {age} ago" (add "with top-ups" when `partial`).
 3. **B2x Hospital says no:** `hospital_says = does_not` within 14 days. Leave out of card searches; show "Not accepted (hospital)" on the detail page.
-4. **B3 Patients confirmed:** at least 3 accepted reports and more accepted than refused. Light green. Text: "{n} patients confirmed this month".
+4. **B3 Patients confirmed:** at least 3 accepted reports and more accepted than refused. Light green. Text: "{n} patients confirmed in the last 30 days".
 5. **B4 On a list, not checked:** `listed_by` is `nhia` or `insurer`. Grey. Text: "On {NHIA/insurer} list, not checked yet. Call first".
 6. **B5 Unknown:** none of the above. Leave out of card searches; show under "No card/cash".
 
-**F. Status freshness** (per service, from the newest `status_updates` row): under 24 hours shown normally with the time; 24–72 hours adds "may have changed"; over 72 hours greyed with "not updated recently"; no row ever shows "No update yet".
+**Answer wording (team decision 2026-10-24).** Each badge is shown as an answer first, then its text above as the source line: B2 and B3 "Takes {card}"; B4 "{card} not confirmed yet"; B1 "Patients report {card} refusals"; B2x "Does not take {card}"; B5 "No {card} information".
 
-**T. Top-ups.** With at least 2 `topup` reports in 60 days for the same facility, insurer and item, show "{item} top-up about GH¢ {median}", rounded to the nearest 5. A newer hospital `confirm_topup` shows "confirmed by hospital"; a newer `correct_topup` replaces the amount until at least 2 newer patient reports disagree.
+**F. Status freshness** (per service, from the newest `status_updates` row): under 24 hours shown normally with the time; 24–72 hours adds "may have changed"; over 72 hours greyed with "not updated recently"; no row ever shows "No update yet". A status row may have an `until_time`. Once that time has passed, the status no longer counts as current: the screen shows "Was {status} till {time}. Call to check", and rules S1 and S2 sort it as unknown.
+
+**T. Top-ups.** With at least 2 `topup` reports in 60 days for the same facility, insurer and item, show "{item} top-up about GH¢ {median} ({n} patients, last 60 days)", rounded to the nearest 5. A newer hospital `confirm_topup` shows "confirmed by hospital"; a newer `correct_topup` replaces the amount until at least 2 newer patient reports disagree.
 
 **S1. Results order.** Keep facilities within the radius that offer the service and whose badge is B1–B4. Sort by badge (B2, B3, B4, then B1 last), then today's status for that service (open or accepting, then unknown, then closed or full), then distance. Distance is straight-line (haversine) in km, one decimal place.
 
-**S2. Emergency order.** Facilities offering `emergency` within 15 km, sorted by emergency status (accepting, then unknown or stale, then full), then distance. **Never filter or reorder by card.** Show the user's cards' badges as information only.
+**S2. Emergency order.** Facilities offering `emergency` within 15 km, sorted by emergency status (accepting, then unknown or stale, then full), then distance. **Never filter or reorder by card.** Show the user's cards' badges as information only. After the units with an emergency status, list real facilities whose NHIA type is a hospital or polyclinic, with no emergency status, as "Emergency not checked. Call first", sorted by distance, within 15 km. Pharmacies, clinics and facilities with no location are not listed in emergency mode. The card still never filters or reorders anything (rule 3).
 
 **A. Report limits.** `device_hash` = SHA-256 of a random device id plus a server-side secret. One report per device per facility per 7 days; later attempts get a polite "already counted" message. More than 10 reports for one facility in an hour puts new ones in `held`. Held and rejected reports never count.
 
 **K. Insurer figures, last 30 days:** hospitals on list (`listed_by = insurer`); confirmed (those at B2); members refused (count of `refused` reports, and the number of facilities); member searches (searches with that card, from a counts-only `search_daily` table: insurer\_id, day, area\_cell, had\_confirmed\_result); coverage gaps (area cells of about 2 km where searches found no B2 or B3 facility within 5 km).
 
 **M. Morning check.** Hospital staff get an SMS reminder at 07:30 (stubbed to the console in Phase 1). Publishing writes one `status_updates` row per changed service and sets `hospital_confirmed_at` for every card they confirm.
+
+**D. Directory (real facilities).**
+
+1. **D1 Directory facts:** A real facility carries only what its source file says, plus a location from OpenStreetMap or an admin. Every directory fact shows its source and month: "From the NHIA list, October 2026". A facility with `location_source = none` is left out of every distance search and emergency mode, and listed on /admin under "Needs a location".
+2. **D2 Demo separation:** Demo facilities show only with the demo login cookie or `?demo=1`. Real facilities never get demo reports, statuses, top-ups or hospital answers.
+3. **D3 Services not listed:** For a service search with NHIS or No card / cash, real facilities with no confirmed services appear in a second group after the rule S1 results, headed "Services not listed. Call to ask". The group is sorted by distance only and shows the 10 nearest, then "Show more". Each card shows the NHIA type as written in the file and, for NHIS, its rule B badge (B4). Pharmacies never appear in this group. A service is never guessed from the facility type. Searches with a private card don't show this group.
+
+**R. Reports on real facilities.**
+
+1. **R1:** With `REPORTS_LIVE=off`, reports on real facilities are closed on the web and on USSD. The report screen says "Reporting opens soon. Call the hospital to check your card." Demo facilities keep reporting. `REPORTS_LIVE` turns on only after the Data Protection Commission registration.
 
 ## 5. Stack and folders
 
@@ -195,7 +207,7 @@ veriq/
 | Phase | Goal | Prompts | Gate (all must be true) |
 | --- | --- | --- | --- |
 | 1. Pitch demo | A deployed app on sample data that tells the whole story in 90 seconds | 0–8 | Demo script (section 9) passes as a Playwright test and by hand on a phone; all rule tests pass; deployed URL works on 3G throttling; every data screen shows SAMPLE DATA |
-| 2. Pilot | Real data for about 20 Accra hospitals and one insurer | 9–16 | Data Protection Commission registration done; real hospital logins; reports pass rule A in production; USSD works through an aggregator; admin can verify hospitals |
+| 2. Pilot | Real data for about 20 Accra hospitals and one insurer | 9–17 | Data Protection Commission registration done; real hospital logins; reports pass rule A in production; USSD works through an aggregator; admin can verify hospitals |
 | 3. Scale | More regions and the national link | 17+ | Signed data-sharing agreement with GHS and NAS before any national-link code goes live |
 
 **Why phases:** a working demo exists early even if time runs out; each session is small enough to review and commit; Claude Code's memory resets between sessions, so small pieces with written handovers lose less; and the pilot should be shaped by what the validation calls and judges say.
@@ -387,22 +399,54 @@ Check the Phase 1 gate in section 6 item by item and report each one as met or n
 End-of-session protocol.
 ```
 
-### Phase 2: pilot (write these prompts in full after the pitch)
+### Phase 2: pilot (write each prompt in full here before running it)
 
 | Prompt | Scope |
 | --- | --- |
-| 9 | Real staff auth (phone and email codes), admin verification of hospitals, held-report review |
-| 10 | Screen 15, hospital onboarding, plus SMS morning-check reminders |
-| 11 | Screen 8, map view with Leaflet and OpenStreetMap |
-| 12 | Screens 9 and 10: saved hospitals, alerts, sharing |
-| 13 | Screen 12: full offline and low-data mode |
-| 14 | Live SMS and USSD through the chosen aggregator |
-| 15 | Screen 19: insurer list upload, matching and conflicts |
-| 16 | Languages (Twi, Ga, Ewe, Dagbani, Hausa), privacy notice, pilot analytics |
+| 9 | Real NHIA directory for Greater Accra (written in full below) |
+| 10 | Real staff auth (phone and email codes), admin verification of hospitals, held-report review |
+| 11 | Screen 15, hospital onboarding, plus SMS morning-check reminders |
+| 12 | Screen 8, map view with Leaflet and OpenStreetMap |
+| 13 | Screens 9 and 10: saved hospitals, alerts, sharing |
+| 14 | Screen 12: full offline and low-data mode |
+| 15 | Live SMS and USSD through the chosen aggregator |
+| 16 | Screen 19: insurer list upload, matching and conflicts |
+| 17 | Languages (Twi, Ga, Ewe, Dagbani, Hausa), privacy notice, pilot analytics |
+
+**Prompt 9: real NHIA directory for Greater Accra**
+
+```text
+Start-of-session protocol first. Then build Prompt 9 from SPEC.md: real NHIA directory for Greater Accra.
+
+1. Import: read the NHIA accredited-provider file in data/nhia/ and its SOURCE.md. Write a tested
+   importer (lib/import/nhia.ts) that keeps name, type, district, area, phone (only if the file has
+   one) and the NHIA code. Never invent or fill in a fact the file doesn't have. Rows the importer
+   can't read go to a report, not the database.
+2. Locations: match each facility to OpenStreetMap by name and district (credit OpenStreetMap,
+   ODbL). Store location_source = osm only for a confident match; otherwise none, and list it on
+   /admin under "Needs a location". An admin can set it by hand (location_source = admin).
+3. Facts allowed for real facilities: facility_insurers row for NHIS with listed_by = nhia (badge B4),
+   nothing for private insurers (B5), no status rows, no reports, no top-ups, no hospital answers.
+   Write a test that fails if any real facility has an invented report, status or hospital answer.
+4. Rules D1–D3, the S2 addition and the F until_time change in lib/rules with tests first, citing
+   rule ids. Show the source line ("From the NHIA list, {month year}") on results, hospital and
+   emergency screens.
+5. Demo mode: demo hospitals (source = demo) show only when the demo login cookie or ?demo=1 is
+   set. Keep tests/e2e/demo.spec.ts passing in demo mode, and "Reset demo data" working.
+6. SAMPLE DATA: show the tag only while a demo hospital is on the screen (rule 1 as changed).
+   Test both cases.
+7. Reports: rule R1 (REPORTS_LIVE=off closes reports on real hospitals, web and USSD). Test it.
+8. Results: a Call button on "Call first" cards (restructure the card so the link and the button
+   aren't nested). Insurer table at 390 px: stacked rows.
+9. Check on the live site: a search near Dansoman shows real NHIA facilities with the source line,
+   no SAMPLE DATA tag, and no fact without a source.
+Do not touch auth, admin verification of hospitals or USSD going live: those are later prompts.
+End-of-session protocol.
+```
 
 ### Phase 3: scale (outline only)
 
-17: screen 17, the national bed-system link, built only after a signed agreement. 18: regions beyond Greater Accra. 19: insurer data feed (API) and paid plans.
+18: screen 17, the national bed-system link, built only after a signed agreement. 19: regions beyond Greater Accra. 20: insurer data feed (API) and paid plans.
 
 ## 9. Demo script and definition of done
 

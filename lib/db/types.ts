@@ -2,6 +2,8 @@
 // Once a Supabase project exists, `npx supabase gen types typescript` can replace this file.
 
 export type FacilityType = "public" | "mission" | "private" | "quasi";
+export type FacilitySource = "nhia" | "demo";
+export type LocationSource = "osm" | "admin" | "none";
 export type ServiceStatus = "open" | "closed" | "accepting" | "full" | "working" | "down" | "from_time";
 export type StatusSource = "hospital" | "admin";
 export type InsurerKind = "public" | "private";
@@ -16,17 +18,30 @@ export type StaffRole = "hospital" | "insurer" | "admin";
 export type FacilityRow = {
   id: string;
   name: string;
-  type: FacilityType;
+  /** Ownership. null for a real facility whose source file doesn't say (rule D1). */
+  type: FacilityType | null;
   region: string;
   district: string;
-  area: string;
-  lat: number;
-  lng: number;
+  /** null when the source file leaves it blank. */
+  area: string | null;
+  /** null when location_source is "none" (rule D1). */
+  lat: number | null;
+  lng: number | null;
   phone: string | null;
   verified: boolean;
   verified_at: string | null;
   nhia_listed: boolean;
   is_sample: boolean;
+  /** "demo" for the invented hospitals (rule 1), "nhia" for the NHIA list (rules D1–D3). */
+  source: FacilitySource;
+  /** The row or code in the source file. */
+  source_ref: string | null;
+  /** "YYYY-MM-DD": when the source list was taken. */
+  source_date: string | null;
+  /** The facility type as the source file writes it, e.g. "PRIMARY HOSPITAL". */
+  nhia_type: string | null;
+  location_source: LocationSource;
+  location_checked_at: string | null;
   created_at: string;
 };
 
@@ -52,6 +67,8 @@ export type StatusUpdateRow = {
   status: ServiceStatus;
   /** "HH:MM:SS" when status is "from_time". */
   from_time: string | null;
+  /** "HH:MM:SS": the status holds until then (rule F), or null. */
+  until_time: string | null;
   note: string | null;
   source: StatusSource;
   created_by: string | null;
@@ -146,7 +163,7 @@ type View<Row> = { Row: Row; Relationships: [] };
 export type Database = {
   public: {
     Tables: {
-      facilities: Table<FacilityRow, "name" | "type" | "region" | "district" | "area" | "lat" | "lng">;
+      facilities: Table<FacilityRow, "name" | "region" | "district">;
       services: Table<ServiceRow, "id" | "name" | "category">;
       facility_services: Table<FacilityServiceRow, "facility_id" | "service_id">;
       status_updates: Table<StatusUpdateRow, "facility_id" | "service_id" | "status" | "source">;

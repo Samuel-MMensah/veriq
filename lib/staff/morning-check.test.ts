@@ -89,7 +89,7 @@ describe("publishMorningCheck (rule M)", () => {
     const t = new Date();
     const services = new Map((await listServices(fakeDb(pg, "anon"))).map((s) => [s.id, s.name]));
     const results = buildResults({
-      candidates: await getSearchCandidates(fakeDb(pg, "anon"), { serviceIds: ["antenatal"], insurerId: NHIS, ...DANSOMAN, radiusKm: 5, now: t }),
+      candidates: await getSearchCandidates(fakeDb(pg, "anon"), { serviceIds: ["antenatal"], insurerId: NHIS, ...DANSOMAN, radiusKm: 5, now: t, demoMode: true }),
       serviceNames: services,
       withCard: true,
       origin: DANSOMAN,

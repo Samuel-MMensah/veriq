@@ -2,6 +2,7 @@
 // Never logs the body or the caller's address (rule 2).
 import { isLocalData, serviceDb } from "@/lib/db/server";
 import { submitReport } from "@/lib/reports/submit";
+import { reportsLive } from "@/lib/rules/directory";
 
 const MAX_BODY_BYTES = 2_000;
 const LOCAL_ONLY_SECRET = "local-data-mode-only";
@@ -27,8 +28,14 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await submitReport({ db: await serviceDb(), body, secret, now: new Date() });
-    const status = { counted: 201, held: 201, already_counted: 409, invalid: 400 }[result.status];
+    const result = await submitReport({
+      db: await serviceDb(),
+      body,
+      secret,
+      now: new Date(),
+      reportsLive: reportsLive(process.env.REPORTS_LIVE),
+    });
+    const status = { counted: 201, held: 201, already_counted: 409, invalid: 400, closed: 403 }[result.status];
     return json(result, status);
   } catch (e) {
     console.error("Report failed:", (e as Error).message);

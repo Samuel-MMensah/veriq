@@ -10,8 +10,12 @@ import { agoText, ageMs } from "@/lib/rules/time";
 export const metadata: Metadata = { title: "Insurer network health" };
 
 const pct = (share: number) => `${Math.round(share * 100)}%`;
-// The refusals table scrolls inside a "relative" box, so its visually hidden header can't widen the page (rule 7).
+// Rule 7: under 640 px the refusals table reads as stacked rows, each value with its own label, so it never
+// scrolls sideways at 390 px. The header stays for screen readers inside a "relative" box.
 const n = (x: number) => x.toLocaleString("en-GB");
+/** A cell as one "label  value" line in the stacked layout. */
+const STACKED =
+  "max-sm:flex max-sm:justify-between max-sm:gap-3 max-sm:py-1 max-sm:before:font-normal max-sm:before:text-ink/70 max-sm:before:content-[attr(data-label)]";
 
 // Screen 18, read-only (rule K). Phase 1: the NHIS demo login.
 export default async function NetworkPage() {
@@ -28,7 +32,8 @@ export default async function NetworkPage() {
   // Insurer staff see only their own insurer's figures (SPEC section 3, rule K).
   const db = await serviceDb();
   const now = new Date();
-  const network = await getInsurerNetwork(db, staff.insurerId, now);
+  // Rule D2: the insurer view has only a demo login so far, so it shows the demo world.
+  const network = await getInsurerNetwork(db, staff.insurerId, now, true);
   if (!network) throw new Error("The demo insurer is missing from the data. Re-run the seed.");
   const k = insurerFigures({
     facilities: network.facilities,
@@ -69,9 +74,9 @@ export default async function NetworkPage() {
             {k.turnedAway.length === 0 ? (
               <p className="mt-2 text-ink/70">No refusals reported in the last 30 days.</p>
             ) : (
-              <div className="relative mt-2 overflow-x-auto">
-                <table className="w-full min-w-[34rem] text-left">
-                  <thead className="text-sm text-ink/70">
+              <div className="relative mt-2">
+                <table className="w-full text-left max-sm:block">
+                  <thead className="text-sm text-ink/70 max-sm:sr-only">
                     <tr className="border-b border-ink/10">
                       <th scope="col" className="py-2 pr-3 font-semibold">Hospital</th>
                       <th scope="col" className="py-2 pr-3 font-semibold">Your list says</th>
@@ -80,22 +85,22 @@ export default async function NetworkPage() {
                       <th scope="col" className="py-2"><span className="sr-only">Action</span></th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="max-sm:block">
                     {k.turnedAway.map((row) => {
                       const phone = phoneOf.get(row.facilityId);
                       return (
-                        <tr key={row.facilityId} className="border-b border-ink/10 last:border-0">
-                          <th scope="row" className="py-3 pr-2 font-semibold">{row.name}</th>
-                          <td className="py-3 pr-2">{row.listed ? "In network" : "Not listed"}</td>
-                          <td className={`py-3 pr-2 font-bold ${row.refusals ? "text-refused-ink" : "text-brand"}`}>{row.refusals}</td>
-                          <td className="py-3 pr-2 text-ink/80">
+                        <tr key={row.facilityId} className="border-b border-ink/10 last:border-0 max-sm:block max-sm:py-3">
+                          <th scope="row" className="py-3 pr-2 font-semibold max-sm:block max-sm:py-0 max-sm:text-lg">{row.name}</th>
+                          <td data-label="Your list says" className={`py-3 pr-2 ${STACKED}`}>{row.listed ? "In network" : "Not listed"}</td>
+                          <td data-label="Refusals" className={`py-3 pr-2 font-bold ${STACKED} ${row.refusals ? "text-refused-ink" : "text-brand"}`}>{row.refusals}</td>
+                          <td data-label="Last report" className={`py-3 pr-2 text-ink/80 ${STACKED}`}>
                             {row.refusals === 0 && !row.listed
                               ? `${row.accepted} members served`
                               : row.lastReportAt
                                 ? agoText(ageMs(row.lastReportAt, now))
                                 : "–"}
                           </td>
-                          <td className="py-3 text-right">
+                          <td className="py-3 text-right max-sm:block max-sm:pb-0 max-sm:pt-2 max-sm:text-left">
                             {row.listed ? (
                               phone ? (
                                 <a

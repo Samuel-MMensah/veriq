@@ -1,0 +1,5881 @@
+{
+"source": "OpenStreetMap via the Overpass API",
+"licence": "ODbL 1.0, © OpenStreetMap contributors",
+"osm_base": "2026-10-26T08:48:40Z",
+"places": [
+{
+"osm": "node/10204507604",
+"name": "Pharmatrust",
+"lat": 5.60859,
+"lng": -0.244968
+},
+{
+"osm": "node/10246620499",
+"name": "Medcare Plus Clinic",
+"lat": 5.713011,
+"lng": -0.205791
+},
+{
+"osm": "node/10246647004",
+"name": "Mizfred Pharmacy",
+"lat": 5.714858,
+"lng": -0.183264
+},
+{
+"osm": "node/10249822220",
+"name": "Crystal Tabs Pharmacy",
+"lat": 5.661339,
+"lng": -0.237133
+},
+{
+"osm": "node/10249852524",
+"name": "Unicom",
+"lat": 5.668096,
+"lng": -0.239779
+},
+{
+"osm": "node/10249860093",
+"name": "Ampoma",
+"lat": 5.667979,
+"lng": -0.242554
+},
+{
+"osm": "node/10253328347",
+"name": "Sonotech Medical Center",
+"lat": 5.545287,
+"lng": -0.34479
+},
+{
+"osm": "node/10261041505",
+"name": "Messiah Pharmacy",
+"lat": 5.610098,
+"lng": -0.234288
+},
+{
+"osm": "node/10261046914",
+"name": "Rebeacon Chemists Limited",
+"lat": 5.66594,
+"lng": -0.204296
+},
+{
+"osm": "node/10264578937",
+"name": "Top-up",
+"lat": 5.751346,
+"lng": -0.008937
+},
+{
+"osm": "node/10274985522",
+"name": "Paradise Diagnostic Centre",
+"lat": 5.607954,
+"lng": -0.253542
+},
+{
+"osm": "node/10279563584",
+"name": "Country Pharmacy and Laboratory",
+"lat": 5.584811,
+"lng": -0.274249
+},
+{
+"osm": "node/10280126882",
+"name": "Success Key Pharmacy and Mini Mart",
+"lat": 5.603767,
+"lng": -0.243498
+},
+{
+"osm": "node/10281418286",
+"name": "Origin Chemist",
+"lat": 5.779337,
+"lng": -0.000288
+},
+{
+"osm": "node/10281418287",
+"name": "Mocel Pharmacy",
+"lat": 5.775165,
+"lng": -0.001406
+},
+{
+"osm": "node/10284183819",
+"name": "Atomic Road Pharmacy",
+"lat": 5.667736,
+"lng": -0.207711
+},
+{
+"osm": "node/10284262083",
+"name": "Alpat Pharmacy",
+"lat": 5.521889,
+"lng": -0.46925
+},
+{
+"osm": "node/10284263796",
+"name": "Vivis Pharma",
+"lat": 5.528026,
+"lng": -0.452498
+},
+{
+"osm": "node/10284291156",
+"name": "Ecp",
+"lat": 5.576467,
+"lng": -0.274563
+},
+{
+"osm": "node/10284300758",
+"name": "Helmart",
+"lat": 5.523797,
+"lng": -0.458848
+},
+{
+"osm": "node/10284310237",
+"name": "Cole Pharmacy",
+"lat": 5.522131,
+"lng": -0.473816
+},
+{
+"osm": "node/10285782792",
+"name": "Hass West Africa Hearing Clinic",
+"lat": 5.571442,
+"lng": -0.236058
+},
+{
+"osm": "node/10285786226",
+"name": "Wellmark Specialist Hospital",
+"lat": 5.681192,
+"lng": -0.193366
+},
+{
+"osm": "node/10285787760",
+"name": "Unicorn Chemist Limited",
+"lat": 5.571598,
+"lng": -0.23314
+},
+{
+"osm": "node/10285832155",
+"name": "Med-touch pharmacy",
+"lat": 5.571544,
+"lng": -0.238091
+},
+{
+"osm": "node/10285834393",
+"name": "Bloom physiotherapy clinic",
+"lat": 5.5713,
+"lng": -0.236544
+},
+{
+"osm": "node/10286595293",
+"name": "Global Star HealthCenter",
+"lat": 5.675363,
+"lng": -0.181885
+},
+{
+"osm": "node/10289599302",
+"name": "Pakscare Pharmacy",
+"lat": 5.680633,
+"lng": -0.183309
+},
+{
+"osm": "node/10296275200",
+"name": "PillBox Phamacy",
+"lat": 5.678411,
+"lng": -0.174171
+},
+{
+"osm": "node/10302249979",
+"name": "Abokobi Pharmacy",
+"lat": 5.731763,
+"lng": -0.204985
+},
+{
+"osm": "node/10307345655",
+"name": "Ascot Pharmacy, Wholesale",
+"lat": 5.606678,
+"lng": -0.247947
+},
+{
+"osm": "node/10307345656",
+"name": "Unicaom Chemist Limited, Wholesale",
+"lat": 5.606693,
+"lng": -0.247924
+},
+{
+"osm": "node/10537834823",
+"name": "Inkoom Hospital",
+"lat": 5.633705,
+"lng": -0.098333
+},
+{
+"osm": "node/10565336409",
+"name": "Diplomat Pharmacy",
+"lat": 5.599153,
+"lng": -0.081175
+},
+{
+"osm": "node/10603797382",
+"name": "Albany Specialist Clinic",
+"lat": 5.670142,
+"lng": -0.183843
+},
+{
+"osm": "node/10603809047",
+"name": "Akcess Dental",
+"lat": 5.669824,
+"lng": -0.182632
+},
+{
+"osm": "node/10603826855",
+"name": "Happy Health Haven",
+"lat": 5.668981,
+"lng": -0.186599
+},
+{
+"osm": "node/10606956953",
+"name": "Expert's Hand Clinic",
+"lat": 5.677701,
+"lng": -0.17958
+},
+{
+"osm": "node/10608398377",
+"name": "Unity Medical Center",
+"lat": 5.677748,
+"lng": -0.175557
+},
+{
+"osm": "node/10608637242",
+"name": "Apanyin Pharmacy",
+"lat": 5.679502,
+"lng": -0.175068
+},
+{
+"osm": "node/10610469636",
+"name": "Haatso Pharmacy",
+"lat": 5.677548,
+"lng": -0.202807
+},
+{
+"osm": "node/10617514574",
+"name": "Pharmatrust",
+"lat": 5.60547,
+"lng": -0.252981
+},
+{
+"osm": "node/10633801926",
+"name": "MedAid Pharmacy",
+"lat": 5.645886,
+"lng": -0.14367
+},
+{
+"osm": "node/10639721427",
+"name": "Bemuah Royal Hospital",
+"lat": 5.645973,
+"lng": -0.156896
+},
+{
+"osm": "node/10650638987",
+"name": "Offshore Pharmacy",
+"lat": 5.676674,
+"lng": -0.176438
+},
+{
+"osm": "node/10655643017",
+"name": "Leding Medical Laboratory",
+"lat": 5.644821,
+"lng": -0.156084
+},
+{
+"osm": "node/10655651666",
+"name": "Cosmopolitan Health",
+"lat": 5.644574,
+"lng": -0.155456
+},
+{
+"osm": "node/10691098344",
+"name": "Eben Kweku Newton Licensed Chemical Shop",
+"lat": 5.731891,
+"lng": -0.203371
+},
+{
+"osm": "node/10768781305",
+"name": "Sonrisa Dental Clinic",
+"lat": 5.584042,
+"lng": -0.137745
+},
+{
+"osm": "node/10775480368",
+"name": "Mikado Herbal Clinic",
+"lat": 5.548343,
+"lng": -0.40516
+},
+{
+"osm": "node/10833790628",
+"name": "St. Andrew Catholic Hospital",
+"lat": 5.924462,
+"lng": 0.017678
+},
+{
+"osm": "node/10891372642",
+"name": "Nolan Group Pharmacy",
+"lat": 5.647088,
+"lng": -0.076449
+},
+{
+"osm": "node/10891372645",
+"name": "Alpha and Omega Chiropractic Health Care",
+"lat": 5.6478,
+"lng": -0.07331
+},
+{
+"osm": "node/10891502542",
+"name": "Valley View Clinic",
+"lat": 5.615156,
+"lng": -0.198284
+},
+{
+"osm": "node/10891514522",
+"name": "MMC Polyclinic",
+"lat": 5.612022,
+"lng": -0.193867
+},
+{
+"osm": "node/10891515059",
+"name": "Van J Eye Care",
+"lat": 5.612639,
+"lng": -0.198234
+},
+{
+"osm": "node/10891959551",
+"name": "Health Angels Pharmaceuticals",
+"lat": 5.626195,
+"lng": -0.255077
+},
+{
+"osm": "node/10891973969",
+"name": "Bendi Chemist Limited",
+"lat": 5.630816,
+"lng": -0.266249
+},
+{
+"osm": "node/10912960050",
+"name": "Arlin Pharmacy",
+"lat": 5.650696,
+"lng": -0.071099
+},
+{
+"osm": "node/10943923926",
+"name": "Robinson Dental Clinic",
+"lat": 5.651038,
+"lng": -0.069258
+},
+{
+"osm": "node/10948757093",
+"name": "Power Shower Pharmacy",
+"lat": 5.648972,
+"lng": -0.076475
+},
+{
+"osm": "node/10948896149",
+"name": "Hutch Pharma Limited",
+"lat": 5.641894,
+"lng": -0.076497
+},
+{
+"osm": "node/10957156755",
+"name": "Landmark Medical Center",
+"lat": 5.653532,
+"lng": -0.075951
+},
+{
+"osm": "node/10957259148",
+"name": "X-Perts Pharmacy",
+"lat": 5.652385,
+"lng": -0.076509
+},
+{
+"osm": "node/10962117777",
+"name": "Makay Pharmacy Limited",
+"lat": 5.627397,
+"lng": -0.067892
+},
+{
+"osm": "node/10965601562",
+"name": "Aide Chemist Pharmacy",
+"lat": 5.63237,
+"lng": -0.076362
+},
+{
+"osm": "node/10965634840",
+"name": "De Georges Pharmacy",
+"lat": 5.629134,
+"lng": -0.076384
+},
+{
+"osm": "node/10965661487",
+"name": "Link 12 Pharmacy",
+"lat": 5.633545,
+"lng": -0.076346
+},
+{
+"osm": "node/10965712633",
+"name": "Jewjef Pharmacy",
+"lat": 5.633633,
+"lng": -0.072769
+},
+{
+"osm": "node/10967499922",
+"name": "Azater Health Services Limited",
+"lat": 5.645144,
+"lng": -0.088255
+},
+{
+"osm": "node/10967499923",
+"name": "American Pharmacy",
+"lat": 5.644915,
+"lng": -0.085433
+},
+{
+"osm": "node/10967534119",
+"name": "Strong Pharmacy",
+"lat": 5.645137,
+"lng": -0.094169
+},
+{
+"osm": "node/10967587026",
+"name": "Eleomax Pharmacy Limited",
+"lat": 5.62711,
+"lng": -0.067408
+},
+{
+"osm": "node/10970871490",
+"name": "Santa Theres Pharmacy",
+"lat": 5.628528,
+"lng": -0.083994
+},
+{
+"osm": "node/10980545163",
+"name": "Rhino Pharmacy",
+"lat": 5.653776,
+"lng": -0.064156
+},
+{
+"osm": "node/10997377831",
+"name": "Senes Pharmacy",
+"lat": 5.622034,
+"lng": -0.056589
+},
+{
+"osm": "node/10997377832",
+"name": "Lotus Opticals",
+"lat": 5.621975,
+"lng": -0.056552
+},
+{
+"osm": "node/11002754694",
+"name": "Life aid Pharmacy",
+"lat": 5.635058,
+"lng": -0.091186
+},
+{
+"osm": "node/11002789842",
+"name": "Lashibi Chemists Limited",
+"lat": 5.648936,
+"lng": -0.063843
+},
+{
+"osm": "node/11002821720",
+"name": "Top in Town Pharmacy and Mart",
+"lat": 5.644841,
+"lng": -0.09233
+},
+{
+"osm": "node/11021793792",
+"name": "Ebus Dental Clinic",
+"lat": 5.637152,
+"lng": -0.076636
+},
+{
+"osm": "node/11021793793",
+"name": "Jan-Aid Pharmacy",
+"lat": 5.638118,
+"lng": -0.076519
+},
+{
+"osm": "node/11022159300",
+"name": "Quest Medical Imaging",
+"lat": 5.622932,
+"lng": -0.073178
+},
+{
+"osm": "node/11043913050",
+"name": "LLoylan Pharmacy Limited",
+"lat": 5.632306,
+"lng": -0.06818
+},
+{
+"osm": "node/11056783508",
+"name": "Top up pharmacy",
+"lat": 5.632577,
+"lng": -0.013276
+},
+{
+"osm": "node/11068707797",
+"name": "Phinas Pharmacy",
+"lat": 5.624524,
+"lng": -0.075967
+},
+{
+"osm": "node/11068707802",
+"name": "PEB Dental Clinic",
+"lat": 5.624524,
+"lng": -0.07613
+},
+{
+"osm": "node/11082706568",
+"name": "Scanport Healthcare and Medical Imaging",
+"lat": 5.532882,
+"lng": -0.237223
+},
+{
+"osm": "node/11088949005",
+"name": "Jedna Pharmacy",
+"lat": 5.584705,
+"lng": -0.127468
+},
+{
+"osm": "node/11128842745",
+"name": "CBV",
+"lat": 5.631975,
+"lng": -0.095312
+},
+{
+"osm": "node/11128863916",
+"name": "East Cantonments Pharmacy",
+"lat": 5.626774,
+"lng": -0.085288
+},
+{
+"osm": "node/11128865424",
+"name": "Origin Chemist",
+"lat": 5.639377,
+"lng": -0.106924
+},
+{
+"osm": "node/11168489914",
+"name": "Efan Victory Clinic",
+"lat": 5.598531,
+"lng": -0.198806
+},
+{
+"osm": "node/11181499537",
+"name": "Yilo Krobo District Hospital",
+"lat": 6.069997,
+"lng": -0.029313
+},
+{
+"osm": "node/11212296537",
+"name": "Origin Chemist",
+"lat": 5.616182,
+"lng": -0.092003
+},
+{
+"osm": "node/11248397639",
+"name": "Over the Counter",
+"lat": 5.592122,
+"lng": -0.406393
+},
+{
+"osm": "node/11257481222",
+"name": "Namaata Adam Clinic",
+"lat": 5.672711,
+"lng": -0.146134
+},
+{
+"osm": "node/11265230176",
+"name": "Torgorne Health Centre",
+"lat": 6.117057,
+"lng": 0.13749
+},
+{
+"osm": "node/11281141572",
+"name": "Biakoye",
+"lat": 5.548246,
+"lng": -0.209264
+},
+{
+"osm": "node/11328053369",
+"name": "Panacea",
+"lat": 5.634646,
+"lng": -0.135081
+},
+{
+"osm": "node/11336521099",
+"name": "Dosty pharmacy",
+"lat": 5.734147,
+"lng": 0.030071
+},
+{
+"osm": "node/11384240052",
+"name": "Nadorg",
+"lat": 5.604581,
+"lng": -0.202138
+},
+{
+"osm": "node/11384651013",
+"name": "Al- Fridaws",
+"lat": 5.646276,
+"lng": -0.330656
+},
+{
+"osm": "node/11408642496",
+"name": "Ga North Municipal Hospital",
+"lat": 5.655317,
+"lng": -0.277801
+},
+{
+"osm": "node/11415633024",
+"name": "Speed Hospital",
+"lat": 5.747865,
+"lng": -0.029493
+},
+{
+"osm": "node/11445795963",
+"name": "Krobea Pharmacy",
+"lat": 5.606285,
+"lng": -0.248344
+},
+{
+"osm": "node/11554299569",
+"name": "Vic Dank Health Centre",
+"lat": 5.640468,
+"lng": -0.103907
+},
+{
+"osm": "node/11748974533",
+"name": "Origin Chemist",
+"lat": 5.711246,
+"lng": -0.014896
+},
+{
+"osm": "node/11792815969",
+"name": "Medimafo Herbal Hope",
+"lat": 5.71805,
+"lng": -0.282496
+},
+{
+"osm": "node/11820233870",
+"name": "St. Kathryn's Hospital",
+"lat": 5.58764,
+"lng": -0.231468
+},
+{
+"osm": "node/1191436208",
+"name": "Worldview Pharmacy",
+"lat": 5.605745,
+"lng": -0.188226
+},
+{
+"osm": "node/11925670069",
+"name": "Synlab Medical Laboratory",
+"lat": 5.535774,
+"lng": -0.227616
+},
+{
+"osm": "node/11935637127",
+"name": "Greenville Hospital",
+"lat": 5.728819,
+"lng": 0.034835
+},
+{
+"osm": "node/11982687002",
+"name": "Jasie Pharmacy",
+"lat": 5.643595,
+"lng": -0.068402
+},
+{
+"osm": "node/12025131525",
+"name": "Parker Pharmacy",
+"lat": 5.602147,
+"lng": -0.120941
+},
+{
+"osm": "node/12025133499",
+"name": "Celestial Medicare Clinic",
+"lat": 5.601111,
+"lng": -0.120511
+},
+{
+"osm": "node/12025135949",
+"name": "MDS-Lancet Laboratories",
+"lat": 5.601511,
+"lng": -0.120651
+},
+{
+"osm": "node/12027874182",
+"name": "MDS-Lancet Laboratories",
+"lat": 5.622862,
+"lng": -0.073254
+},
+{
+"osm": "node/12453587543",
+"name": "Cedar Chemist",
+"lat": 5.665265,
+"lng": -0.130062
+},
+{
+"osm": "node/12455714444",
+"name": "Juli-Dee Supermarket and Pharmacy",
+"lat": 5.673028,
+"lng": -0.109719
+},
+{
+"osm": "node/1250323231",
+"name": "Jinlet Pharmacy",
+"lat": 5.616667,
+"lng": -0.181997
+},
+{
+"osm": "node/1251736946",
+"name": "Bedita Pharmacy Limited",
+"lat": 5.611923,
+"lng": -0.20325
+},
+{
+"osm": "node/1251736948",
+"name": "Familycare Pharmacy",
+"lat": 5.612206,
+"lng": -0.200838
+},
+{
+"osm": "node/1251736962",
+"name": "Chiropractic & Wellness Centres",
+"lat": 5.613932,
+"lng": -0.209838
+},
+{
+"osm": "node/12551211008",
+"name": "Next Care",
+"lat": 5.675649,
+"lng": -0.122858
+},
+{
+"osm": "node/12568588022",
+"name": "Ever Care Pharmacy",
+"lat": 5.810289,
+"lng": -0.335127
+},
+{
+"osm": "node/12568791342",
+"name": "Losab Pharmacy",
+"lat": 5.810126,
+"lng": -0.343671
+},
+{
+"osm": "node/12580368164",
+"name": "QP Pharmacy",
+"lat": 5.673597,
+"lng": -0.114608
+},
+{
+"osm": "node/12619925596",
+"name": "Meditab Pharmacy",
+"lat": 5.659742,
+"lng": -0.151117
+},
+{
+"osm": "node/12624210965",
+"name": "Lapaz community pharmacy",
+"lat": 5.611319,
+"lng": -0.279169
+},
+{
+"osm": "node/12658021279",
+"name": "Nolan Ghana",
+"lat": 5.695376,
+"lng": -0.110245
+},
+{
+"osm": "node/12658037876",
+"name": "Humano Pharmacy",
+"lat": 5.687884,
+"lng": -0.114835
+},
+{
+"osm": "node/12658040471",
+"name": "Unicom Chemist",
+"lat": 5.687461,
+"lng": -0.115353
+},
+{
+"osm": "node/12686045454",
+"name": "Seed Pharmacy",
+"lat": 5.682401,
+"lng": -0.120346
+},
+{
+"osm": "node/1270558809",
+"name": "Sape Agbo Memorial Hospital",
+"lat": 5.592265,
+"lng": -0.208231
+},
+{
+"osm": "node/12726535701",
+"name": "Achesta Pharmaceutical",
+"lat": 5.548101,
+"lng": -0.209182
+},
+{
+"osm": "node/12726535801",
+"name": "Jaspers Pharmacy Limited",
+"lat": 5.548069,
+"lng": -0.209181
+},
+{
+"osm": "node/12726535802",
+"name": "Aseda Nka Nyame Pharmacy",
+"lat": 5.548129,
+"lng": -0.209196
+},
+{
+"osm": "node/12727103513",
+"name": "New Site",
+"lat": 5.713131,
+"lng": -0.172033
+},
+{
+"osm": "node/12917692820",
+"name": "AIMS Hospital",
+"lat": 5.60608,
+"lng": -0.225404
+},
+{
+"osm": "node/12969532875",
+"name": "Edinam Medical Center",
+"lat": 5.722747,
+"lng": -0.220958
+},
+{
+"osm": "node/12986866088",
+"name": "Resolve Medical Hospital",
+"lat": 5.63552,
+"lng": -0.078442
+},
+{
+"osm": "node/12988641911",
+"name": "Dentoc Dental Clinic",
+"lat": 5.65906,
+"lng": -0.130606
+},
+{
+"osm": "node/13061566958",
+"name": "Gravity Pharmacy",
+"lat": 5.67172,
+"lng": -0.122203
+},
+{
+"osm": "node/13061587013",
+"name": "S Fuseini OTC",
+"lat": 5.671896,
+"lng": -0.122581
+},
+{
+"osm": "node/13061601830",
+"name": "Reinna Pharmacy",
+"lat": 5.675045,
+"lng": -0.120931
+},
+{
+"osm": "node/13078655245",
+"name": "Alley Pharmacy",
+"lat": 5.667662,
+"lng": -0.117153
+},
+{
+"osm": "node/1314917857",
+"name": "Labone Clinic",
+"lat": 5.568812,
+"lng": -0.170222
+},
+{
+"osm": "node/13274280981",
+"name": "Citi Physiotherapy & Rehab",
+"lat": 5.537427,
+"lng": -0.418083
+},
+{
+"osm": "node/13274280982",
+"name": "Citi Physiotherapy & Rehabilitation Centre",
+"lat": 5.537409,
+"lng": -0.418065
+},
+{
+"osm": "node/13358760419",
+"name": "Jegafan Pharmacy",
+"lat": 5.674346,
+"lng": -0.277848
+},
+{
+"osm": "node/13527381056",
+"name": "Global Medical Solutions",
+"lat": 5.555802,
+"lng": -0.16616
+},
+{
+"osm": "node/13527398544",
+"name": "Sibs Pharmacy Limited",
+"lat": 5.55949,
+"lng": -0.159503
+},
+{
+"osm": "node/1356937858",
+"name": "Health Shop Mini Mart",
+"lat": 5.638328,
+"lng": -0.170889
+},
+{
+"osm": "node/1356937919",
+"name": "St. Bernhard Eye Clinic",
+"lat": 5.574363,
+"lng": -0.207488
+},
+{
+"osm": "node/13588365902",
+"name": "Trust Clinic Dome",
+"lat": 5.646857,
+"lng": -0.244899
+},
+{
+"osm": "node/1364922558",
+"name": "Jinlet Pharmacy",
+"lat": 5.572572,
+"lng": -0.222417
+},
+{
+"osm": "node/1368374851",
+"name": "Dua Clinic",
+"lat": 5.572076,
+"lng": -0.202551
+},
+{
+"osm": "node/13737427658",
+"name": "Pihionya and Abetima",
+"lat": 6.138614,
+"lng": -0.108751
+},
+{
+"osm": "node/13737427666",
+"name": "Agordzor",
+"lat": 6.142962,
+"lng": -0.066218
+},
+{
+"osm": "node/13812882311",
+"name": "Medimoses Clinic and Prostate Center",
+"lat": 5.710442,
+"lng": -0.173092
+},
+{
+"osm": "node/1385353948",
+"name": "Eye Link Clinic",
+"lat": 5.61241,
+"lng": -0.222045
+},
+{
+"osm": "node/13969305546",
+"name": "Rokmer Pharmacy",
+"lat": 5.53761,
+"lng": -0.26018
+},
+{
+"osm": "node/13981539423",
+"name": "Big Maron Pharmacy",
+"lat": 5.60993,
+"lng": -0.252906
+},
+{
+"osm": "node/13992834009",
+"name": "St. Martin's",
+"lat": 5.579391,
+"lng": -0.273304
+},
+{
+"osm": "node/14001004353",
+"name": "Health Style Pharmacy",
+"lat": 5.55661,
+"lng": -0.171248
+},
+{
+"osm": "node/1405374124",
+"name": "Odorna Medical Center",
+"lat": 5.559084,
+"lng": -0.215609
+},
+{
+"osm": "node/14068464323",
+"name": "Top-Up Pharmacy",
+"lat": 5.563272,
+"lng": -0.181448
+},
+{
+"osm": "node/14078559070",
+"name": "APL Pharmacy",
+"lat": 5.703793,
+"lng": -0.156298
+},
+{
+"osm": "node/14078581486",
+"name": "24/7 Direct Pharmacy",
+"lat": 5.706081,
+"lng": -0.167594
+},
+{
+"osm": "node/14078612276",
+"name": "Stipps Pharmacy",
+"lat": 5.706217,
+"lng": -0.158536
+},
+{
+"osm": "node/14090639775",
+"name": "Jida Pharmacy",
+"lat": 5.681315,
+"lng": -0.343507
+},
+{
+"osm": "node/14124900669",
+"name": "Kaby Chemists Pharmacy",
+"lat": 5.578503,
+"lng": -0.238737
+},
+{
+"osm": "node/14166374439",
+"name": "Maycab",
+"lat": 5.653867,
+"lng": -0.258743
+},
+{
+"osm": "node/14182465488",
+"name": "Ernest Chemists",
+"lat": 5.704033,
+"lng": -0.171054
+},
+{
+"osm": "node/14234979344",
+"name": "Dosty Pharmacy",
+"lat": 5.606958,
+"lng": -0.215143
+},
+{
+"osm": "node/1426161179",
+"name": "OMNI Healthcare",
+"lat": 5.616734,
+"lng": -0.192383
+},
+{
+"osm": "node/14287723452",
+"name": "Abenabo CHPS",
+"lat": 6.028846,
+"lng": -0.419294
+},
+{
+"osm": "node/14287743835",
+"name": "Akote CHPS",
+"lat": 6.062637,
+"lng": -0.40213
+},
+{
+"osm": "node/14287761721",
+"name": "Amanhyia CHPS",
+"lat": 6.045224,
+"lng": -0.412314
+},
+{
+"osm": "node/14287762365",
+"name": "Ayekotse Zogo CHPS",
+"lat": 6.034531,
+"lng": -0.448166
+},
+{
+"osm": "node/14287777520",
+"name": "Evecare Plus Medical Centre",
+"lat": 6.042704,
+"lng": -0.435506
+},
+{
+"osm": "node/14304609659",
+"name": "GoodAide Pharmacy",
+"lat": 5.533124,
+"lng": -0.385342
+},
+{
+"osm": "node/14305551070",
+"name": "Premier Care Hospital",
+"lat": 5.523869,
+"lng": -0.388448
+},
+{
+"osm": "node/14314315098",
+"name": "Pehlora",
+"lat": 5.535674,
+"lng": -0.385836
+},
+{
+"osm": "node/1590950161",
+"name": "Pro-Life Pharmacy",
+"lat": 5.601035,
+"lng": -0.119871
+},
+{
+"osm": "node/1700719794",
+"name": "Beaver Clinic",
+"lat": 5.605701,
+"lng": -0.178916
+},
+{
+"osm": "node/1700719799",
+"name": "Bethel Dental Clinic",
+"lat": 5.616803,
+"lng": -0.192542
+},
+{
+"osm": "node/1728032224",
+"name": "Adabraka clinic",
+"lat": 5.566273,
+"lng": -0.209599
+},
+{
+"osm": "node/1728032238",
+"name": "Iran Clinic",
+"lat": 5.568037,
+"lng": -0.212442
+},
+{
+"osm": "node/1728032244",
+"name": "New world dental clinic",
+"lat": 5.568993,
+"lng": -0.202059
+},
+{
+"osm": "node/1762080645",
+"name": "Ashaiman Poly Clinic",
+"lat": 5.686505,
+"lng": -0.039718
+},
+{
+"osm": "node/1775866820",
+"name": "Dr. S.B. Hantes Dental Clinic",
+"lat": 5.568855,
+"lng": -0.169051
+},
+{
+"osm": "node/1775866931",
+"name": "Health Solutions",
+"lat": 5.57709,
+"lng": -0.17359
+},
+{
+"osm": "node/1775872487",
+"name": "Kumcji Hospital",
+"lat": 5.573934,
+"lng": -0.18236
+},
+{
+"osm": "node/1827548153",
+"name": "Medlab",
+"lat": 5.601588,
+"lng": -0.192894
+},
+{
+"osm": "node/1896543297",
+"name": "Spaes Dental Clinic",
+"lat": 5.566233,
+"lng": -0.186548
+},
+{
+"osm": "node/2026403682",
+"name": "Day and Night Pharmacy",
+"lat": 5.530294,
+"lng": -0.26273
+},
+{
+"osm": "node/2026403692",
+"name": "Westlife Pharmacy",
+"lat": 5.528908,
+"lng": -0.264329
+},
+{
+"osm": "node/2148020987",
+"name": "Lapaz Community Hospital",
+"lat": 5.63542,
+"lng": -0.21536
+},
+{
+"osm": "node/2151944590",
+"name": "Nuffield Clinic Orthopaedic",
+"lat": 5.565778,
+"lng": -0.184822
+},
+{
+"osm": "node/2152138368",
+"name": "Crystal Eye Clinic",
+"lat": 5.706148,
+"lng": -0.146809
+},
+{
+"osm": "node/2152138381",
+"name": "Peace Clinic",
+"lat": 5.670066,
+"lng": -0.160085
+},
+{
+"osm": "node/2154259341",
+"name": "Sweden Ghana Medical Centre",
+"lat": 5.725038,
+"lng": -0.114898
+},
+{
+"osm": "node/2574744949",
+"name": "Unicom Chemist Limited",
+"lat": 5.559204,
+"lng": -0.26529
+},
+{
+"osm": "node/2606139912",
+"name": "Ernest Chemists Limited",
+"lat": 5.613756,
+"lng": -0.186573
+},
+{
+"osm": "node/2644149766",
+"name": "Ramona Clinic",
+"lat": 5.560996,
+"lng": -0.182449
+},
+{
+"osm": "node/2815197868",
+"name": "New Discovery Pharmacy",
+"lat": 5.604794,
+"lng": -0.258614
+},
+{
+"osm": "node/2826655019",
+"name": "Airport Womens Hospital",
+"lat": 5.617659,
+"lng": -0.178877
+},
+{
+"osm": "node/3069906805",
+"name": "Regional Medical Office of the Embassy of the Federal Republic of Germany",
+"lat": 5.563669,
+"lng": -0.198411
+},
+{
+"osm": "node/3073611741",
+"name": "Nectar Pharmacy",
+"lat": 5.567895,
+"lng": -0.243007
+},
+{
+"osm": "node/3123797169",
+"name": "Better Hearing Clinic Ltd.",
+"lat": 5.594042,
+"lng": -0.242664
+},
+{
+"osm": "node/3229726703",
+"name": "Medipoint",
+"lat": 5.568414,
+"lng": -0.174361
+},
+{
+"osm": "node/3506704799",
+"name": "Healthnet Airpoort Mediacl Centre",
+"lat": 5.60895,
+"lng": -0.186801
+},
+{
+"osm": "node/3506704821",
+"name": "St. Andrews Clinic",
+"lat": 5.608001,
+"lng": -0.188023
+},
+{
+"osm": "node/3621666091",
+"name": "Flexta Pharmacy",
+"lat": 5.574684,
+"lng": -0.238
+},
+{
+"osm": "node/3665190017",
+"name": "Trust Specialist Hospital",
+"lat": 5.56075,
+"lng": -0.187079
+},
+{
+"osm": "node/3706858382",
+"name": "St. Lukes Clinic",
+"lat": 5.614031,
+"lng": -0.177654
+},
+{
+"osm": "node/3720696845",
+"name": "Accra Physiotherapy & Sports Injury Clinic",
+"lat": 5.613363,
+"lng": -0.215333
+},
+{
+"osm": "node/3720696848",
+"name": "Elite Dental Centre",
+"lat": 5.61222,
+"lng": -0.21542
+},
+{
+"osm": "node/3731302543",
+"name": "Citadel Clinic",
+"lat": 5.60416,
+"lng": -0.218911
+},
+{
+"osm": "node/3745519657",
+"name": "Platinum Dendist",
+"lat": 5.619476,
+"lng": -0.148063
+},
+{
+"osm": "node/3802490258",
+"name": "Eric's Chemists",
+"lat": 5.696197,
+"lng": -0.013351
+},
+{
+"osm": "node/3802490268",
+"name": "All Care Medical Center",
+"lat": 5.708026,
+"lng": -0.014919
+},
+{
+"osm": "node/3802490987",
+"name": "EPCL",
+"lat": 5.647396,
+"lng": -0.149706
+},
+{
+"osm": "node/3802491199",
+"name": "Zizi's Pharmacy",
+"lat": 5.648088,
+"lng": -0.133066
+},
+{
+"osm": "node/3807057244",
+"name": "Topview Diagnostic Center",
+"lat": 6.006196,
+"lng": 0.615855
+},
+{
+"osm": "node/3830300488",
+"name": "Treasure Image Pharmacy",
+"lat": 5.52798,
+"lng": -0.387183
+},
+{
+"osm": "node/3830300489",
+"name": "Tuba Community Maternity & Clinic",
+"lat": 5.512,
+"lng": -0.393109
+},
+{
+"osm": "node/3837992784",
+"name": "Medicines Plus Pharmacy",
+"lat": 5.573256,
+"lng": -0.197943
+},
+{
+"osm": "node/388565621",
+"name": "Hobats Clinic",
+"lat": 5.606822,
+"lng": -0.231701
+},
+{
+"osm": "node/3950017304",
+"name": "King David Hospital",
+"lat": 5.592747,
+"lng": -0.206034
+},
+{
+"osm": "node/3961469680",
+"name": "Ernest Chemists",
+"lat": 5.604866,
+"lng": -0.204221
+},
+{
+"osm": "node/4021383012",
+"name": "Claron Health International",
+"lat": 5.612246,
+"lng": -0.182298
+},
+{
+"osm": "node/4157336040",
+"name": "Asylum Down Pharmacy",
+"lat": 5.572353,
+"lng": -0.200136
+},
+{
+"osm": "node/4157336043",
+"name": "M Pact Clinic",
+"lat": 5.57049,
+"lng": -0.201592
+},
+{
+"osm": "node/4185262041",
+"name": "Acacia Medical Centre",
+"lat": 5.633614,
+"lng": -0.157585
+},
+{
+"osm": "node/4239386293",
+"name": "Nyaah Pharmacy",
+"lat": 5.627358,
+"lng": -0.146246
+},
+{
+"osm": "node/4270160491",
+"name": "J M Addo and sons ltd.",
+"lat": 5.549004,
+"lng": -0.208861
+},
+{
+"osm": "node/4278047642",
+"name": "Lifebridge Physio Clinic",
+"lat": 5.556899,
+"lng": -0.178406
+},
+{
+"osm": "node/4286153094",
+"name": "Ashaiman Community Hospital",
+"lat": 5.710865,
+"lng": -0.037084
+},
+{
+"osm": "node/4286159096",
+"name": "New Crystal Hospital",
+"lat": 5.690273,
+"lng": -0.03433
+},
+{
+"osm": "node/4286172893",
+"name": "Dar-bem Clinic",
+"lat": 5.683381,
+"lng": -0.036258
+},
+{
+"osm": "node/4286172896",
+"name": "St Florence Clinic",
+"lat": 5.688226,
+"lng": -0.032744
+},
+{
+"osm": "node/4286173091",
+"name": "Afenyo Memorial Hospital",
+"lat": 5.692106,
+"lng": -0.034241
+},
+{
+"osm": "node/4286173989",
+"name": "Okanta Clinic",
+"lat": 5.686876,
+"lng": -0.039983
+},
+{
+"osm": "node/4305848889",
+"name": "Dr. K.K. Duncan",
+"lat": 5.594118,
+"lng": -0.232053
+},
+{
+"osm": "node/4313553906",
+"name": "Top Pill Pharmacy",
+"lat": 5.672563,
+"lng": -0.014842
+},
+{
+"osm": "node/4316803036",
+"name": "Midway Clinic Ltd.",
+"lat": 5.617476,
+"lng": -0.226261
+},
+{
+"osm": "node/4349069300",
+"name": "Equity pharmacy",
+"lat": 5.637311,
+"lng": -0.150245
+},
+{
+"osm": "node/4350251990",
+"name": "Ernest Chemist",
+"lat": 5.68777,
+"lng": 0.000445
+},
+{
+"osm": "node/4400481802",
+"name": "Solace Hospital",
+"lat": 5.678482,
+"lng": -0.028132
+},
+{
+"osm": "node/4400481906",
+"name": "East Cantoment Pharmacy",
+"lat": 5.584203,
+"lng": -0.160643
+},
+{
+"osm": "node/4400503914",
+"name": "Forbiq Pharmacy",
+"lat": 5.686257,
+"lng": -0.167821
+},
+{
+"osm": "node/4400503922",
+"name": "COY Paediatric",
+"lat": 5.648374,
+"lng": -0.028215
+},
+{
+"osm": "node/4400503925",
+"name": "Raphal Medical Center",
+"lat": 5.660147,
+"lng": -0.020707
+},
+{
+"osm": "node/4400510392",
+"name": "Adenta Clinic",
+"lat": 5.706065,
+"lng": -0.168109
+},
+{
+"osm": "node/4400510792",
+"name": "Caiquo Hospital",
+"lat": 5.652901,
+"lng": -0.022466
+},
+{
+"osm": "node/4400511089",
+"name": "3rd Gate Pharmacy",
+"lat": 5.685803,
+"lng": -0.150001
+},
+{
+"osm": "node/4400511291",
+"name": "Telad Pharmacy",
+"lat": 5.692742,
+"lng": -0.172152
+},
+{
+"osm": "node/4429993095",
+"name": "Medical & Dental Council Ghana",
+"lat": 5.552352,
+"lng": -0.211204
+},
+{
+"osm": "node/4430009890",
+"name": "Starwin Products Ltd",
+"lat": 5.558946,
+"lng": -0.222797
+},
+{
+"osm": "node/4430018890",
+"name": "Pharmacy Council &National Drug",
+"lat": 5.55204,
+"lng": -0.211161
+},
+{
+"osm": "node/4443298689",
+"name": "Dansoman polyclinic",
+"lat": 5.56108,
+"lng": -0.260079
+},
+{
+"osm": "node/4462237991",
+"name": "Relish/Akai",
+"lat": 5.566363,
+"lng": -0.182919
+},
+{
+"osm": "node/4479634129",
+"name": "Alaska Pharmacy",
+"lat": 5.618728,
+"lng": -0.054319
+},
+{
+"osm": "node/4516622590",
+"name": "Lesson Pharmacy",
+"lat": 5.582088,
+"lng": -0.198463
+},
+{
+"osm": "node/4554919900",
+"name": "Emporium Pharmacy",
+"lat": 5.641307,
+"lng": -0.177262
+},
+{
+"osm": "node/4557928697",
+"name": "Champion Divine",
+"lat": 5.642745,
+"lng": -0.249499
+},
+{
+"osm": "node/4557990252",
+"name": "Eribel Pharmacy",
+"lat": 5.627602,
+"lng": -0.242198
+},
+{
+"osm": "node/4648209596",
+"name": "Equa Chemical Shop",
+"lat": 5.700323,
+"lng": -0.180094
+},
+{
+"osm": "node/4712847592",
+"name": "Christleads Medical Center",
+"lat": 5.680383,
+"lng": -0.176218
+},
+{
+"osm": "node/4741290374",
+"name": "Gap Pharmacy",
+"lat": 5.704671,
+"lng": -0.014511
+},
+{
+"osm": "node/4746491621",
+"name": "G.P.H.A Clinic Tema",
+"lat": 5.632682,
+"lng": -0.006523
+},
+{
+"osm": "node/4780055840",
+"name": "Emmanuel Eye Clinic",
+"lat": 5.630441,
+"lng": -0.174433
+},
+{
+"osm": "node/4789654972",
+"name": "Diagnostic Centre",
+"lat": 5.63171,
+"lng": -0.174259
+},
+{
+"osm": "node/4801479847",
+"name": "Adawukwao CHPS Compound",
+"lat": 5.672105,
+"lng": -0.515161
+},
+{
+"osm": "node/4830568666",
+"name": "Christian Medical Centre & Laboratory",
+"lat": 5.606484,
+"lng": -0.077807
+},
+{
+"osm": "node/4891945821",
+"name": "Annat Medical Diagnostics Centre",
+"lat": 5.801444,
+"lng": -0.491468
+},
+{
+"osm": "node/4927406375",
+"name": "Ebenezer pharmacy",
+"lat": 5.566291,
+"lng": -0.1836
+},
+{
+"osm": "node/4943837822",
+"name": "Ernest Chemist",
+"lat": 5.653181,
+"lng": -0.179179
+},
+{
+"osm": "node/4951010023",
+"name": "Ernest Chemists East Legon Retail",
+"lat": 5.633901,
+"lng": -0.17279
+},
+{
+"osm": "node/4971251581",
+"name": "Maxkins Pharmacy",
+"lat": 5.572958,
+"lng": -0.231063
+},
+{
+"osm": "node/4972577043",
+"name": "Benalice",
+"lat": 5.671552,
+"lng": -0.18982
+},
+{
+"osm": "node/4990644968",
+"name": "Brobbson Pharmacy",
+"lat": 5.621577,
+"lng": -0.071082
+},
+{
+"osm": "node/5005175758",
+"name": "Tobinco Pharmaceuticals Limited",
+"lat": 5.593222,
+"lng": -0.206557
+},
+{
+"osm": "node/5016194293",
+"name": "Agratha Natural Herbal Center",
+"lat": 5.565849,
+"lng": -0.240204
+},
+{
+"osm": "node/5029455806",
+"name": "Telad Pharmay",
+"lat": 5.683315,
+"lng": -0.132243
+},
+{
+"osm": "node/5051344421",
+"name": "Duet Pharmacy",
+"lat": 5.751095,
+"lng": -0.016462
+},
+{
+"osm": "node/5083433636",
+"name": "The Medipoint",
+"lat": 5.632668,
+"lng": -0.139627
+},
+{
+"osm": "node/5087710549",
+"name": "Jeb Pharmacy",
+"lat": 5.999322,
+"lng": 0.597146
+},
+{
+"osm": "node/5128388438",
+"name": "Angola Road Chemists Limited",
+"lat": 5.562418,
+"lng": -0.187308
+},
+{
+"osm": "node/5128388439",
+"name": "Top-Up Pharmacy",
+"lat": 5.564601,
+"lng": -0.181174
+},
+{
+"osm": "node/5128390091",
+"name": "Anasapharma Limited",
+"lat": 5.561126,
+"lng": -0.185177
+},
+{
+"osm": "node/5150562247",
+"name": "Frontline Pharmacy",
+"lat": 5.555221,
+"lng": -0.211478
+},
+{
+"osm": "node/5150562248",
+"name": "SIC Bob Freeman Clinic",
+"lat": 5.554324,
+"lng": -0.208527
+},
+{
+"osm": "node/5150562249",
+"name": "Tudu Pharmacy",
+"lat": 5.553077,
+"lng": -0.208269
+},
+{
+"osm": "node/5188828824",
+"name": "Ashaiman Pharmacy",
+"lat": 5.684773,
+"lng": -0.038701
+},
+{
+"osm": "node/5199759903",
+"name": "Opmann Clinic",
+"lat": 5.6081,
+"lng": -0.242019
+},
+{
+"osm": "node/5199760922",
+"name": "Tedolex Pharmacy",
+"lat": 5.608076,
+"lng": -0.242297
+},
+{
+"osm": "node/5209798110",
+"name": "Nascata Pharmacy Limited",
+"lat": 5.675805,
+"lng": -0.173468
+},
+{
+"osm": "node/5209798229",
+"name": "ECP Pharmacy Wholesale",
+"lat": 5.669169,
+"lng": -0.177
+},
+{
+"osm": "node/5210311621",
+"name": "Rinat Clinic",
+"lat": 5.651874,
+"lng": -0.131227
+},
+{
+"osm": "node/5210337471",
+"name": "Prolife Chinese Acupuncture Clinic",
+"lat": 5.660166,
+"lng": -0.151744
+},
+{
+"osm": "node/5210898985",
+"name": "Maidaal Pharmacy",
+"lat": 5.679272,
+"lng": -0.191992
+},
+{
+"osm": "node/5210899221",
+"name": "Radiance Pharmacy",
+"lat": 5.668649,
+"lng": -0.188057
+},
+{
+"osm": "node/5235963521",
+"name": "Rhamshiv Pharmacy",
+"lat": 5.64126,
+"lng": -0.173965
+},
+{
+"osm": "node/5236480338",
+"name": "Richben Pharmacy Limited",
+"lat": 5.590548,
+"lng": -0.181442
+},
+{
+"osm": "node/5287626001",
+"name": "Kaizen Pharma Limited",
+"lat": 5.552681,
+"lng": -0.272046
+},
+{
+"osm": "node/5287626004",
+"name": "Fidelity Pharmacy",
+"lat": 5.557759,
+"lng": -0.269181
+},
+{
+"osm": "node/5300408284",
+"name": "Solutions Pharmaceuticals Limited",
+"lat": 5.64099,
+"lng": -0.177423
+},
+{
+"osm": "node/5300409376",
+"name": "Pillpoint Pharmacy (Retail)",
+"lat": 5.647077,
+"lng": -0.168976
+},
+{
+"osm": "node/5301563288",
+"name": "Pebs Pharmacy Limited",
+"lat": 5.678112,
+"lng": -0.122469
+},
+{
+"osm": "node/5302018799",
+"name": "Ernest Chemist",
+"lat": 5.579894,
+"lng": -0.266325
+},
+{
+"osm": "node/5302018800",
+"name": "East Cantonments Pharmacy Limited, Wholesale",
+"lat": 5.55063,
+"lng": -0.355907
+},
+{
+"osm": "node/5321471509",
+"name": "Healthnet Clinic",
+"lat": 5.554257,
+"lng": -0.171835
+},
+{
+"osm": "node/5321471739",
+"name": "Amnex",
+"lat": 5.588053,
+"lng": -0.098987
+},
+{
+"osm": "node/5322314854",
+"name": "Speed Pharmacy",
+"lat": 5.595584,
+"lng": -0.133658
+},
+{
+"osm": "node/5486353373",
+"name": "Ebenezer Chemist Limited",
+"lat": 5.552913,
+"lng": -0.199593
+},
+{
+"osm": "node/5627808037",
+"name": "Aython Drugs",
+"lat": 5.594639,
+"lng": -0.233355
+},
+{
+"osm": "node/5705985321",
+"name": "Polyclinic",
+"lat": 5.612886,
+"lng": -0.088966
+},
+{
+"osm": "node/5708784721",
+"name": "Sing Praises",
+"lat": 5.606447,
+"lng": -0.08614
+},
+{
+"osm": "node/5714066427",
+"name": "Etornam Herbal Center",
+"lat": 5.601424,
+"lng": -0.084161
+},
+{
+"osm": "node/5714073662",
+"name": "Pill Point",
+"lat": 5.598393,
+"lng": -0.081218
+},
+{
+"osm": "node/5714073663",
+"name": "B.B.S Pharmacy Limited",
+"lat": 5.600057,
+"lng": -0.083192
+},
+{
+"osm": "node/5714094831",
+"name": "Sebatos",
+"lat": 5.603714,
+"lng": -0.086643
+},
+{
+"osm": "node/5717927636",
+"name": "Lloyd's Pharmacy",
+"lat": 5.557345,
+"lng": -0.175313
+},
+{
+"osm": "node/5725952521",
+"name": "Nola",
+"lat": 5.641128,
+"lng": -0.119085
+},
+{
+"osm": "node/5726303123",
+"name": "Quality Care",
+"lat": 5.637709,
+"lng": -0.161913
+},
+{
+"osm": "node/5727975621",
+"name": "Op Pharmacy",
+"lat": 5.607446,
+"lng": -0.246055
+},
+{
+"osm": "node/5728895262",
+"name": "Urban Medical Research Center",
+"lat": 5.681254,
+"lng": -0.195842
+},
+{
+"osm": "node/5730097211",
+"name": "Aide Chemists",
+"lat": 5.678837,
+"lng": -0.175069
+},
+{
+"osm": "node/5731354878",
+"name": "Mary de Rose Pharmacy",
+"lat": 5.579535,
+"lng": -0.247275
+},
+{
+"osm": "node/5732666951",
+"name": "Belah Pharmacy",
+"lat": 5.675822,
+"lng": -0.19156
+},
+{
+"osm": "node/5732865813",
+"name": "Reanie Chemist Limited",
+"lat": 5.609783,
+"lng": -0.180458
+},
+{
+"osm": "node/5741247520",
+"name": "CureAid",
+"lat": 5.692473,
+"lng": -0.171404
+},
+{
+"osm": "node/5746072945",
+"name": "Ernest Chemist Limited",
+"lat": 5.643246,
+"lng": -0.113253
+},
+{
+"osm": "node/5748042149",
+"name": "Late Night Pharmacy",
+"lat": 5.571537,
+"lng": -0.178531
+},
+{
+"osm": "node/5749720245",
+"name": "Pill Point",
+"lat": 5.667836,
+"lng": -0.177472
+},
+{
+"osm": "node/5751454691",
+"name": "Regent Pharmacy",
+"lat": 5.566185,
+"lng": -0.233563
+},
+{
+"osm": "node/5752141742",
+"name": "Ernest Chemist",
+"lat": 5.570102,
+"lng": -0.212043
+},
+{
+"osm": "node/5752197975",
+"name": "Dans Chemist",
+"lat": 5.57144,
+"lng": -0.215788
+},
+{
+"osm": "node/5755779938",
+"name": "Nyaho Medical Centre",
+"lat": 5.55149,
+"lng": -0.203939
+},
+{
+"osm": "node/5756412277",
+"name": "Ultra Lab Diagnostic Center",
+"lat": 5.646085,
+"lng": -0.147242
+},
+{
+"osm": "node/5756412280",
+"name": "Comprehensive Telemedicine Ghana",
+"lat": 5.645695,
+"lng": -0.144484
+},
+{
+"osm": "node/5766799969",
+"name": "Health Concept",
+"lat": 5.609494,
+"lng": -0.087189
+},
+{
+"osm": "node/5770056540",
+"name": "EVP Pharmacy",
+"lat": 5.660506,
+"lng": -0.206209
+},
+{
+"osm": "node/5775921566",
+"name": "Ed-Joe",
+"lat": 5.640505,
+"lng": -0.21058
+},
+{
+"osm": "node/5775921569",
+"name": "Palace Pharmaceuticals",
+"lat": 5.566025,
+"lng": -0.178911
+},
+{
+"osm": "node/5776863753",
+"name": "Providence Medical Centre",
+"lat": 6.078473,
+"lng": -0.27139
+},
+{
+"osm": "node/5776863853",
+"name": "Newlands Medical Centre",
+"lat": 6.082494,
+"lng": -0.275389
+},
+{
+"osm": "node/5777113610",
+"name": "Hebrews Pharmacy Limited",
+"lat": 5.616221,
+"lng": -0.248564
+},
+{
+"osm": "node/5781989254",
+"name": "Pharma Solutions",
+"lat": 5.537693,
+"lng": -0.401757
+},
+{
+"osm": "node/5790774953",
+"name": "Fabby Pharmacy",
+"lat": 5.608742,
+"lng": -0.075866
+},
+{
+"osm": "node/5794952811",
+"name": "St Kem Pharmacy",
+"lat": 5.668085,
+"lng": -0.181899
+},
+{
+"osm": "node/5799350934",
+"name": "Hale",
+"lat": 5.630961,
+"lng": -0.219124
+},
+{
+"osm": "node/5809255656",
+"name": "Liniven Pharmacy",
+"lat": 5.675739,
+"lng": -0.191368
+},
+{
+"osm": "node/5819906953",
+"name": "Biotic Pharmacy",
+"lat": 5.638854,
+"lng": -0.124016
+},
+{
+"osm": "node/5824861049",
+"name": "Unicom",
+"lat": 5.667821,
+"lng": -0.188568
+},
+{
+"osm": "node/5868518756",
+"name": "Port Medical Centre",
+"lat": 5.642639,
+"lng": 0.001417
+},
+{
+"osm": "node/5881543451",
+"name": "Hobet Pharmacy",
+"lat": 5.682959,
+"lng": -0.193481
+},
+{
+"osm": "node/5892839589",
+"name": "G2 Medical Laboratory Services",
+"lat": 5.590249,
+"lng": -0.181608
+},
+{
+"osm": "node/5893538876",
+"name": "24hrs Pharmacy",
+"lat": 5.565465,
+"lng": -0.179065
+},
+{
+"osm": "node/5912226025",
+"name": "Mk Eye Center",
+"lat": 5.636693,
+"lng": -0.237919
+},
+{
+"osm": "node/5923783047",
+"name": "Healthmark Pharmacy",
+"lat": 5.619092,
+"lng": -0.25015
+},
+{
+"osm": "node/5952622192",
+"name": "Van-J Eye Care",
+"lat": 5.570832,
+"lng": -0.23266
+},
+{
+"osm": "node/5955274013",
+"name": "Kin-Ada",
+"lat": 5.587619,
+"lng": -0.232955
+},
+{
+"osm": "node/5956685479",
+"name": "Septal",
+"lat": 5.600542,
+"lng": -0.238985
+},
+{
+"osm": "node/5956713515",
+"name": "Ballis Pharmacy",
+"lat": 5.569896,
+"lng": -0.233663
+},
+{
+"osm": "node/5959485082",
+"name": "Pharma Solutions",
+"lat": 5.599081,
+"lng": -0.235073
+},
+{
+"osm": "node/5959485125",
+"name": "Free Mart Pharmacy",
+"lat": 5.579662,
+"lng": -0.228358
+},
+{
+"osm": "node/5959485126",
+"name": "PNT Pharmacy",
+"lat": 5.584242,
+"lng": -0.231233
+},
+{
+"osm": "node/5963528280",
+"name": "Nesta",
+"lat": 5.602861,
+"lng": -0.241939
+},
+{
+"osm": "node/5965868710",
+"name": "Revman Pharmacy",
+"lat": 5.609216,
+"lng": -0.245701
+},
+{
+"osm": "node/5966273994",
+"name": "3A Pharmacy",
+"lat": 5.595059,
+"lng": -0.233066
+},
+{
+"osm": "node/5969633908",
+"name": "Phersons Pharmacy",
+"lat": 5.621691,
+"lng": -0.230775
+},
+{
+"osm": "node/5987250116",
+"name": "Rock Chemist",
+"lat": 5.630576,
+"lng": -0.235059
+},
+{
+"osm": "node/5991635395",
+"name": "Adepa Pharmacy",
+"lat": 5.59936,
+"lng": -0.187825
+},
+{
+"osm": "node/6016629534",
+"name": "Biolink Pharmacy",
+"lat": 5.92155,
+"lng": -0.051788
+},
+{
+"osm": "node/6019652556",
+"name": "OBM Pharmacy",
+"lat": 5.736409,
+"lng": -0.014269
+},
+{
+"osm": "node/6019717328",
+"name": "Eastwing Clinic",
+"lat": 5.756396,
+"lng": -0.006262
+},
+{
+"osm": "node/6019717336",
+"name": "La Famille Chemist",
+"lat": 5.741294,
+"lng": -0.01349
+},
+{
+"osm": "node/6031380950",
+"name": "Rockwell Pharmacy And Mart",
+"lat": 5.730797,
+"lng": 0.027772
+},
+{
+"osm": "node/6037962463",
+"name": "Adepharma Limited - Wholesale Only",
+"lat": 5.999156,
+"lng": 0.596063
+},
+{
+"osm": "node/6050981938",
+"name": "Ernest Chemist Limited",
+"lat": 5.566062,
+"lng": -0.189915
+},
+{
+"osm": "node/6072524768",
+"name": "MayDay Pharmacy",
+"lat": 5.585672,
+"lng": -0.175929
+},
+{
+"osm": "node/6095208031",
+"name": "Omari Medical Centre",
+"lat": 5.772267,
+"lng": -0.005086
+},
+{
+"osm": "node/6095220985",
+"name": "Senes Pharmacy",
+"lat": 5.772801,
+"lng": -0.001293
+},
+{
+"osm": "node/6095245468",
+"name": "P.A. Mamattah Chemical Licensed Chemical Seller",
+"lat": 5.774547,
+"lng": 0.00138
+},
+{
+"osm": "node/6100969250",
+"name": "Nardorg Pharmacy",
+"lat": 5.605166,
+"lng": -0.203047
+},
+{
+"osm": "node/6109998117",
+"name": "Magpat Pharmacy",
+"lat": 5.67636,
+"lng": -0.150953
+},
+{
+"osm": "node/6115657385",
+"name": "1st Champions Pharmacy",
+"lat": 5.600515,
+"lng": -0.200646
+},
+{
+"osm": "node/6132175109",
+"name": "Josly Pharmacy Limited",
+"lat": 5.608193,
+"lng": -0.237735
+},
+{
+"osm": "node/6135529577",
+"name": "Jacob Nelson",
+"lat": 5.564311,
+"lng": -0.177094
+},
+{
+"osm": "node/6160907673",
+"name": "Ke-nash Pharmacy",
+"lat": 5.606027,
+"lng": -0.251334
+},
+{
+"osm": "node/6173271978",
+"name": "Codia Clinic",
+"lat": 5.754541,
+"lng": 0.046955
+},
+{
+"osm": "node/6198608186",
+"name": "Emmasel Pharmacy",
+"lat": 5.581817,
+"lng": -0.20832
+},
+{
+"osm": "node/6198695885",
+"name": "Chara Pharmacy",
+"lat": 5.583667,
+"lng": -0.208392
+},
+{
+"osm": "node/6213041912",
+"name": "Club Road Clinic",
+"lat": 5.544478,
+"lng": -0.206385
+},
+{
+"osm": "node/6215799885",
+"name": "Hills Pharmacy",
+"lat": 5.545288,
+"lng": -0.212599
+},
+{
+"osm": "node/6217956936",
+"name": "East Cantoments Pharmacy Retail",
+"lat": 5.566863,
+"lng": -0.214742
+},
+{
+"osm": "node/6218840085",
+"name": "Syrene Health Services",
+"lat": 5.544657,
+"lng": -0.213842
+},
+{
+"osm": "node/6233786941",
+"name": "Health Lover",
+"lat": 5.718896,
+"lng": -0.171942
+},
+{
+"osm": "node/6234120412",
+"name": "Eri Pharma Ltd",
+"lat": 5.685803,
+"lng": -0.150952
+},
+{
+"osm": "node/6234158807",
+"name": "Aide Pharmacy",
+"lat": 5.702899,
+"lng": -0.150661
+},
+{
+"osm": "node/6247611198",
+"name": "Nakopat Pharmacy",
+"lat": 5.56492,
+"lng": -0.234559
+},
+{
+"osm": "node/6253492898",
+"name": "Aviation Road Pharmacy",
+"lat": 5.697795,
+"lng": -0.146859
+},
+{
+"osm": "node/6253504385",
+"name": "Nissi Pharmacy",
+"lat": 5.685877,
+"lng": -0.165765
+},
+{
+"osm": "node/6253505995",
+"name": "Medmina Pharmacy",
+"lat": 5.68387,
+"lng": -0.165743
+},
+{
+"osm": "node/6256037003",
+"name": "Daniel A. Tetteh ( Awokye Drug Store)",
+"lat": 6.016457,
+"lng": -0.077863
+},
+{
+"osm": "node/6256498497",
+"name": "Aboabo Drug Store",
+"lat": 6.117754,
+"lng": -0.234729
+},
+{
+"osm": "node/6256580101",
+"name": "Pharmacy Relics",
+"lat": 6.091879,
+"lng": -0.255391
+},
+{
+"osm": "node/6256615236",
+"name": "TC Pharmacy",
+"lat": 6.095385,
+"lng": -0.256408
+},
+{
+"osm": "node/6257562446",
+"name": "Oman Clinic",
+"lat": 6.097837,
+"lng": -0.260841
+},
+{
+"osm": "node/6261963935",
+"name": "Quantum Medical Centre and Eye Clinic",
+"lat": 5.567474,
+"lng": -0.257386
+},
+{
+"osm": "node/6261963936",
+"name": "Alive Pharmaceuticals (Wholesale)",
+"lat": 5.572904,
+"lng": -0.254072
+},
+{
+"osm": "node/6266640142",
+"name": "Kotoku Clinic",
+"lat": 5.73637,
+"lng": -0.359485
+},
+{
+"osm": "node/6274427264",
+"name": "CDC Hospital (Cosmas- Damien Clinic)",
+"lat": 6.088269,
+"lng": -0.260182
+},
+{
+"osm": "node/6277014897",
+"name": "Denis Donkor Chemist",
+"lat": 5.614758,
+"lng": -0.244435
+},
+{
+"osm": "node/6277014898",
+"name": "Nyame ne Hene Herbal",
+"lat": 5.615719,
+"lng": -0.243942
+},
+{
+"osm": "node/6277015915",
+"name": "Elizabeth Oppong License Chemical Shop",
+"lat": 5.616883,
+"lng": -0.242429
+},
+{
+"osm": "node/6278004864",
+"name": "Seyama Pharmaceuticals",
+"lat": 5.581907,
+"lng": -0.23023
+},
+{
+"osm": "node/6279110346",
+"name": "Edward Attah Asare",
+"lat": 5.61361,
+"lng": -0.240192
+},
+{
+"osm": "node/6279110347",
+"name": "Excel Pharmacy and Cosmetics",
+"lat": 5.617625,
+"lng": -0.236689
+},
+{
+"osm": "node/6279110348",
+"name": "Weseh Chemical Store",
+"lat": 5.615424,
+"lng": -0.239666
+},
+{
+"osm": "node/6279110349",
+"name": "Adonai Grace Pharmacy",
+"lat": 5.615845,
+"lng": -0.237316
+},
+{
+"osm": "node/6281690204",
+"name": "Roman Pharmacy Limited",
+"lat": 6.102922,
+"lng": -0.266483
+},
+{
+"osm": "node/6283465058",
+"name": "Esther's Pharmacy Shop",
+"lat": 5.610437,
+"lng": -0.237965
+},
+{
+"osm": "node/6283465059",
+"name": "Luckies Pharmacy",
+"lat": 5.611363,
+"lng": -0.237334
+},
+{
+"osm": "node/6285113074",
+"name": "Cardinal Mensah",
+"lat": 5.613498,
+"lng": -0.235798
+},
+{
+"osm": "node/6285113296",
+"name": "Lifeview Medical Laboratory",
+"lat": 5.611663,
+"lng": -0.233511
+},
+{
+"osm": "node/6288620693",
+"name": "Koforidua Clinic",
+"lat": 6.088496,
+"lng": -0.268648
+},
+{
+"osm": "node/6290813210",
+"name": "Rich Pharmacy",
+"lat": 5.611399,
+"lng": -0.243921
+},
+{
+"osm": "node/6290813211",
+"name": "Francisca Mensah",
+"lat": 5.612564,
+"lng": -0.241851
+},
+{
+"osm": "node/6290813212",
+"name": "Nikos Pharmacy",
+"lat": 5.609002,
+"lng": -0.244405
+},
+{
+"osm": "node/6290813562",
+"name": "Auguelix Herbal Shop",
+"lat": 5.612482,
+"lng": -0.243086
+},
+{
+"osm": "node/6292744802",
+"name": "TMA Maternity and Children's Clinic",
+"lat": 5.647716,
+"lng": -0.002661
+},
+{
+"osm": "node/6293319260",
+"name": "Adenta Pharmacy",
+"lat": 5.701478,
+"lng": -0.171991
+},
+{
+"osm": "node/6304073822",
+"name": "Gabson Pharmacy",
+"lat": 6.098879,
+"lng": -0.252689
+},
+{
+"osm": "node/6305321317",
+"name": "Osons Chemist",
+"lat": 5.56017,
+"lng": -0.212958
+},
+{
+"osm": "node/6305336215",
+"name": "Edith's Maternity Home",
+"lat": 5.755467,
+"lng": -0.328976
+},
+{
+"osm": "node/6305746078",
+"name": "Ernest Chemist Limited",
+"lat": 5.629449,
+"lng": -0.0907
+},
+{
+"osm": "node/6310119701",
+"name": "Amicus Pharmacy",
+"lat": 6.094561,
+"lng": -0.256409
+},
+{
+"osm": "node/6312196221",
+"name": "Dr Asomani Clinic",
+"lat": 6.082278,
+"lng": -0.260754
+},
+{
+"osm": "node/6312202203",
+"name": "Atekyem Medical Center",
+"lat": 6.078508,
+"lng": -0.269021
+},
+{
+"osm": "node/6312866084",
+"name": "All Faith Clinic",
+"lat": 5.542951,
+"lng": -0.335006
+},
+{
+"osm": "node/6314371221",
+"name": "Big Maron Pharmacy",
+"lat": 5.60725,
+"lng": -0.256914
+},
+{
+"osm": "node/6319174597",
+"name": "Bonna O- A Memorial Clinic",
+"lat": 6.094424,
+"lng": -0.255717
+},
+{
+"osm": "node/6324846586",
+"name": "G & E Health Services",
+"lat": 5.738864,
+"lng": 0.102261
+},
+{
+"osm": "node/6325471516",
+"name": "Samsam Community Clinic",
+"lat": 5.777579,
+"lng": -0.30023
+},
+{
+"osm": "node/6329668374",
+"name": "Aide Chemists",
+"lat": 5.57343,
+"lng": -0.27309
+},
+{
+"osm": "node/6349309485",
+"name": "Med Aid Pharmacy",
+"lat": 5.646444,
+"lng": -0.155025
+},
+{
+"osm": "node/6349309785",
+"name": "Inter-Star Eye Clinic",
+"lat": 5.646459,
+"lng": -0.155002
+},
+{
+"osm": "node/6350580474",
+"name": "Grit Pharmacy",
+"lat": 5.551938,
+"lng": -0.203977
+},
+{
+"osm": "node/6352298093",
+"name": "Robbie's Chemist",
+"lat": 5.600962,
+"lng": -0.230724
+},
+{
+"osm": "node/6352738040",
+"name": "St Moses Clinic",
+"lat": 5.688652,
+"lng": -0.28589
+},
+{
+"osm": "node/6356087258",
+"name": "Acheampong Specialist Clinic",
+"lat": 5.561695,
+"lng": -0.172576
+},
+{
+"osm": "node/6356778208",
+"name": "Jak Pharmacy",
+"lat": 5.550773,
+"lng": -0.183956
+},
+{
+"osm": "node/6362090188",
+"name": "Eastern Chemists",
+"lat": 6.095033,
+"lng": -0.260854
+},
+{
+"osm": "node/6369964730",
+"name": "A. O. Pharmacy",
+"lat": 5.576528,
+"lng": -0.216946
+},
+{
+"osm": "node/6372816494",
+"name": "Skycare Pharmacy",
+"lat": 6.106063,
+"lng": -0.247606
+},
+{
+"osm": "node/6376476022",
+"name": "Add Pharmacy",
+"lat": 5.590412,
+"lng": -0.230327
+},
+{
+"osm": "node/6387877453",
+"name": "East Cantoments Pharmacy Retail",
+"lat": 5.570769,
+"lng": -0.176597
+},
+{
+"osm": "node/6387882586",
+"name": "Sadas Chemists",
+"lat": 5.567014,
+"lng": -0.162997
+},
+{
+"osm": "node/6387882669",
+"name": "Pharmacy Royale",
+"lat": 5.577191,
+"lng": -0.165465
+},
+{
+"osm": "node/6388042409",
+"name": "B4 Pharmacy",
+"lat": 6.094303,
+"lng": -0.258404
+},
+{
+"osm": "node/6388042484",
+"name": "Patbrenda Clinic & Laboratory",
+"lat": 6.107029,
+"lng": -0.247678
+},
+{
+"osm": "node/6394489647",
+"name": "Wesley Pharmacy",
+"lat": 6.08797,
+"lng": -0.254935
+},
+{
+"osm": "node/6395651958",
+"name": "Amicus Pharmacy",
+"lat": 6.098555,
+"lng": -0.262849
+},
+{
+"osm": "node/6419800386",
+"name": "Danpong Pharmacy",
+"lat": 5.606094,
+"lng": -0.077235
+},
+{
+"osm": "node/6419800389",
+"name": "Marisa & May Pharmacy",
+"lat": 5.617831,
+"lng": -0.092668
+},
+{
+"osm": "node/6420471671",
+"name": "Kafny Pharmacy",
+"lat": 5.557297,
+"lng": -0.305885
+},
+{
+"osm": "node/6428842015",
+"name": "Safeline Medical Laboratory",
+"lat": 6.093969,
+"lng": -0.258895
+},
+{
+"osm": "node/6431425985",
+"name": "Davjoel Pharmacy",
+"lat": 5.888654,
+"lng": -0.089567
+},
+{
+"osm": "node/6432200682",
+"name": "Joy NK",
+"lat": 5.683489,
+"lng": -0.035759
+},
+{
+"osm": "node/6433598787",
+"name": "Edd Eddy",
+"lat": 5.602214,
+"lng": -0.080237
+},
+{
+"osm": "node/6435744903",
+"name": "Gabson Pharmacy",
+"lat": 6.092417,
+"lng": -0.258616
+},
+{
+"osm": "node/6435759256",
+"name": "Inter-Pharma Limited",
+"lat": 6.094377,
+"lng": -0.25975
+},
+{
+"osm": "node/6435778898",
+"name": "Kama Pharmacy",
+"lat": 6.090803,
+"lng": -0.25736
+},
+{
+"osm": "node/6437976663",
+"name": "Ernbrid Pharmacy",
+"lat": 5.56346,
+"lng": -0.203707
+},
+{
+"osm": "node/6446698786",
+"name": "Prime",
+"lat": 5.638846,
+"lng": -0.123081
+},
+{
+"osm": "node/6446698787",
+"name": "Medimart",
+"lat": 5.627956,
+"lng": -0.151186
+},
+{
+"osm": "node/6448342769",
+"name": "New Vision Dental",
+"lat": 5.577363,
+"lng": -0.152848
+},
+{
+"osm": "node/6448601889",
+"name": "Ernest Chemist",
+"lat": 5.57095,
+"lng": -0.211642
+},
+{
+"osm": "node/6451360488",
+"name": "Medimart",
+"lat": 5.602869,
+"lng": -0.176272
+},
+{
+"osm": "node/6453274999",
+"name": "Almas Pharmacy",
+"lat": 5.642612,
+"lng": -0.003462
+},
+{
+"osm": "node/6453275522",
+"name": "Top Pill",
+"lat": 5.651528,
+"lng": -0.007105
+},
+{
+"osm": "node/6464523586",
+"name": "Success Pharmacy",
+"lat": 5.750706,
+"lng": -0.18484
+},
+{
+"osm": "node/6465598585",
+"name": "Pepmay",
+"lat": 5.613233,
+"lng": -0.073848
+},
+{
+"osm": "node/6466793970",
+"name": "Brobbson Pharmacy",
+"lat": 5.723245,
+"lng": 0.01785
+},
+{
+"osm": "node/6470868773",
+"name": "Deccon Pharmacy",
+"lat": 5.622686,
+"lng": -0.070084
+},
+{
+"osm": "node/6470868779",
+"name": "CrossRoad",
+"lat": 5.615293,
+"lng": -0.073543
+},
+{
+"osm": "node/6475165522",
+"name": "BJ Medical Centre",
+"lat": 5.630628,
+"lng": -0.260931
+},
+{
+"osm": "node/6476504089",
+"name": "Maxwell Akoto-Mireku",
+"lat": 5.604697,
+"lng": -0.088014
+},
+{
+"osm": "node/6478425887",
+"name": "S.K Agyapong Over the Canter",
+"lat": 5.604837,
+"lng": -0.080536
+},
+{
+"osm": "node/6478645121",
+"name": "Ernest Chemist",
+"lat": 5.565664,
+"lng": -0.198787
+},
+{
+"osm": "node/6481544425",
+"name": "Bezzaleel Diagnostic Clinic",
+"lat": 6.092627,
+"lng": -0.26004
+},
+{
+"osm": "node/6490356674",
+"name": "NEA Pharmacy",
+"lat": 5.602712,
+"lng": -0.236371
+},
+{
+"osm": "node/6492032679",
+"name": "Herbal Pharmacy",
+"lat": 5.582581,
+"lng": -0.105413
+},
+{
+"osm": "node/6492135185",
+"name": "Beach Road Pharmacy",
+"lat": 5.580684,
+"lng": -0.10697
+},
+{
+"osm": "node/6492135186",
+"name": "Christian Pharmacy",
+"lat": 5.582991,
+"lng": -0.104963
+},
+{
+"osm": "node/6493148330",
+"name": "Mobimed Pharmacy",
+"lat": 5.593045,
+"lng": -0.090785
+},
+{
+"osm": "node/6502579538",
+"name": "Retina Pharmacy",
+"lat": 5.642476,
+"lng": -0.109602
+},
+{
+"osm": "node/6522171385",
+"name": "Greenfield",
+"lat": 5.618811,
+"lng": -0.090966
+},
+{
+"osm": "node/6528533857",
+"name": "Human Pharmacy",
+"lat": 5.645799,
+"lng": -0.146291
+},
+{
+"osm": "node/6535358017",
+"name": "MDS- Lancet Laboratories",
+"lat": 6.095805,
+"lng": -0.258147
+},
+{
+"osm": "node/6535367088",
+"name": "Amasha Partners Ltd",
+"lat": 6.095709,
+"lng": -0.258088
+},
+{
+"osm": "node/6575423200",
+"name": "Tony Joyce Pharmacy",
+"lat": 5.601101,
+"lng": -0.120393
+},
+{
+"osm": "node/6577751037",
+"name": "Pro-Life Medical Center",
+"lat": 5.585147,
+"lng": -0.131264
+},
+{
+"osm": "node/6581207997",
+"name": "Efan Victory Clinic",
+"lat": 5.624386,
+"lng": -0.090954
+},
+{
+"osm": "node/6586388406",
+"name": "Three Ace Pharmacy",
+"lat": 5.590047,
+"lng": -0.111418
+},
+{
+"osm": "node/6593471393",
+"name": "Prime Pharmacy",
+"lat": 5.600713,
+"lng": -0.225232
+},
+{
+"osm": "node/6594159249",
+"name": "Magic Mitch",
+"lat": 5.588186,
+"lng": -0.196969
+},
+{
+"osm": "node/6601013046",
+"name": "Pillpoint",
+"lat": 5.63623,
+"lng": -0.103513
+},
+{
+"osm": "node/6615072325",
+"name": "Darpong Clinic",
+"lat": 5.628104,
+"lng": -0.088759
+},
+{
+"osm": "node/6649973861",
+"name": "GBC Clinic",
+"lat": 5.575589,
+"lng": -0.194122
+},
+{
+"osm": "node/6658579882",
+"name": "Jinlet",
+"lat": 5.555769,
+"lng": -0.182857
+},
+{
+"osm": "node/6673302845",
+"name": "Lemon",
+"lat": 5.639005,
+"lng": -0.061332
+},
+{
+"osm": "node/6673315763",
+"name": "3G Medical Diagnosis",
+"lat": 5.605143,
+"lng": -0.078213
+},
+{
+"osm": "node/6673369950",
+"name": "Kofikrom",
+"lat": 5.624672,
+"lng": -0.068584
+},
+{
+"osm": "node/6698137436",
+"name": "Michrisma",
+"lat": 5.627483,
+"lng": -0.092603
+},
+{
+"osm": "node/6700363806",
+"name": "Premium Pharmacy and Mart",
+"lat": 5.552415,
+"lng": -0.17834
+},
+{
+"osm": "node/6700429721",
+"name": "Over Flowing Grace",
+"lat": 5.616381,
+"lng": -0.125008
+},
+{
+"osm": "node/6700460529",
+"name": "Tohaba Pharmacy",
+"lat": 5.622204,
+"lng": -0.124292
+},
+{
+"osm": "node/6700466399",
+"name": "Poll Point Pharmacy",
+"lat": 5.585197,
+"lng": -0.100289
+},
+{
+"osm": "node/6700469570",
+"name": "Biotic Pharmacy Limited",
+"lat": 5.589379,
+"lng": -0.09883
+},
+{
+"osm": "node/6700548830",
+"name": "Ernest Chemist Limited",
+"lat": 5.622539,
+"lng": -0.072475
+},
+{
+"osm": "node/6700604298",
+"name": "Vicar Pharmacy",
+"lat": 5.622188,
+"lng": -0.091108
+},
+{
+"osm": "node/6700705046",
+"name": "Pill Point Pharmacy",
+"lat": 5.646892,
+"lng": -0.060537
+},
+{
+"osm": "node/6700736590",
+"name": "Capa Chemist",
+"lat": 5.652073,
+"lng": -0.064053
+},
+{
+"osm": "node/6703531223",
+"name": "Jessumana Pharmacy",
+"lat": 5.695115,
+"lng": -0.201507
+},
+{
+"osm": "node/6703755509",
+"name": "Tap Pharmacy",
+"lat": 5.690269,
+"lng": -0.196915
+},
+{
+"osm": "node/6715223673",
+"name": "CITA Geakrh",
+"lat": 5.666411,
+"lng": -0.196221
+},
+{
+"osm": "node/6719795485",
+"name": "pile box",
+"lat": 5.766477,
+"lng": 0.06142
+},
+{
+"osm": "node/6727482684",
+"name": "Christian Medical Service Clinic",
+"lat": 5.583215,
+"lng": -0.105013
+},
+{
+"osm": "node/6732445513",
+"name": "Mapok",
+"lat": 5.588341,
+"lng": -0.09762
+},
+{
+"osm": "node/6732455567",
+"name": "Tinattet Herbal Centre",
+"lat": 5.58757,
+"lng": -0.098992
+},
+{
+"osm": "node/6742877664",
+"name": "Top-Up Pharmacy",
+"lat": 5.625518,
+"lng": -0.077873
+},
+{
+"osm": "node/6743972962",
+"name": "Frankiz",
+"lat": 5.598213,
+"lng": -0.112533
+},
+{
+"osm": "node/6743999386",
+"name": "Vicmag Pharmacy",
+"lat": 5.600649,
+"lng": -0.103758
+},
+{
+"osm": "node/6744277475",
+"name": "GAB Pharmacy",
+"lat": 5.595221,
+"lng": -0.086067
+},
+{
+"osm": "node/6746346239",
+"name": "Millan Elements",
+"lat": 5.617941,
+"lng": -0.071773
+},
+{
+"osm": "node/6747184248",
+"name": "Glem Pharmacy",
+"lat": 5.607894,
+"lng": -0.09356
+},
+{
+"osm": "node/6753538057",
+"name": "Evepet Pharmacy",
+"lat": 5.589739,
+"lng": -0.130899
+},
+{
+"osm": "node/6753546541",
+"name": "Jim-Beck Pharmacy",
+"lat": 5.597029,
+"lng": -0.125963
+},
+{
+"osm": "node/6769611313",
+"name": "Jilak Chemists",
+"lat": 5.579163,
+"lng": -0.109321
+},
+{
+"osm": "node/6772261844",
+"name": "Baccenta Pharmacy",
+"lat": 5.680108,
+"lng": -0.173091
+},
+{
+"osm": "node/6772265390",
+"name": "Dr. Mensah Herbal Clinic & Shop",
+"lat": 5.680587,
+"lng": -0.173133
+},
+{
+"osm": "node/6779147423",
+"name": "TJ Nhyira Herbal Home",
+"lat": 5.596951,
+"lng": -0.118513
+},
+{
+"osm": "node/6795161816",
+"name": "Eye Plus Pharmacy",
+"lat": 5.56445,
+"lng": -0.180096
+},
+{
+"osm": "node/6797165933",
+"name": "EverCare Pharmacy",
+"lat": 6.128452,
+"lng": -0.212374
+},
+{
+"osm": "node/6816243585",
+"name": "Santa",
+"lat": 5.681788,
+"lng": -0.050137
+},
+{
+"osm": "node/6825058462",
+"name": "BrainTree",
+"lat": 5.632303,
+"lng": -0.134626
+},
+{
+"osm": "node/6825058463",
+"name": "O.K.E Dental Clinic",
+"lat": 5.630863,
+"lng": -0.157231
+},
+{
+"osm": "node/6846113431",
+"name": "Healthaus Pharmacy",
+"lat": 5.596057,
+"lng": -0.101837
+},
+{
+"osm": "node/6869905697",
+"name": "Axis Pharmacy",
+"lat": 5.577492,
+"lng": -0.181968
+},
+{
+"osm": "node/6882941356",
+"name": "Medical & Dental Clini6",
+"lat": 5.626419,
+"lng": -0.15378
+},
+{
+"osm": "node/6883017727",
+"name": "Marpe Pharmacy",
+"lat": 5.565171,
+"lng": -0.213636
+},
+{
+"osm": "node/6892763208",
+"name": "Sterada Pharmacy Limited",
+"lat": 5.575787,
+"lng": -0.188781
+},
+{
+"osm": "node/6897763704",
+"name": "La Medicare Ltd",
+"lat": 5.55777,
+"lng": -0.15553
+},
+{
+"osm": "node/6917993313",
+"name": "Clinic Diagnostic Pharmacy",
+"lat": 5.558056,
+"lng": -0.153953
+},
+{
+"osm": "node/6919099377",
+"name": "The Mall Pharmacy",
+"lat": 5.613094,
+"lng": -0.071969
+},
+{
+"osm": "node/6923924091",
+"name": "Airport Clinic Limited",
+"lat": 5.608267,
+"lng": -0.170918
+},
+{
+"osm": "node/6923935295",
+"name": "Airport Clinic Limited",
+"lat": 5.607487,
+"lng": -0.17129
+},
+{
+"osm": "node/6924791879",
+"name": "Delight Pharmacy",
+"lat": 6.09594,
+"lng": -0.256254
+},
+{
+"osm": "node/6925089485",
+"name": "Topmed Pharmacy",
+"lat": 5.757329,
+"lng": -0.331141
+},
+{
+"osm": "node/6925128752",
+"name": "Media Pharmacy",
+"lat": 5.632634,
+"lng": -0.139797
+},
+{
+"osm": "node/6930474723",
+"name": "The Oak Street Clinic & Laboratory",
+"lat": 5.590863,
+"lng": -0.099231
+},
+{
+"osm": "node/6930620869",
+"name": "Biotic Pharmacy Limited",
+"lat": 5.588749,
+"lng": -0.098924
+},
+{
+"osm": "node/6935467481",
+"name": "NHIS Office Kasoa",
+"lat": 5.53153,
+"lng": -0.436028
+},
+{
+"osm": "node/6938228121",
+"name": "Justab Clinic",
+"lat": 5.533197,
+"lng": -0.429061
+},
+{
+"osm": "node/6938868418",
+"name": "Health Corner",
+"lat": 5.600984,
+"lng": -0.097292
+},
+{
+"osm": "node/6938921774",
+"name": "Palace Pharmacy",
+"lat": 5.584384,
+"lng": -0.162571
+},
+{
+"osm": "node/6939763699",
+"name": "Essel Pharmacy",
+"lat": 5.609126,
+"lng": -0.107999
+},
+{
+"osm": "node/6950090543",
+"name": "Life Pharmacy",
+"lat": 5.683836,
+"lng": -0.282981
+},
+{
+"osm": "node/6950331680",
+"name": "Nima Highway Pharmacy",
+"lat": 5.578965,
+"lng": -0.199931
+},
+{
+"osm": "node/6950424396",
+"name": "Jucad Pharmacy",
+"lat": 5.53506,
+"lng": -0.422544
+},
+{
+"osm": "node/6950451591",
+"name": "Nhyira Pharmacy",
+"lat": 5.53347,
+"lng": -0.429557
+},
+{
+"osm": "node/6953608710",
+"name": "Kasoa Polyclinic",
+"lat": 5.533813,
+"lng": -0.426428
+},
+{
+"osm": "node/6953609643",
+"name": "Enerst Chemist",
+"lat": 5.535456,
+"lng": -0.419405
+},
+{
+"osm": "node/6958422911",
+"name": "Dons Medical Services",
+"lat": 5.582419,
+"lng": -0.198336
+},
+{
+"osm": "node/6958422969",
+"name": "New Cross Clinic and Medical",
+"lat": 5.582382,
+"lng": -0.19929
+},
+{
+"osm": "node/6958423005",
+"name": "Lesson Pharmacy",
+"lat": 5.582106,
+"lng": -0.198473
+},
+{
+"osm": "node/6960812174",
+"name": "Vision Clinic",
+"lat": 5.582084,
+"lng": -0.201294
+},
+{
+"osm": "node/6970189706",
+"name": "Royal Star Clinic and Diagnostic Center",
+"lat": 5.590431,
+"lng": -0.203873
+},
+{
+"osm": "node/6974715277",
+"name": "AnsaPharma",
+"lat": 5.549131,
+"lng": -0.2299
+},
+{
+"osm": "node/6975166245",
+"name": "Layfa Clinic",
+"lat": 5.581569,
+"lng": -0.197307
+},
+{
+"osm": "node/6975237624",
+"name": "Nyala Phamacy",
+"lat": 5.583127,
+"lng": -0.194403
+},
+{
+"osm": "node/6975562195",
+"name": "Sakeena Ofosu",
+"lat": 5.658371,
+"lng": -0.253668
+},
+{
+"osm": "node/6976560804",
+"name": "Paul Opoku",
+"lat": 5.581506,
+"lng": -0.201588
+},
+{
+"osm": "node/6976560824",
+"name": "Z. A Herbal Home",
+"lat": 5.582318,
+"lng": -0.202902
+},
+{
+"osm": "node/6976854419",
+"name": "Nana Panin Herbal And Research Centre",
+"lat": 5.578977,
+"lng": -0.200232
+},
+{
+"osm": "node/6977988712",
+"name": "The Oak Street Clinic",
+"lat": 5.590699,
+"lng": -0.099257
+},
+{
+"osm": "node/6984618077",
+"name": "Sina Zuwina Herbal Center",
+"lat": 5.581497,
+"lng": -0.201922
+},
+{
+"osm": "node/6985230183",
+"name": "Zagus Chemicals",
+"lat": 5.579596,
+"lng": -0.202796
+},
+{
+"osm": "node/6985350566",
+"name": "Magmitch Pharmacy",
+"lat": 5.588151,
+"lng": -0.197138
+},
+{
+"osm": "node/6989978136",
+"name": "Interbrain Pharmacy Limited",
+"lat": 5.586494,
+"lng": -0.196938
+},
+{
+"osm": "node/7014066720",
+"name": "Evans Chemicals",
+"lat": 5.611304,
+"lng": -0.237415
+},
+{
+"osm": "node/7015538712",
+"name": "Zak-med Clinic",
+"lat": 5.583225,
+"lng": -0.207755
+},
+{
+"osm": "node/7018299902",
+"name": "Sievako Pharmacy Limited",
+"lat": 5.59161,
+"lng": -0.204525
+},
+{
+"osm": "node/7018299938",
+"name": "Lifeview Medical Laboratory and Ultra Scan centre",
+"lat": 5.591619,
+"lng": -0.204551
+},
+{
+"osm": "node/7038861920",
+"name": "37 Pharmacy",
+"lat": 5.58797,
+"lng": -0.183796
+},
+{
+"osm": "node/7038890323",
+"name": "JM Wadhwani( pathology department)",
+"lat": 5.58883,
+"lng": -0.184265
+},
+{
+"osm": "node/7041388696",
+"name": "Anglican Medical Center",
+"lat": 5.69726,
+"lng": -0.281136
+},
+{
+"osm": "node/7046135614",
+"name": "Evergreen Natural Wellness Herbal Shop",
+"lat": 5.619338,
+"lng": -0.092012
+},
+{
+"osm": "node/7046135638",
+"name": "Menaba Herbal Center",
+"lat": 5.619247,
+"lng": -0.092453
+},
+{
+"osm": "node/7051293354",
+"name": "Bedita",
+"lat": 5.627961,
+"lng": -0.169398
+},
+{
+"osm": "node/7091233013",
+"name": "White Tower",
+"lat": 5.561121,
+"lng": -0.215296
+},
+{
+"osm": "node/7095415507",
+"name": "Voek Pharmacy",
+"lat": 5.761798,
+"lng": 0.051987
+},
+{
+"osm": "node/7102234383",
+"name": "Jim - Beck",
+"lat": 5.611716,
+"lng": -0.106514
+},
+{
+"osm": "node/7127806850",
+"name": "MycroChemist Pharmacy",
+"lat": 5.647719,
+"lng": -0.15151
+},
+{
+"osm": "node/7127853157",
+"name": "Save the Nation's Sight Clinic",
+"lat": 5.658422,
+"lng": -0.155802
+},
+{
+"osm": "node/7128879152",
+"name": "Amamorley Health Centre",
+"lat": 5.663478,
+"lng": -0.296872
+},
+{
+"osm": "node/7140706354",
+"name": "Bimex",
+"lat": 5.598191,
+"lng": -0.223681
+},
+{
+"osm": "node/7142921288",
+"name": "Pillpoint Pharmacy",
+"lat": 5.631675,
+"lng": -0.252072
+},
+{
+"osm": "node/7147467169",
+"name": "Elizabeth Sey Pharmacy",
+"lat": 5.635414,
+"lng": -0.187468
+},
+{
+"osm": "node/7151828423",
+"name": "Grit Pharmacy",
+"lat": 5.614112,
+"lng": -0.228423
+},
+{
+"osm": "node/7154060541",
+"name": "Norkids",
+"lat": 5.616619,
+"lng": -0.062316
+},
+{
+"osm": "node/7162116722",
+"name": "Kelmed Pharmaceuticals",
+"lat": 5.561613,
+"lng": -0.213658
+},
+{
+"osm": "node/7164564613",
+"name": "Pharmatrust Pharmacy",
+"lat": 5.616189,
+"lng": -0.229036
+},
+{
+"osm": "node/7170251487",
+"name": "Pharma George",
+"lat": 5.630241,
+"lng": -0.24673
+},
+{
+"osm": "node/7171466999",
+"name": "Add Pharma",
+"lat": 5.600351,
+"lng": -0.19734
+},
+{
+"osm": "node/7182261015",
+"name": "Benalice",
+"lat": 5.635324,
+"lng": -0.24075
+},
+{
+"osm": "node/7187301603",
+"name": "Zoe Pharmacy",
+"lat": 5.667476,
+"lng": -0.185609
+},
+{
+"osm": "node/7187310367",
+"name": "Mini Clinic",
+"lat": 5.667475,
+"lng": -0.185664
+},
+{
+"osm": "node/7193211854",
+"name": "Wellmark Pharmacy",
+"lat": 5.681224,
+"lng": -0.19317
+},
+{
+"osm": "node/7193220303",
+"name": "New Vision Dental Clinic Annex",
+"lat": 5.681609,
+"lng": -0.193105
+},
+{
+"osm": "node/7198661876",
+"name": "Sir Swanzy Chemicals",
+"lat": 5.589695,
+"lng": -0.258359
+},
+{
+"osm": "node/7198689151",
+"name": "Chrismark",
+"lat": 5.590442,
+"lng": -0.255233
+},
+{
+"osm": "node/7204700917",
+"name": "Love pharmacy",
+"lat": 5.660019,
+"lng": -0.25477
+},
+{
+"osm": "node/7207976460",
+"name": "Eden Royal",
+"lat": 5.602963,
+"lng": -0.256478
+},
+{
+"osm": "node/7209383695",
+"name": "Hemins Pharmacy Limited",
+"lat": 5.590083,
+"lng": -0.251984
+},
+{
+"osm": "node/7211393385",
+"name": "M&G Pharmaceuticals",
+"lat": 5.534817,
+"lng": -0.211325
+},
+{
+"osm": "node/7211448645",
+"name": "M&G whole sale division",
+"lat": 5.535129,
+"lng": -0.211144
+},
+{
+"osm": "node/7211660772",
+"name": "Letap pharmacy",
+"lat": 5.557002,
+"lng": -0.219459
+},
+{
+"osm": "node/7213787583",
+"name": "QuasiPharma",
+"lat": 5.552636,
+"lng": -0.184253
+},
+{
+"osm": "node/7215950604",
+"name": "Ami Pharmacy",
+"lat": 5.593398,
+"lng": -0.252378
+},
+{
+"osm": "node/7215965920",
+"name": "Sergen",
+"lat": 5.599996,
+"lng": -0.255
+},
+{
+"osm": "node/7218556808",
+"name": "Benatash Pharmacy",
+"lat": 5.567135,
+"lng": -0.21355
+},
+{
+"osm": "node/7222513545",
+"name": "Bridge View Pharmacy",
+"lat": 5.645565,
+"lng": -0.246586
+},
+{
+"osm": "node/7238982597",
+"name": "Matcare Pharmacy",
+"lat": 5.631315,
+"lng": -0.090041
+},
+{
+"osm": "node/7238982608",
+"name": "Lena Pharmacy",
+"lat": 5.686192,
+"lng": -0.028649
+},
+{
+"osm": "node/7252688372",
+"name": "Osbon Pharmacy",
+"lat": 5.67757,
+"lng": -0.181399
+},
+{
+"osm": "node/7266056585",
+"name": "Camden",
+"lat": 5.576213,
+"lng": -0.137639
+},
+{
+"osm": "node/7267248249",
+"name": "Raise chemist",
+"lat": 5.65263,
+"lng": -0.250662
+},
+{
+"osm": "node/7267284362",
+"name": "Swanlake Pharmacy",
+"lat": 5.656428,
+"lng": -0.252136
+},
+{
+"osm": "node/7267287583",
+"name": "Kinschem Pharmacy",
+"lat": 5.658116,
+"lng": -0.252902
+},
+{
+"osm": "node/7282918527",
+"name": "PalmAid Pharmacy",
+"lat": 5.573579,
+"lng": -0.159298
+},
+{
+"osm": "node/7293055585",
+"name": "Mcaliz Pharmacy",
+"lat": 5.710989,
+"lng": -0.19343
+},
+{
+"osm": "node/7296409694",
+"name": "Baseline",
+"lat": 5.551813,
+"lng": -0.209623
+},
+{
+"osm": "node/7308441494",
+"name": "Osu Maternity Home Hospital",
+"lat": 5.553747,
+"lng": -0.185228
+},
+{
+"osm": "node/7312485183",
+"name": "Neptune Medical Centre",
+"lat": 5.64948,
+"lng": -0.074886
+},
+{
+"osm": "node/7315829926",
+"name": "Pharmatrust Professional college",
+"lat": 5.552842,
+"lng": -0.343043
+},
+{
+"osm": "node/7316574318",
+"name": "PrijoPharma",
+"lat": 5.642469,
+"lng": -0.249741
+},
+{
+"osm": "node/7331952065",
+"name": "RX Pharmacy",
+"lat": 5.749654,
+"lng": -0.182507
+},
+{
+"osm": "node/7331974110",
+"name": "Aide Pharmacy",
+"lat": 5.747257,
+"lng": -0.189406
+},
+{
+"osm": "node/7332012111",
+"name": "Isaac Opuni License Chemical",
+"lat": 5.751076,
+"lng": -0.184271
+},
+{
+"osm": "node/7332075463",
+"name": "Bright Kwasi Ameho",
+"lat": 5.757235,
+"lng": -0.191652
+},
+{
+"osm": "node/7335482236",
+"name": "Life Health Care",
+"lat": 5.638541,
+"lng": -0.241597
+},
+{
+"osm": "node/7344680334",
+"name": "Life Health Care",
+"lat": 5.638936,
+"lng": -0.241273
+},
+{
+"osm": "node/7348800676",
+"name": "Givers Scientic Herbal Clinic",
+"lat": 5.60787,
+"lng": -0.127572
+},
+{
+"osm": "node/7348800679",
+"name": "Mutti Pharmacy",
+"lat": 5.607657,
+"lng": -0.125963
+},
+{
+"osm": "node/7348800680",
+"name": "Kingstreet Pharmacy",
+"lat": 5.604905,
+"lng": -0.117966
+},
+{
+"osm": "node/7439191623",
+"name": "Agbogba Community Clinic",
+"lat": 5.694953,
+"lng": -0.201244
+},
+{
+"osm": "node/7441397234",
+"name": "Good Start Pharmacy Limited",
+"lat": 5.6239,
+"lng": -0.249149
+},
+{
+"osm": "node/7471932854",
+"name": "Tofeefy Pharmacy",
+"lat": 5.652484,
+"lng": -0.246922
+},
+{
+"osm": "node/7471974190",
+"name": "Crystal",
+"lat": 5.660913,
+"lng": -0.23726
+},
+{
+"osm": "node/7472011399",
+"name": "Kess Pharmacy",
+"lat": 5.686729,
+"lng": -0.184871
+},
+{
+"osm": "node/7495050567",
+"name": "Just ask Pharmacy and Mart",
+"lat": 5.655305,
+"lng": -0.262751
+},
+{
+"osm": "node/7496247952",
+"name": "Kklay",
+"lat": 5.658978,
+"lng": -0.272515
+},
+{
+"osm": "node/7516013352",
+"name": "Kent Pharmacy",
+"lat": 5.623532,
+"lng": -0.241117
+},
+{
+"osm": "node/7526173959",
+"name": "Medline",
+"lat": 5.645313,
+"lng": -0.247554
+},
+{
+"osm": "node/7532272117",
+"name": "King Solomon Dental Clinic",
+"lat": 5.667908,
+"lng": -0.204407
+},
+{
+"osm": "node/7566424316",
+"name": "Hale Pharmacy",
+"lat": 5.595279,
+"lng": -0.231423
+},
+{
+"osm": "node/7600588293",
+"name": "Star Med",
+"lat": 5.585436,
+"lng": -0.102247
+},
+{
+"osm": "node/7614571218",
+"name": "Visat Pharmacy",
+"lat": 5.683884,
+"lng": -0.180601
+},
+{
+"osm": "node/7625364314",
+"name": "Aide Pharmacy",
+"lat": 5.680831,
+"lng": -0.197487
+},
+{
+"osm": "node/7629520515",
+"name": "MDS-Lancet",
+"lat": 5.535608,
+"lng": -0.22841
+},
+{
+"osm": "node/7631821113",
+"name": "MDS-Lancet Laboratories",
+"lat": 5.638333,
+"lng": -0.210972
+},
+{
+"osm": "node/7634539648",
+"name": "Akpabe Pharmacy Limited",
+"lat": 5.670364,
+"lng": -0.205417
+},
+{
+"osm": "node/7637963327",
+"name": "Panacea Pharmacy",
+"lat": 5.657764,
+"lng": -0.20752
+},
+{
+"osm": "node/7640382185",
+"name": "Linah Asante",
+"lat": 5.608013,
+"lng": -0.130081
+},
+{
+"osm": "node/7693042673",
+"name": "Penbrose Clinic",
+"lat": 5.648278,
+"lng": -0.228348
+},
+{
+"osm": "node/7693055793",
+"name": "Frimata Pharmacy",
+"lat": 5.646384,
+"lng": -0.226843
+},
+{
+"osm": "node/7727437261",
+"name": "Baseline",
+"lat": 5.546999,
+"lng": -0.209984
+},
+{
+"osm": "node/7767669321",
+"name": "Top Herbal Clinic",
+"lat": 5.682835,
+"lng": -0.193503
+},
+{
+"osm": "node/7774301190",
+"name": "New Discovery Pharmacy",
+"lat": 5.641063,
+"lng": -0.240185
+},
+{
+"osm": "node/7775284579",
+"name": "Veronica Sasah",
+"lat": 5.50917,
+"lng": -0.337795
+},
+{
+"osm": "node/7775289597",
+"name": "McCarthy Hill Pharmacy",
+"lat": 5.523527,
+"lng": -0.326914
+},
+{
+"osm": "node/7775290904",
+"name": "Claks Mosk Chemist",
+"lat": 5.5204,
+"lng": -0.327981
+},
+{
+"osm": "node/7775291916",
+"name": "Unicon Chemist Limited",
+"lat": 5.573999,
+"lng": -0.27908
+},
+{
+"osm": "node/7775298236",
+"name": "Licensed Over the Counter",
+"lat": 5.511025,
+"lng": -0.335211
+},
+{
+"osm": "node/7775298756",
+"name": "Rejoice Sename",
+"lat": 5.508645,
+"lng": -0.336614
+},
+{
+"osm": "node/7775302897",
+"name": "Fountain Spring Pharmacy",
+"lat": 5.538457,
+"lng": -0.325898
+},
+{
+"osm": "node/7775772659",
+"name": "Delivery Chemist",
+"lat": 5.554658,
+"lng": -0.308223
+},
+{
+"osm": "node/7775821111",
+"name": "Hilton Chemist Limited",
+"lat": 5.544559,
+"lng": -0.32574
+},
+{
+"osm": "node/7775836840",
+"name": "Accra West Medical Centre",
+"lat": 5.546389,
+"lng": -0.326209
+},
+{
+"osm": "node/7777512985",
+"name": "Jephong",
+"lat": 5.548837,
+"lng": -0.349701
+},
+{
+"osm": "node/7777513011",
+"name": "Declan Pharmacy",
+"lat": 5.539199,
+"lng": -0.399341
+},
+{
+"osm": "node/7779103597",
+"name": "Listings",
+"lat": 5.631014,
+"lng": -0.285115
+},
+{
+"osm": "node/7799331930",
+"name": "Pokuase Pharmacy",
+"lat": 5.672817,
+"lng": -0.291518
+},
+{
+"osm": "node/7810005711",
+"name": "Shalina",
+"lat": 5.566,
+"lng": -0.210348
+},
+{
+"osm": "node/7810232498",
+"name": "Floss Pharma",
+"lat": 5.634422,
+"lng": -0.100893
+},
+{
+"osm": "node/7812008490",
+"name": "Mother-Love Hospital",
+"lat": 5.716545,
+"lng": -0.166359
+},
+{
+"osm": "node/7812284286",
+"name": "Theonic Pharmacy",
+"lat": 5.708638,
+"lng": -0.016069
+},
+{
+"osm": "node/7814702658",
+"name": "GAFAT pharmacy",
+"lat": 5.591032,
+"lng": -0.206492
+},
+{
+"osm": "node/7837916785",
+"name": "Firdaws Pharmacy Limited",
+"lat": 5.623639,
+"lng": -0.29822
+},
+{
+"osm": "node/7856510593",
+"name": "Novomed",
+"lat": 5.622705,
+"lng": -0.301855
+},
+{
+"osm": "node/7859185106",
+"name": "Yakos Pharmacy",
+"lat": 5.734019,
+"lng": -0.174953
+},
+{
+"osm": "node/7859194100",
+"name": "Modem Pharmacy Limited",
+"lat": 5.743361,
+"lng": -0.177031
+},
+{
+"osm": "node/7869175836",
+"name": "Mawuena Pharmacy",
+"lat": 5.781838,
+"lng": -0.175353
+},
+{
+"osm": "node/7869275633",
+"name": "Double Plus",
+"lat": 5.687001,
+"lng": -0.193798
+},
+{
+"osm": "node/7877561279",
+"name": "Dawa CHPS compound",
+"lat": 5.86469,
+"lng": 0.28651
+},
+{
+"osm": "node/7881392996",
+"name": "Nesta Pharmacy",
+"lat": 5.596941,
+"lng": -0.231006
+},
+{
+"osm": "node/7881397955",
+"name": "Avenue Chemist",
+"lat": 5.597365,
+"lng": -0.229455
+},
+{
+"osm": "node/7927557097",
+"name": "Danslob Pharmacy Limited",
+"lat": 5.649427,
+"lng": -0.251486
+},
+{
+"osm": "node/7933833160",
+"name": "Midpoint Pharmacy",
+"lat": 5.637572,
+"lng": -0.217106
+},
+{
+"osm": "node/7958938806",
+"name": "Medifem Multi-Specialist Hospital & Fertility Centre",
+"lat": 5.658528,
+"lng": -0.20607
+},
+{
+"osm": "node/8003263177",
+"name": "Colliers Pharmacy",
+"lat": 5.573343,
+"lng": -0.260196
+},
+{
+"osm": "node/8004079890",
+"name": "Central Kasoa Clinic - Annex",
+"lat": 5.484698,
+"lng": -0.420123
+},
+{
+"osm": "node/8006375662",
+"name": "Ernest Chemists",
+"lat": 5.607735,
+"lng": -0.185147
+},
+{
+"osm": "node/8006985111",
+"name": "St. Gregory Catholic Hospital",
+"lat": 5.523873,
+"lng": -0.475358
+},
+{
+"osm": "node/8007051526",
+"name": "Roman Trust Clinic",
+"lat": 5.504982,
+"lng": -0.457071
+},
+{
+"osm": "node/8070168590",
+"name": "Citadel Hospital",
+"lat": 5.596484,
+"lng": -0.21683
+},
+{
+"osm": "node/8070174468",
+"name": "Alex Tawiah Chemical Store",
+"lat": 5.596067,
+"lng": -0.216771
+},
+{
+"osm": "node/8071501404",
+"name": "Jubail Specialist Hospital",
+"lat": 5.625637,
+"lng": -0.052081
+},
+{
+"osm": "node/8071501405",
+"name": "Rosmond Pharmacy",
+"lat": 5.609342,
+"lng": -0.112015
+},
+{
+"osm": "node/8112000302",
+"name": "Marie Stopes",
+"lat": 5.57718,
+"lng": -0.213748
+},
+{
+"osm": "node/8240196694",
+"name": "Cyrus Physiotherapy and Rehabilitation Centre",
+"lat": 5.762617,
+"lng": -0.192819
+},
+{
+"osm": "node/8346382200",
+"name": "K-Lynks pharmacy",
+"lat": 5.743549,
+"lng": -0.153486
+},
+{
+"osm": "node/8391471220",
+"name": "Max-Health Pharmacy",
+"lat": 5.700256,
+"lng": -0.202724
+},
+{
+"osm": "node/8544169870",
+"name": "AdePharmacy",
+"lat": 6.006447,
+"lng": 0.615271
+},
+{
+"osm": "node/8567038917",
+"name": "Franeva",
+"lat": 5.585029,
+"lng": -0.212864
+},
+{
+"osm": "node/8571994317",
+"name": "NexrCap",
+"lat": 5.675414,
+"lng": -0.123212
+},
+{
+"osm": "node/8572227217",
+"name": "Ernest Pharmacy",
+"lat": 5.64048,
+"lng": -0.151211
+},
+{
+"osm": "node/8572611717",
+"name": "Herbal",
+"lat": 5.539255,
+"lng": -0.246982
+},
+{
+"osm": "node/8598911517",
+"name": "General Family Hospital",
+"lat": 5.724347,
+"lng": -0.057918
+},
+{
+"osm": "node/8707722417",
+"name": "Samsel",
+"lat": 5.606223,
+"lng": -0.115103
+},
+{
+"osm": "node/8708704008",
+"name": "Bart Brown",
+"lat": 5.746176,
+"lng": -0.178556
+},
+{
+"osm": "node/8708737318",
+"name": "Ervian Pharmacy",
+"lat": 5.759597,
+"lng": -0.192733
+},
+{
+"osm": "node/8718176396",
+"name": "Classic Diagnostic & Medical Clinic",
+"lat": 5.704553,
+"lng": -0.201748
+},
+{
+"osm": "node/8868150633",
+"name": "Adowa Boatemaa Memorial Clinic",
+"lat": 5.533058,
+"lng": -0.237364
+},
+{
+"osm": "node/8873554755",
+"name": "MiniMax Pharmacy",
+"lat": 5.697003,
+"lng": -0.203426
+},
+{
+"osm": "node/8898883192",
+"name": "Bubune Pharmacy",
+"lat": 5.651513,
+"lng": -0.209263
+},
+{
+"osm": "node/8953954351",
+"name": "James Town Usher Clinic",
+"lat": 5.540333,
+"lng": -0.21299
+},
+{
+"osm": "node/8976806587",
+"name": "Atta Quarshie Merton Memorial Hospital",
+"lat": 5.561949,
+"lng": -0.213777
+},
+{
+"osm": "node/8979595011",
+"name": "Adisec Clinic",
+"lat": 6.094146,
+"lng": 0.505999
+},
+{
+"osm": "node/8979605646",
+"name": "New Bakpa Chps Compound",
+"lat": 6.051072,
+"lng": 0.540069
+},
+{
+"osm": "node/8979607895",
+"name": "Mafi Anfoe Chps Compound",
+"lat": 6.148452,
+"lng": 0.541502
+},
+{
+"osm": "node/8979649404",
+"name": "Mafi Avedo Chps Compound",
+"lat": 6.133677,
+"lng": 0.636868
+},
+{
+"osm": "node/8979649623",
+"name": "Dekpoe Chps Compound",
+"lat": 6.126982,
+"lng": 0.494093
+},
+{
+"osm": "node/8986141401",
+"name": "Kpotame Health Centre",
+"lat": 5.976666,
+"lng": 0.525704
+},
+{
+"osm": "node/8986148774",
+"name": "Sokpoe Chps Compound",
+"lat": 5.992315,
+"lng": 0.579853
+},
+{
+"osm": "node/8986152599",
+"name": "Sogakope Government Hospital",
+"lat": 6.001387,
+"lng": 0.594909
+},
+{
+"osm": "node/8986160071",
+"name": "Sasekope Chps Compound",
+"lat": 6.047804,
+"lng": 0.604406
+},
+{
+"osm": "node/8986163757",
+"name": "Tefle Health Centre",
+"lat": 6.000539,
+"lng": 0.570732
+},
+{
+"osm": "node/8986166740",
+"name": "Planned Parenthood Association of Ghana Clinic",
+"lat": 6.001582,
+"lng": 0.597539
+},
+{
+"osm": "node/8986168307",
+"name": "Sogasco Sick Bay",
+"lat": 5.991628,
+"lng": 0.601465
+},
+{
+"osm": "node/9039039190",
+"name": "Pill Point Pharmacy",
+"lat": 5.568708,
+"lng": -0.286708
+},
+{
+"osm": "node/9041902863",
+"name": "ADD Pharma",
+"lat": 5.576906,
+"lng": -0.254555
+},
+{
+"osm": "node/9083982209",
+"name": "Diamed Diagnostical and Treatment Center",
+"lat": 5.639097,
+"lng": -0.177408
+},
+{
+"osm": "node/9123049006",
+"name": "Getaid Pharmarcy",
+"lat": 5.686276,
+"lng": -0.168957
+},
+{
+"osm": "node/9123339417",
+"name": "Prime",
+"lat": 5.604384,
+"lng": -0.17523
+},
+{
+"osm": "node/9132743817",
+"name": "Outbox Pharmacy",
+"lat": 5.783645,
+"lng": -0.168757
+},
+{
+"osm": "node/9132743820",
+"name": "Danfa Clinic",
+"lat": 5.789452,
+"lng": -0.159536
+},
+{
+"osm": "node/9132744318",
+"name": "MBC Pharmacy",
+"lat": 5.782608,
+"lng": -0.177506
+},
+{
+"osm": "node/9150839718",
+"name": "Charis Pharma",
+"lat": 5.677603,
+"lng": -0.046717
+},
+{
+"osm": "node/9160879618",
+"name": "Acts Pharmacy",
+"lat": 5.598619,
+"lng": -0.099418
+},
+{
+"osm": "node/9209889400",
+"name": "Tricare A. Pharmacy Limited",
+"lat": 5.704678,
+"lng": -0.17092
+},
+{
+"osm": "node/9229859744",
+"name": "Beanathan Pharmacy",
+"lat": 5.686392,
+"lng": -0.194421
+},
+{
+"osm": "node/9235979417",
+"name": "HealthLane",
+"lat": 5.625545,
+"lng": -0.152507
+},
+{
+"osm": "node/9236170976",
+"name": "Gene Lab",
+"lat": 5.640535,
+"lng": -0.145363
+},
+{
+"osm": "node/9273013572",
+"name": "GN Pharmacy",
+"lat": 5.732802,
+"lng": -0.157983
+},
+{
+"osm": "node/9332433917",
+"name": "All Drugs Pharmacy",
+"lat": 5.608918,
+"lng": -0.10479
+},
+{
+"osm": "node/9341179817",
+"name": "Hutch",
+"lat": 5.642336,
+"lng": -0.076492
+},
+{
+"osm": "node/9341180418",
+"name": "De Georges Pharmacy",
+"lat": 5.635886,
+"lng": -0.076093
+},
+{
+"osm": "node/9351803221",
+"name": "Asanco",
+"lat": 5.593446,
+"lng": -0.094471
+},
+{
+"osm": "node/9368231190",
+"name": "Ranstell Pharmacy",
+"lat": 5.898781,
+"lng": 0.522545
+},
+{
+"osm": "node/9400800440",
+"name": "Atis Pharmacy",
+"lat": 5.748606,
+"lng": -0.150654
+},
+{
+"osm": "node/9469866678",
+"name": "McHenly's Medical Centre",
+"lat": 5.632815,
+"lng": -0.16692
+},
+{
+"osm": "node/9592393312",
+"name": "Senes Pharmacy",
+"lat": 5.697556,
+"lng": -0.037444
+},
+{
+"osm": "node/9592703774",
+"name": "Lobing Pharmacy",
+"lat": 5.750166,
+"lng": -0.086007
+},
+{
+"osm": "node/9595225678",
+"name": "Rabille Pharmacy",
+"lat": 5.605925,
+"lng": -0.247062
+},
+{
+"osm": "node/9595320827",
+"name": "Burma Camp Pharmacy",
+"lat": 5.597264,
+"lng": -0.152294
+},
+{
+"osm": "node/9599082167",
+"name": "Vicdoris Pharmacy",
+"lat": 5.57414,
+"lng": -0.23088
+},
+{
+"osm": "node/9602395871",
+"name": "Tobinco",
+"lat": 5.57945,
+"lng": -0.265331
+},
+{
+"osm": "node/9602396228",
+"name": "CA Pharmacy",
+"lat": 5.729185,
+"lng": -0.31273
+},
+{
+"osm": "node/9646636717",
+"name": "Geomond Eye Centre",
+"lat": 5.617501,
+"lng": -0.078728
+},
+{
+"osm": "node/9660303978",
+"name": "Joepharma Pharmacy",
+"lat": 5.650415,
+"lng": -0.191517
+},
+{
+"osm": "node/9678357942",
+"name": "Kam-Aid",
+"lat": 5.748779,
+"lng": -0.177351
+},
+{
+"osm": "node/9679380617",
+"name": "MediTab",
+"lat": 5.67393,
+"lng": -0.193735
+},
+{
+"osm": "node/9738244761",
+"name": "Select",
+"lat": 5.55164,
+"lng": -0.329458
+},
+{
+"osm": "node/9795356718",
+"name": "Unicom Pharmacy",
+"lat": 5.561501,
+"lng": -0.182078
+},
+{
+"osm": "node/9825285017",
+"name": "St. Lucy Eye Clinic",
+"lat": 5.634594,
+"lng": -0.063783
+},
+{
+"osm": "node/9845769217",
+"name": "Lebanon Community Hospital",
+"lat": 5.720567,
+"lng": -0.057847
+},
+{
+"osm": "node/9895315827",
+"name": "Ofoe's Pharmacy",
+"lat": 6.099798,
+"lng": 0.126258
+},
+{
+"osm": "node/9895395238",
+"name": "Pharmancy",
+"lat": 6.100816,
+"lng": 0.127302
+},
+{
+"osm": "node/9895395243",
+"name": "Pharmancy",
+"lat": 6.102416,
+"lng": 0.12731
+},
+{
+"osm": "node/9942010487",
+"name": "Tobinco Pharmacy",
+"lat": 5.550833,
+"lng": -0.207685
+},
+{
+"osm": "node/9995774214",
+"name": "Life Aid Pharmacy",
+"lat": 5.602211,
+"lng": -0.256246
+},
+{
+"osm": "relation/10953894",
+"name": "Family Hospital and Fertility Centre",
+"lat": 5.549831,
+"lng": -0.355757
+},
+{
+"osm": "way/1079468384",
+"name": "Sickbay",
+"lat": 5.606338,
+"lng": -0.065266
+},
+{
+"osm": "way/1125972897",
+"name": "Offshore Pharmacy",
+"lat": 5.67885,
+"lng": -0.179026
+},
+{
+"osm": "way/1195602513",
+"name": "Focos Orthopedic hospital",
+"lat": 5.727474,
+"lng": -0.185106
+},
+{
+"osm": "way/1246021750",
+"name": "Supreme Total Care;ECG Sales Point",
+"lat": 5.766922,
+"lng": 0.008895
+},
+{
+"osm": "way/1337086403",
+"name": "Bright Clinic",
+"lat": 5.82451,
+"lng": 0.027787
+},
+{
+"osm": "way/1339925672",
+"name": "Peace Be Clinic",
+"lat": 5.684647,
+"lng": -0.145175
+},
+{
+"osm": "way/1361738583",
+"name": "Okra Kwadwo Health Centre",
+"lat": 6.108992,
+"lng": -0.105747
+},
+{
+"osm": "way/1363157092",
+"name": "St. Martin's Memorial Hospital",
+"lat": 5.579362,
+"lng": -0.273374
+},
+{
+"osm": "way/1373254008",
+"name": "Rhema Rapha Medical Center",
+"lat": 5.57659,
+"lng": -0.139469
+},
+{
+"osm": "way/1373672359",
+"name": "Bright ALK Herbal Clinic",
+"lat": 5.579325,
+"lng": -0.144482
+},
+{
+"osm": "way/1374389524",
+"name": "Gidams Pharmacy",
+"lat": 5.580244,
+"lng": -0.140484
+},
+{
+"osm": "way/1380325866",
+"name": "Ishmael Ashistey Medical Center",
+"lat": 5.626269,
+"lng": -0.024374
+},
+{
+"osm": "way/1381960488",
+"name": "Sab Dental Clinic",
+"lat": 5.634773,
+"lng": -0.013998
+},
+{
+"osm": "way/1383076685",
+"name": "Breasted One Foundation",
+"lat": 5.63192,
+"lng": -0.014665
+},
+{
+"osm": "way/1395327521",
+"name": "Atua Government Hospital",
+"lat": 6.119688,
+"lng": -0.008032
+},
+{
+"osm": "way/1395340546",
+"name": "Saint Martin D Porres Hostital",
+"lat": 6.14422,
+"lng": 0.015077
+},
+{
+"osm": "way/1424844495",
+"name": "Rehabilitation Center",
+"lat": 5.719538,
+"lng": -0.187167
+},
+{
+"osm": "way/1444838898",
+"name": "Odumkyere Darmang Health Centre",
+"lat": 5.868827,
+"lng": -0.542236
+},
+{
+"osm": "way/1461318436",
+"name": "New Life Homeopathic Clinic",
+"lat": 5.555227,
+"lng": -0.267043
+},
+{
+"osm": "way/1498831897",
+"name": "M & D Medical Center",
+"lat": 5.756065,
+"lng": -0.333982
+},
+{
+"osm": "way/1528249886",
+"name": "Ga East Municipal Hospital",
+"lat": 5.673371,
+"lng": -0.22933
+},
+{
+"osm": "way/1537699959",
+"name": "Oduman Polyclinic",
+"lat": 5.642259,
+"lng": -0.330747
+},
+{
+"osm": "way/1544555914",
+"name": "Abisim Yeboah CHPS",
+"lat": 6.127845,
+"lng": -0.398266
+},
+{
+"osm": "way/1552485161",
+"name": "Mafi Tove CHPS Compound",
+"lat": 6.109187,
+"lng": 0.612832
+},
+{
+"osm": "way/1560770246",
+"name": "Avedo Health Centre",
+"lat": 6.133665,
+"lng": 0.636623
+},
+{
+"osm": "way/1560770251",
+"name": "Dorkplorme Community-based Health Planning and Services",
+"lat": 6.115845,
+"lng": 0.705579
+},
+{
+"osm": "way/192082873",
+"name": "Karikari Brobbey Hospital",
+"lat": 5.531098,
+"lng": -0.261595
+},
+{
+"osm": "way/192082879",
+"name": "Zaclex Maternity Home",
+"lat": 5.528576,
+"lng": -0.263876
+},
+{
+"osm": "way/255511063",
+"name": "Ghana Police Hospital",
+"lat": 5.568439,
+"lng": -0.181711
+},
+{
+"osm": "way/277028141",
+"name": "MBA Hospital",
+"lat": 5.601309,
+"lng": -0.256814
+},
+{
+"osm": "way/278268702",
+"name": "University of Ghana Hospital",
+"lat": 5.651852,
+"lng": -0.178107
+},
+{
+"osm": "way/298258033",
+"name": "Korle Bu Policlinic",
+"lat": 5.537867,
+"lng": -0.223472
+},
+{
+"osm": "way/298260306",
+"name": "Ridge Hospital",
+"lat": 5.562299,
+"lng": -0.19939
+},
+{
+"osm": "way/299668118",
+"name": "Nyaho Clinic",
+"lat": 5.614556,
+"lng": -0.184994
+},
+{
+"osm": "way/303162760",
+"name": "Korle Bu Teaching Hospital",
+"lat": 5.538081,
+"lng": -0.227202
+},
+{
+"osm": "way/310088363",
+"name": "Lapaz Community Hospital",
+"lat": 5.608767,
+"lng": -0.253733
+},
+{
+"osm": "way/316141751",
+"name": "Princess Marie Louie Children's Hospital",
+"lat": 5.544645,
+"lng": -0.213242
+},
+{
+"osm": "way/316834573",
+"name": "WARA / International SOS",
+"lat": 5.570308,
+"lng": -0.166837
+},
+{
+"osm": "way/356767423",
+"name": "Kaneshie Polyclinic",
+"lat": 5.574578,
+"lng": -0.230925
+},
+{
+"osm": "way/358330133",
+"name": "Bengali Hospital",
+"lat": 5.667841,
+"lng": -0.02029
+},
+{
+"osm": "way/358337142",
+"name": "Tema General Hospital",
+"lat": 5.674217,
+"lng": -0.025155
+},
+{
+"osm": "way/358871238",
+"name": "Madina Polyclinic",
+"lat": 5.66758,
+"lng": -0.165229
+},
+{
+"osm": "way/381731529",
+"name": "New Cross Clinic",
+"lat": 5.582432,
+"lng": -0.199324
+},
+{
+"osm": "way/381731531",
+"name": "Nima Goverment Clinic",
+"lat": 5.57757,
+"lng": -0.200014
+},
+{
+"osm": "way/388245694",
+"name": "Healthy Soul Natural Health Clinic",
+"lat": 5.580617,
+"lng": -0.220226
+},
+{
+"osm": "way/391750854",
+"name": "Mamobi General Hospital",
+"lat": 5.591364,
+"lng": -0.199086
+},
+{
+"osm": "way/403277948",
+"name": "Faith Medical Services",
+"lat": 5.599969,
+"lng": -0.217619
+},
+{
+"osm": "way/425718114",
+"name": "Mission Children Clinic",
+"lat": 5.582638,
+"lng": -0.215776
+},
+{
+"osm": "way/428712574",
+"name": "Beijing Clinic",
+"lat": 5.558373,
+"lng": -0.180122
+},
+{
+"osm": "way/437380195",
+"name": "Achimota Hospital",
+"lat": 5.629735,
+"lng": -0.217263
+},
+{
+"osm": "way/439346942",
+"name": "Civil Service Polyclinic",
+"lat": 5.55104,
+"lng": -0.19601
+},
+{
+"osm": "way/443765697",
+"name": "Tema Polyclinic",
+"lat": 5.635652,
+"lng": -0.006799
+},
+{
+"osm": "way/455565143",
+"name": "North Deseret Hospital",
+"lat": 5.608031,
+"lng": -0.278783
+},
+{
+"osm": "way/457229787",
+"name": "Ada East District Hospital",
+"lat": 5.889384,
+"lng": 0.569725
+},
+{
+"osm": "way/459562807",
+"name": "Valley View University Hospital",
+"lat": 5.798064,
+"lng": -0.125924
+},
+{
+"osm": "way/460123227",
+"name": "Mile Seven pharmacy",
+"lat": 5.630996,
+"lng": -0.243783
+},
+{
+"osm": "way/464683570",
+"name": "University of Ghana Medical Center Limited",
+"lat": 5.631864,
+"lng": -0.185925
+},
+{
+"osm": "way/478696524",
+"name": "Eastern Regional Hospital",
+"lat": 6.097765,
+"lng": -0.256979
+},
+{
+"osm": "way/481195130",
+"name": "Bemuah Royal Hospital",
+"lat": 5.645849,
+"lng": -0.156798
+},
+{
+"osm": "way/481195132",
+"name": "Del International hospital & fertility centre",
+"lat": 5.652465,
+"lng": -0.153639
+},
+{
+"osm": "way/506907120",
+"name": "Adniad Pharmacy",
+"lat": 5.713496,
+"lng": -0.185588
+},
+{
+"osm": "way/513108606",
+"name": "Doctors on Duty Clinic",
+"lat": 5.559874,
+"lng": -0.158612
+},
+{
+"osm": "way/532459266",
+"name": "Amasaman Hospital",
+"lat": 5.70192,
+"lng": -0.299348
+},
+{
+"osm": "way/542892105",
+"name": "Manna Mission",
+"lat": 5.607096,
+"lng": -0.107374
+},
+{
+"osm": "way/543467738",
+"name": "Grace Memorial Hospital",
+"lat": 5.597029,
+"lng": -0.112341
+},
+{
+"osm": "way/546664075",
+"name": "Cathedral Clinic and Lab Limited",
+"lat": 5.539521,
+"lng": -0.207766
+},
+{
+"osm": "way/562940711",
+"name": "Dofor Adidome Health Centre",
+"lat": 6.11887,
+"lng": 0.244139
+},
+{
+"osm": "way/594675123",
+"name": "Lighthouse Hospital",
+"lat": 5.648028,
+"lng": 0.024328
+},
+{
+"osm": "way/597939156",
+"name": "SSNIT Mother and Child",
+"lat": 5.555147,
+"lng": -0.179296
+},
+{
+"osm": "way/607399321",
+"name": "Adjiringanor Health Center",
+"lat": 5.647174,
+"lng": -0.136826
+},
+{
+"osm": "way/614521670",
+"name": "Faith Evangelical Mission Hospital",
+"lat": 5.579282,
+"lng": -0.245048
+},
+{
+"osm": "way/615233031",
+"name": "Asiedu Memorial Clinic",
+"lat": 6.093037,
+"lng": -0.25317
+},
+{
+"osm": "way/615395145",
+"name": "Alogboshie CHPS Compound",
+"lat": 5.626685,
+"lng": -0.232025
+},
+{
+"osm": "way/615818856",
+"name": "Micheal Quaique Otc Medicine Seller",
+"lat": 5.643041,
+"lng": -0.235185
+},
+{
+"osm": "way/615824877",
+"name": "Koforidua Poly Clinic",
+"lat": 6.094949,
+"lng": -0.257905
+},
+{
+"osm": "way/615856823",
+"name": "Rabito Clinic",
+"lat": 6.092113,
+"lng": -0.259576
+},
+{
+"osm": "way/625801430",
+"name": "Oblogo Health Centre",
+"lat": 5.558173,
+"lng": -0.306453
+},
+{
+"osm": "way/635023706",
+"name": "Al-Ayar Hospital",
+"lat": 5.613837,
+"lng": -0.240367
+},
+{
+"osm": "way/665805262",
+"name": "Sam J Hospital",
+"lat": 5.677399,
+"lng": -0.203028
+},
+{
+"osm": "way/672444403",
+"name": "Gewah Hospital",
+"lat": 5.56165,
+"lng": -0.310078
+},
+{
+"osm": "way/672667634",
+"name": "Weija-Gbawe Municipal Hospital",
+"lat": 5.565149,
+"lng": -0.290353
+},
+{
+"osm": "way/672670915",
+"name": "Advance Body Sculpture",
+"lat": 5.5562,
+"lng": -0.304198
+},
+{
+"osm": "way/702226170",
+"name": "Akai House Clinic",
+"lat": 5.577234,
+"lng": -0.171563
+},
+{
+"osm": "way/705954643",
+"name": "Asuo Afram Chemists Ghana Limited",
+"lat": 5.583092,
+"lng": -0.197892
+},
+{
+"osm": "way/706230762",
+"name": "Ghanuba Specialist Clinic",
+"lat": 5.582793,
+"lng": -0.20682
+},
+{
+"osm": "way/707847400",
+"name": "Accra New Town CHPS Compound",
+"lat": 5.583051,
+"lng": -0.205962
+},
+{
+"osm": "way/708086101",
+"name": "Daprof Clinic",
+"lat": 5.579679,
+"lng": -0.196933
+},
+{
+"osm": "way/710756868",
+"name": "Hajj Abdulai Yaro Memorial and Maternity Clinic",
+"lat": 5.585305,
+"lng": -0.199481
+},
+{
+"osm": "way/711850022",
+"name": "C. T. Kpabitey",
+"lat": 5.586688,
+"lng": -0.206096
+},
+{
+"osm": "way/736371694",
+"name": "CHPS Compound",
+"lat": 6.010529,
+"lng": -0.051567
+},
+{
+"osm": "way/738914521",
+"name": "Amoah Memorial Hospital",
+"lat": 5.590794,
+"lng": -0.287288
+},
+{
+"osm": "way/741871603",
+"name": "Golden Jubilee Clinic",
+"lat": 5.662173,
+"lng": -0.172816
+},
+{
+"osm": "way/764528088",
+"name": "Meridian Clinic",
+"lat": 5.645627,
+"lng": -0.007262
+},
+{
+"osm": "way/785855366",
+"name": "SSNIT Hospital",
+"lat": 5.562561,
+"lng": -0.182113
+},
+{
+"osm": "way/785886182",
+"name": "Valley View Clinic",
+"lat": 5.615057,
+"lng": -0.198227
+},
+{
+"osm": "way/785911112",
+"name": "Accra Psychiatric Hospital",
+"lat": 5.563335,
+"lng": -0.204589
+},
+{
+"osm": "way/785913649",
+"name": "German Egon Clinic",
+"lat": 5.612363,
+"lng": -0.214348
+},
+{
+"osm": "way/785915055",
+"name": "Family Health Hospital",
+"lat": 5.572863,
+"lng": -0.112204
+},
+{
+"osm": "way/785917727",
+"name": "Lekma Hospital",
+"lat": 5.603121,
+"lng": -0.120013
+},
+{
+"osm": "way/785918690",
+"name": "Lister Hospital",
+"lat": 5.619309,
+"lng": -0.14647
+},
+{
+"osm": "way/785927801",
+"name": "VRA Hospital & Pharmacy",
+"lat": 5.553983,
+"lng": -0.180748
+},
+{
+"osm": "way/786143438",
+"name": "37 Military Hospital",
+"lat": 5.586912,
+"lng": -0.184713
+},
+{
+"osm": "way/786211189",
+"name": "Adabraka Polyclinic",
+"lat": 5.561821,
+"lng": -0.204431
+},
+{
+"osm": "way/786212491",
+"name": "Greater Grace Hospital",
+"lat": 5.718486,
+"lng": -0.174098
+},
+{
+"osm": "way/786216093",
+"name": "Pantang Hospital",
+"lat": 5.717441,
+"lng": -0.190787
+},
+{
+"osm": "way/786224221",
+"name": "Tetteh Quarshie Hospital",
+"lat": 5.921637,
+"lng": -0.132374
+},
+{
+"osm": "way/786228938",
+"name": "Suhum District Hospital",
+"lat": 6.038014,
+"lng": -0.444667
+},
+{
+"osm": "way/786328111",
+"name": "Obaatan Pa Womens Hospital",
+"lat": 5.631025,
+"lng": -0.168702
+},
+{
+"osm": "way/786331457",
+"name": "Cocoa Clinic",
+"lat": 5.571797,
+"lng": -0.236333
+},
+{
+"osm": "way/786339807",
+"name": "North Legon Hospital",
+"lat": 5.66942,
+"lng": -0.182454
+},
+{
+"osm": "way/786508244",
+"name": "Sogakope District Hospital",
+"lat": 6.008168,
+"lng": 0.614982
+},
+{
+"osm": "way/786508246",
+"name": "Barnor Hospital",
+"lat": 5.549264,
+"lng": -0.241119
+},
+{
+"osm": "way/786513575",
+"name": "Akuse Government Hospital",
+"lat": 6.097829,
+"lng": 0.124956
+},
+{
+"osm": "way/786529847",
+"name": "Anthon Memorial Hospital",
+"lat": 5.593701,
+"lng": -0.211451
+},
+{
+"osm": "way/786544961",
+"name": "Accra Medical Centre",
+"lat": 5.568718,
+"lng": -0.186039
+},
+{
+"osm": "way/786559578",
+"name": "Narh-Bita Hospital",
+"lat": 5.658011,
+"lng": -0.010804
+},
+{
+"osm": "way/786560555",
+"name": "C&J Medicare Hospital and Diagnostic Center",
+"lat": 5.624365,
+"lng": -0.06956
+},
+{
+"osm": "way/786562321",
+"name": "Sakumono Community Hospital",
+"lat": 5.622496,
+"lng": -0.062749
+},
+{
+"osm": "way/786571709",
+"name": "Pro Vita Specialist Hospital",
+"lat": 5.652354,
+"lng": -0.019805
+},
+{
+"osm": "way/786572804",
+"name": "Bethel Hospital",
+"lat": 5.67204,
+"lng": -0.019317
+},
+{
+"osm": "way/786573050",
+"name": "Valco Hospital",
+"lat": 5.668976,
+"lng": 0.034477
+},
+{
+"osm": "way/786574501",
+"name": "Atlantis Hospital",
+"lat": 5.7186,
+"lng": 0.008722
+},
+{
+"osm": "way/786575138",
+"name": "New Crystal Hospital",
+"lat": 5.736734,
+"lng": -0.014381
+},
+{
+"osm": "way/786576008",
+"name": "Ashongman Community Hospital",
+"lat": 5.685357,
+"lng": -0.231811
+},
+{
+"osm": "way/786579765",
+"name": "Mother of God Hospital",
+"lat": 5.710956,
+"lng": -0.050174
+},
+{
+"osm": "way/786581483",
+"name": "Tema Women's Hospital",
+"lat": 5.665711,
+"lng": -0.018876
+},
+{
+"osm": "way/786595766",
+"name": "Comboni Hospital",
+"lat": 6.002468,
+"lng": 0.585007
+},
+{
+"osm": "way/786598312",
+"name": "Ngleshie Amanfro Polyclinic",
+"lat": 5.536351,
+"lng": -0.411279
+},
+{
+"osm": "way/786941878",
+"name": "Ayiresu Chip Compound",
+"lat": 5.621139,
+"lng": -0.521894
+},
+{
+"osm": "way/786943766",
+"name": "International Homeopatic Clinic",
+"lat": 5.635602,
+"lng": -0.16104
+},
+{
+"osm": "way/786945317",
+"name": "Adeiso Polyclinic",
+"lat": 5.799588,
+"lng": -0.490669
+},
+{
+"osm": "way/787118973",
+"name": "Nyameadom Maternity Home",
+"lat": 5.551863,
+"lng": -0.26434
+},
+{
+"osm": "way/787121870",
+"name": "Dr. Beecham's Central Dansoman Clinic",
+"lat": 5.552274,
+"lng": -0.262226
+},
+{
+"osm": "way/787138905",
+"name": "Twumasiwaa Hospital",
+"lat": 5.659538,
+"lng": -0.148089
+},
+{
+"osm": "way/787139418",
+"name": "La General Hospital",
+"lat": 5.555398,
+"lng": -0.166495
+},
+{
+"osm": "way/787139863",
+"name": "Nova Surgery Center",
+"lat": 5.653095,
+"lng": -0.134379
+},
+{
+"osm": "way/787174959",
+"name": "Euracare",
+"lat": 5.570436,
+"lng": -0.176664
+},
+{
+"osm": "way/787175525",
+"name": "Battor Catholic Mission Hospital",
+"lat": 6.068618,
+"lng": 0.401299
+},
+{
+"osm": "way/787188976",
+"name": "Cedars Medical Center",
+"lat": 5.681436,
+"lng": -0.198466
+},
+{
+"osm": "way/787191829",
+"name": "Cedars Medical Center",
+"lat": 5.679387,
+"lng": -0.192696
+},
+{
+"osm": "way/787379775",
+"name": "Ghana Atomic Energy Commission Hospital",
+"lat": 5.668583,
+"lng": -0.231571
+},
+{
+"osm": "way/787397299",
+"name": "International Medical & Dental Clinic",
+"lat": 5.637182,
+"lng": -0.164652
+},
+{
+"osm": "way/787456161",
+"name": "Shai Osudoku Old District Hospital",
+"lat": 5.885327,
+"lng": -0.091868
+},
+{
+"osm": "way/787456657",
+"name": "Afienya Clinic",
+"lat": 5.802486,
+"lng": 0.005968
+},
+{
+"osm": "way/787456916",
+"name": "Yeboah Hospital",
+"lat": 5.632289,
+"lng": -0.152257
+},
+{
+"osm": "way/787491535",
+"name": "Emmanuel Community Hospital",
+"lat": 5.606533,
+"lng": -0.237588
+},
+{
+"osm": "way/787639638",
+"name": "Focus Orthopedic",
+"lat": 5.736226,
+"lng": -0.176166
+},
+{
+"osm": "way/787641195",
+"name": "Malikem Hospital",
+"lat": 5.667398,
+"lng": -0.116638
+},
+{
+"osm": "way/787644126",
+"name": "St Joseph's Orthopedic Hospital",
+"lat": 6.100956,
+"lng": -0.272586
+},
+{
+"osm": "way/787644965",
+"name": "Klagon Maternity Home and Clinic",
+"lat": 5.664674,
+"lng": -0.049919
+},
+{
+"osm": "way/787645390",
+"name": "City of Hope Hospital",
+"lat": 5.639462,
+"lng": -0.056646
+},
+{
+"osm": "way/788122226",
+"name": "Armah Memorial",
+"lat": 5.558404,
+"lng": -0.243367
+},
+{
+"osm": "way/788123204",
+"name": "Shai Osudoku New District Hospital",
+"lat": 5.898865,
+"lng": -0.091485
+},
+{
+"osm": "way/788124254",
+"name": "C&J Medicare Hospital",
+"lat": 5.553525,
+"lng": -0.210097
+},
+{
+"osm": "way/788125499",
+"name": "The Bank Hospital Anex",
+"lat": 5.583319,
+"lng": -0.160833
+},
+{
+"osm": "way/788125655",
+"name": "The Bank Hospital",
+"lat": 5.585129,
+"lng": -0.162
+},
+{
+"osm": "way/788135801",
+"name": "Esidem Hospital",
+"lat": 5.660176,
+"lng": -0.154979
+},
+{
+"osm": "way/788137900",
+"name": "Provident Specialist Hospital",
+"lat": 5.626274,
+"lng": -0.236429
+},
+{
+"osm": "way/788138027",
+"name": "Valco Clinic",
+"lat": 5.652432,
+"lng": -0.010233
+},
+{
+"osm": "way/788512791",
+"name": "Maldey Medical Centre",
+"lat": 5.626927,
+"lng": -0.01836
+},
+{
+"osm": "way/788661433",
+"name": "International Maritime Hospital Ghana Limited",
+"lat": 5.626487,
+"lng": -0.026784
+},
+{
+"osm": "way/806130064",
+"name": "Chrispod Hospital",
+"lat": 5.643609,
+"lng": -0.231986
+},
+{
+"osm": "way/836636704",
+"name": "Kanbok Pharmaceuticals",
+"lat": 5.519009,
+"lng": -0.388712
+},
+{
+"osm": "way/881084468",
+"name": "Accra Medical Centre",
+"lat": 5.569407,
+"lng": -0.186411
+},
+{
+"osm": "way/882483445",
+"name": "Rabito Clinic",
+"lat": 5.565651,
+"lng": -0.180066
+},
+{
+"osm": "way/902217687",
+"name": "Vicdoris Pharmacy",
+"lat": 5.5717,
+"lng": -0.205818
+},
+{
+"osm": "way/930106836",
+"name": "Sapphire Pharmacy",
+"lat": 5.691832,
+"lng": -0.023457
+},
+{
+"osm": "way/931986016",
+"name": "Trust Aid Pharmacy",
+"lat": 5.691401,
+"lng": -0.033029
+},
+{
+"osm": "way/933801710",
+"name": "Alive Pharmacy",
+"lat": 5.691515,
+"lng": -0.032584
+},
+{
+"osm": "way/933824924",
+"name": "Widama Pharmacy",
+"lat": 5.690183,
+"lng": -0.030488
+},
+{
+"osm": "way/934924722",
+"name": "Uptown Pharmacy",
+"lat": 5.702663,
+"lng": -0.030382
+},
+{
+"osm": "way/935129816",
+"name": "Lexley Pharmacy",
+"lat": 5.704112,
+"lng": -0.029511
+},
+{
+"osm": "way/937058396",
+"name": "Amanark Pharmacy",
+"lat": 5.686349,
+"lng": -0.029284
+},
+{
+"osm": "way/965030706",
+"name": "Mamprobi Hospital",
+"lat": 5.53818,
+"lng": -0.245264
+},
+{
+"osm": "way/970442689",
+"name": "Adidome Hospital",
+"lat": 6.072866,
+"lng": 0.498208
+},
+{
+"osm": "way/980615152",
+"name": "Dialysis Center",
+"lat": 5.542271,
+"lng": -0.229193
+},
+{
+"osm": "way/980616603",
+"name": "Urology and Nephrology Centre of Excellence",
+"lat": 5.541763,
+"lng": -0.228482
+},
+{
+"osm": "way/996908203",
+"name": "Adweso Clinic",
+"lat": 6.063495,
+"lng": -0.253995
+}
+]
+}

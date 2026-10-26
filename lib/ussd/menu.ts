@@ -9,6 +9,7 @@ import type { Db } from "@/lib/db/supabase";
 import { haversineKm } from "@/lib/geo";
 import type { Messenger } from "@/lib/messaging";
 import { submitReport } from "@/lib/reports/submit";
+import { REPORTS_CLOSED_TEXT } from "@/lib/rules/directory";
 import { AREAS, SERVICE_CHIPS, type Area } from "@/lib/view/catalog";
 import { buildResults, type ResultCard } from "@/lib/view/results";
 
@@ -29,6 +30,10 @@ export type UssdDeps = {
   /** REPORT_HASH_SECRET, for rule A. */
   secret: string;
   now: Date;
+  /** Rule D2: the demo hospitals (a test line) or the real directory. */
+  demoMode: boolean;
+  /** Rule R1: REPORTS_LIVE=on. */
+  reportsLive: boolean;
 };
 
 type Card = { slug: string | null; name: string };
@@ -38,6 +43,9 @@ type Step<T> = { value: T; rest: string[] };
 const numbered = (title: string, items: string[]) => `CON ${title}\n${items.map((x, i) => `${i + 1} ${x}`).join("\n")}`;
 const pick = <T>(items: T[], answer: string | undefined): T | undefined =>
   answer && /^\d{1,2}$/.test(answer) ? items[Number(answer) - 1] : undefined;
+
+/** Rule 1: "VERIQ (sample data)" while the menu reads the demo hospitals, "VERIQ" otherwise. */
+const smsHead = (deps: UssdDeps) => (deps.demoMode ? "VERIQ (sample data)" : "VERIQ");
 
 /** SMS can't show "¢" on every phone, so cedis are written GHS there. */
 const smsText = (s: string) => s.replace(/GH¢/g, "GHS");
@@ -76,6 +84,7 @@ async function search(deps: UssdDeps, card: Card, serviceIds: string[], area: Ar
     lng: area.lng,
     radiusKm: RADIUS_KM,
     now: deps.now,
+    demoMode: deps.demoMode,
   });
   // Rules B, F, T and S1, exactly as the app shows them.
   return buildResults({
@@ -115,9 +124,9 @@ async function findHospital(answers: string[], deps: UssdDeps, phone: string): P
   if (results.length === 0) {
     return `END No hospitals within ${RADIUS_KM}km of ${area.value.name}${card.value.slug ? ` take ${card.value.name}` : ""}. Emergency? Call 112.`;
   }
-  // Rule 1: every message with data says it is sample data.
+  // Rule 1: a message about demo hospitals says it is sample data.
   const sms = [
-    `VERIQ (sample data): ${need.label}, ${cardLabel}, near ${area.value.name}`,
+    `${smsHead(deps)}: ${need.label}, ${cardLabel}, near ${area.value.name}`,
     ...results.slice(0, SMS_RESULTS).map((c, i) => hospitalLine(i + 1, c, card.value)),
     "Dial again and choose 3 to report a refusal.",
   ].join("\n");
@@ -137,7 +146,7 @@ async function cardCheck(answers: string[], deps: UssdDeps, phone: string): Prom
   const results = await search(deps, card.value, allServices, area.value);
   if (results.length === 0) return `END We know of no hospital within ${RADIUS_KM}km of ${area.value.name} that takes ${card.value.name}. Call first.`;
   const sms = [
-    `VERIQ (sample data): ${card.value.name} near ${area.value.name}`,
+    `${smsHead(deps)}: ${card.value.name} near ${area.value.name}`,
     ...results.slice(0, SMS_RESULTS).map((c, i) => smsText(`${i + 1}) ${c.name.toUpperCase()}: ${c.badge?.text ?? "Unknown"} (${c.distanceKm}km)`)),
   ].join("\n");
   await deps.messenger.sendSms(phone, sms);
@@ -149,6 +158,8 @@ async function reportRefusal(answers: string[], deps: UssdDeps, phone: string): 
   if (typeof card === "string") return card;
   const area = areaStep(card.rest);
   if (typeof area === "string") return area;
+  // Rule R1: reports on real hospitals are closed until REPORTS_LIVE=on.
+  if (!deps.demoMode && !deps.reportsLive) return `END ${REPORTS_CLOSED_TEXT}`;
 
   // Every hospital nearby, nearest first: a card can be refused anywhere.
   const allServices = [...new Set(SERVICE_CHIPS.flatMap((c) => c.serviceIds))];
@@ -160,6 +171,7 @@ async function reportRefusal(answers: string[], deps: UssdDeps, phone: string): 
       lng: area.value.lng,
       radiusKm: RADIUS_KM,
       now: deps.now,
+      demoMode: deps.demoMode,
     })
   )
     .map((c) => ({ facility: c.facility, km: haversineKm(area.value, c.facility) }))
@@ -185,7 +197,9 @@ async function reportRefusal(answers: string[], deps: UssdDeps, phone: string): 
     body: { deviceId, facilityId: hospital.facility.id, insurerId: insurer.id, outcome: "refused" },
     secret: deps.secret,
     now: deps.now,
+    reportsLive: deps.reportsLive,
   });
+  if (result.status === "closed") return `END ${result.message}`;
   if (result.status === "counted") return "END Thank you. Your report is counted. It helps the next person.";
   if (result.status === "held") return "END Thank you. We'll check your report before it counts.";
   if (result.status === "already_counted") return `END ${result.message}`;
