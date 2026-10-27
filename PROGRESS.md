@@ -1,7 +1,7 @@
 # Veriq Health progress
 Last updated: 2026-10-27, session 2026-10-27-02 (pitch-ready fix-up; review: docs/REVIEW-2026-10-27.md)
-Current phase: 2 (pilot). Phase 1 gate met on 2026-10-24. Phase 2 gate: not yet (needs DPC registration, real logins live, rule A in production, USSD aggregator; real logins and admin verification are built but not yet deployed)
-Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-west-1)
+Current phase: 2 (pilot). Phase 1 gate met on 2026-10-24. Phase 2 gate: not yet. Built and live: real logins, admin verification (0 hospitals verified so far). Still needed: Data Protection Commission registration, real patient reports under rule A, USSD through an aggregator
+Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-west-1). Demo site for pitches: https://veriq-demo-snowy.vercel.app (`VERIQ_DEMO_SITE=on`, same database)
 
 ## Prompts
 ### Phase 1: pitch demo
@@ -52,13 +52,14 @@ Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-w
 | – | Staff sign-in | `/staff/sign-in`, `/staff/password` | 2 | done | email and password, accounts made by an admin, nothing emailed |
 
 ## Known bugs
-- The full 90-second demo doesn't run on the production URL (demo login off there, by design). Fixed by the demo deployment (VERIQ_DEMO_SITE=on, docs/DEPLOY.md), which the team still has to create in Vercel; checked locally only, high, found 2026-10-27-01
-- Live 3G first content was 1.2–2.8 s after Prompt 10 (varies with the network). CSS is now inlined and the font isn't preloaded: 0.34–0.42 s locally (was 0.98 s); not yet measured live (needs the deploy), medium, found 2026-10-27-01
-- Two e2e tests failed once in a slow demo-site run ("emergency: no WCAG 2 AA problems (axe)" timed out; "offline: the report waits…" missed its 10 s poll) and passed 3 of 3 on repeat: flaky, low, found 2026-10-27-02
+- none open. Fixed in 2026-10-27-02:
+  - the demo can't run on production: the demo site https://veriq-demo-snowy.vercel.app runs all 8 steps;
+  - live 3G regression: production first content 0.67–0.82 s (was 1.2–2.8 s);
+  - two flaky e2e tests: they now wait for content, with longer timeouts.
 
 ## Open questions for the team
 - The review's questions still open: docs/REVIEW-2026-10-27.md, section 14 (Supabase sign-ups off? who places the 360 locations? NHIA permission? DPC registration date? pilot insurer?)
 - Who asks NHIA for permission to republish the provider list, and for a dated copy with NHIA codes and phone numbers?
 
 ## Next prompt
-Before any new prompt: apply migration 9 (`npx supabase db push`), commit and push, create the demo deployment in Vercel (docs/DEPLOY.md, "The demo deployment"), then run the live checks against it and the 3G check on production. Then Prompt 11: hospital onboarding (screen 15) and morning-check reminders (write it in full in SPEC section 8 first).
+Prompt 11: hospital onboarding (screen 15) and morning-check reminders. Before it: write it in full in SPEC section 8. Before every pitch: https://veriq-demo-snowy.vercel.app/admin/demo → Demo login → Reset demo data.
