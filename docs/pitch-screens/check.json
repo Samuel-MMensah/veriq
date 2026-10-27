@@ -1,0 +1,85 @@
+[
+  {
+    "name": "reset",
+    "ok": true,
+    "at": "2026-10-27T21:18:31.716Z"
+  },
+  {
+    "name": "01-results-antenatal-nhis",
+    "url": "https://veriq-demo-snowy.vercel.app/results?service=antenatal&card=nhis&lat=5.545&lng=-0.265&area=dansoman&r=5",
+    "wasOpenTill": false,
+    "openTill": "Open till 1 am ",
+    "sample": true
+  },
+  {
+    "name": "02-akoma-hospital",
+    "url": "https://veriq-demo-snowy.vercel.app/facility/f0000000-0000-4000-8000-000000000001?lat=5.545&lng=-0.265&card=nhis",
+    "wasOpenTill": false,
+    "openTill": "Open till 1 am",
+    "sample": true
+  },
+  {
+    "name": "03-akoma-was-your-card-accepted",
+    "url": "https://veriq-demo-snowy.vercel.app/facility/f0000000-0000-4000-8000-000000000001/report?card=nhis",
+    "wasOpenTill": false,
+    "openTill": null,
+    "sample": true
+  },
+  {
+    "name": "04-emergency",
+    "url": "https://veriq-demo-snowy.vercel.app/emergency",
+    "wasOpenTill": false,
+    "openTill": null,
+    "sample": true
+  },
+  {
+    "name": "05-results-antenatal-cosmopolitan",
+    "url": "https://veriq-demo-snowy.vercel.app/results?service=antenatal&card=cosmopolitan&lat=5.545&lng=-0.265&area=dansoman&r=5",
+    "wasOpenTill": false,
+    "openTill": "Open till 1 am ",
+    "sample": true
+  },
+  {
+    "name": "06-akoma-morning-check",
+    "url": "https://veriq-demo-snowy.vercel.app/h/check",
+    "wasOpenTill": false,
+    "openTill": null,
+    "sample": true
+  },
+  {
+    "name": "07-insurer-network-1280",
+    "url": "https://veriq-demo-snowy.vercel.app/i/network",
+    "wasOpenTill": false,
+    "openTill": null,
+    "sample": true
+  },
+  {
+    "retake": "2026-10-27T21:39:56.121Z",
+    "results": [
+      {
+        "name": "01-results-antenatal-nhis",
+        "oneAm": false,
+        "wasOpenTill": false,
+        "openTill": null
+      },
+      {
+        "name": "02-akoma-hospital",
+        "oneAm": false,
+        "wasOpenTill": false,
+        "openTill": null
+      },
+      {
+        "name": "05-results-antenatal-cosmopolitan",
+        "oneAm": false,
+        "wasOpenTill": false,
+        "openTill": null
+      },
+      {
+        "name": "06-akoma-morning-check",
+        "oneAm": false,
+        "wasOpenTill": false,
+        "openTill": null
+      }
+    ]
+  }
+]
