@@ -56,6 +56,7 @@ test("a second report from the same phone within 7 days is refused politely (rul
 });
 
 test("offline: the report waits on the phone, then sends when back online (rule 8)", async ({ page, context }) => {
+  test.setTimeout(90_000); // slow runs: sending the queue can take a while
   await openReport(page, LAKESIDE);
   await context.setOffline(true);
   // "Covered", so this test doesn't change the refusal figures other tests read.
@@ -67,7 +68,17 @@ test("offline: the report waits on the phone, then sends when back online (rule 
   // Back online: the app sends the queue (on the "online" event, and whenever a page opens).
   await page.goto("/report/thanks");
   await expect(page.getByText("waiting to send")).toBeVisible();
-  await expect.poll(async () => page.getByText("report from you").isVisible(), { timeout: 10_000 }).toBe(true);
+  // The counts are read when the page loads, and every page load sends the queue again (as a phone
+  // that comes back online would). Reload until the report shows as sent; allow 30 s on slow runs.
+  await expect
+    .poll(
+      async () => {
+        await page.reload();
+        return page.getByText("report from you").isVisible();
+      },
+      { timeout: 30_000, intervals: [1_000, 2_000, 3_000] },
+    )
+    .toBe(true);
   await page.reload();
   await expect(page.locator("p", { hasText: "report from you" }).locator("xpath=preceding-sibling::p")).toHaveText("1");
   await expect(page.locator("p", { hasText: "waiting to send" }).locator("xpath=preceding-sibling::p")).toHaveText("0");

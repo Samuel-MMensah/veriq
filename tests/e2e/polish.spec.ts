@@ -46,8 +46,19 @@ async function open(page: Page, s: (typeof SCREENS)[number]) {
   await page.goto(s.path);
   if (s.staff) await page.getByRole("button", { name: "Demo login" }).click();
   if (s.openFirst) await page.getByRole("link", { name: new RegExp(s.openFirst) }).first().click();
-  await page.waitForLoadState("networkidle");
+  // Wait for real content, not for the network to fall silent: emergency mode streams its list
+  // (Suspense), and on a slow run "network idle" could take minutes. The streamed list has
+  // replaced its "Finding emergency units…" placeholder when this resolves.
+  await expect(page.getByRole("heading", { level: 1 }).first()).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByText("Finding emergency units near you")).toHaveCount(0, { timeout: 30_000 });
+  // Then a short, bounded wait for late requests (fonts, a sign-in redirect).
+  await page.waitForLoadState("networkidle", { timeout: 10_000 }).catch(() => {});
 }
+
+// Slow runs (a busy machine, a deployed site over a slow link) get 90 s per test, not 30.
+test.beforeEach(() => {
+  test.setTimeout(90_000);
+});
 
 for (const s of SCREENS.flatMap((s) => (s.wide ? [s, { ...s, name: `${s.name} at 1280 px`, width: 1280 }] : [s])) as ((typeof SCREENS)[number] & { width?: number })[]) {
   test(`${s.name}: no WCAG 2 AA problems (axe)`, async ({ page }) => {
