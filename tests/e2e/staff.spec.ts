@@ -3,7 +3,7 @@ import { LOCAL_ADMIN, resetDemo, signIn, signInAdmin } from "./helpers";
 
 // Prompt 10: real staff sign-in (email and password, accounts made by an admin, nothing emailed),
 // role checks, hospital verification, held reports and the admin log. Local data mode only: these
-// make accounts and change data.
+// make accounts and change data. staff-demo.spec.ts repeats the safe checks with the demo login.
 test.skip(Boolean(process.env.E2E_BASE_URL), "makes accounts; local data mode only");
 test.describe.configure({ mode: "serial" });
 
@@ -117,7 +117,8 @@ test("role checks: a hospital user can't open /admin, and an insurer can't verif
 });
 
 test("verification: the admin checks the claim, marks it verified with who and when, and the log shows it", async ({ page, browser }) => {
-  await signInAdmin(page, "/admin/hospitals");
+  // ?demo=0: real hospital claims, also when the suite runs as the demo site (VERIQ_DEMO_SITE=on).
+  await signInAdmin(page, "/admin/hospitals?demo=0");
   const waiting = page.getByRole("region", { name: /Waiting for verification/ });
   await waiting.getByRole("link", { name: new RegExp(DANSOMAN_POLY) }).click();
   await expect(page.getByText("Waiting for verification").first()).toBeVisible();
@@ -231,16 +232,5 @@ test("held reports (rule A): release one with a reason after a confirmation; rej
   await expect(history).toContainText("Same burst pattern");
 });
 
-test("morning check (rule F): a verified hospital sets 'open till' a time, and patients see it", async ({ page }) => {
-  await page.goto("/h/check");
-  await page.getByRole("button", { name: "Demo login" }).click();
-  const antenatal = page.getByRole("group", { name: "Antenatal clinic" });
-  await antenatal.getByText("Open", { exact: true }).click();
-  const till = antenatal.getByLabel(/time for Antenatal clinic/);
-  if (!(await till.isVisible())) await antenatal.getByText(/till time/i).click();
-  await till.fill("23:58");
-  await page.getByRole("button", { name: "Confirm and publish" }).click();
-  await expect(page.getByRole("status")).toContainText("Published");
-  await page.goto("/facility/f0000000-0000-4000-8000-000000000001?card=nhis&demo=1");
-  await expect(page.getByText("Open till 11:58 pm").first()).toBeVisible();
-});
+// The morning-check till time (rule F) is tested with the demo login in staff-demo.spec.ts, which also
+// runs against the demo deployment.

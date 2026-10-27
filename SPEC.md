@@ -147,7 +147,7 @@ If a session runs out of room mid-prompt, type **"Wrap up now: write the session
 
 **A. Report limits.** `device_hash` = SHA-256 of a random device id plus a server-side secret. One report per device per facility per 7 days; later attempts get a polite "already counted" message. More than 10 reports for one facility in an hour puts new ones in `held`. Held and rejected reports never count.
 
-**K. Insurer figures, last 30 days:** hospitals on list (`listed_by = insurer`); confirmed (those at B2); members refused (count of `refused` reports, and the number of facilities); member searches (searches with that card, from a counts-only `search_daily` table: insurer\_id, day, area\_cell, had\_confirmed\_result); coverage gaps (area cells of about 2 km where searches found no B2 or B3 facility within 5 km).
+**K. Insurer figures, last 30 days:** hospitals on list (the insurer's own list, `listed_by = insurer`; for NHIS, the NHIA list counts too, `listed_by = nhia`, because NHIA keeps the NHIS list; a private insurer counts only its own list); confirmed (those at B2); members refused (count of `refused` reports, and the number of facilities); member searches (searches with that card, from a counts-only `search_daily` table: insurer\_id, day, area\_cell, had\_confirmed\_result); coverage gaps (area cells of about 2 km where searches found no B2 or B3 facility within 5 km).
 
 **M. Morning check.** Hospital staff get an SMS reminder at 07:30 (stubbed to the console in Phase 1). Publishing writes one `status_updates` row per changed service and sets `hospital_confirmed_at` for every card they confirm.
 

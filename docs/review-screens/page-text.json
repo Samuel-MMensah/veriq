@@ -1,0 +1,170 @@
+[
+  {
+    "name": "07-first-open",
+    "path": "/?demo=1",
+    "status": 200,
+    "sample": false,
+    "demoLoginButton": 0,
+    "text": "veriq Emergency HEALTH Know before you go. See which hospitals really take your card, what's open today, and what other patients paid. Check your card first NHIS or private, confirmed by hospitals and patients. See what's open today Clinics, scans and specialists, with the time it was updated. Help the next person One tap after your visit keeps Veriq true. Language English Twi, Ga, Ewe, Dagbani an"
+  },
+  {
+    "name": "01-find",
+    "path": "/find",
+    "status": 200,
+    "sample": false,
+    "demoLoginButton": 0,
+    "text": "Find care veriq health Know before you go Emergency? Open emergency mode. Your card won't hold you back. What do you need? Antenatal / maternity See a doctor Scan / X-ray Lab test Specialist Dental Which card will you use? NHIS Public Cosmopolitan Health Private Prudential Private No card / cash Paying yourself Near Dansoman, Accra Within 5 km · Not here? Tap Change Change Show hospitals that take"
+  },
+  {
+    "name": "02-results",
+    "path": "/results?service=antenatal&card=nhis&lat=5.545&lng=-0.265&area=dansoman&r=5",
+    "status": 200,
+    "sample": true,
+    "demoLoginButton": 0,
+    "text": "4 hospitals near Dansoman Antenatal / maternity · NHIS · within 5 km SAMPLE DATA What the colours mean Akoma Mission Hospital Kaneshie · 1.8 km Takes NHIS Confirmed by hospital 2 days ago Antenatal clinic: Was open till 4 pm. Call to check · updated by hospital 3 h ago Scan top-up about GH¢ 80 (3 patients, last 60 days) Lakeside Family Clinic Dansoman · 2.6 km Takes NHIS 14 patients confirmed in t"
+  },
+  {
+    "name": "03-hospital-detail",
+    "path": "/facility/f0000000-0000-4000-8000-000000000001?lat=5.545&lng=-0.265&card=nhis",
+    "status": 200,
+    "sample": true,
+    "demoLoginButton": 0,
+    "text": "Akoma Mission Hospital SAMPLE DATA Mission · Kaneshie · 1.8 km Call Directions Your card here How we check Takes NHIS Confirmed by hospital 2 days ago Patients, last 30 days: 9 card worked · 0 refused More Scan top-up about GH¢ 80 (3 patients, last 60 days) Today Updated by hospital 1:14 pm Antenatal clinic Was open till 4 pm. Call to check Emergency unit Accepting Obstetrician From 2 pm Ultrasoun"
+  },
+  {
+    "name": "04-report",
+    "path": "/facility/f0000000-0000-4000-8000-000000000001/report?card=nhis",
+    "status": 200,
+    "sample": true,
+    "demoLoginButton": 0,
+    "text": "Akoma Mission Hospital SAMPLE DATA Was your NHIS card accepted? Your answer helps the next person decide where to go. Takes 10 seconds. Another card? NHIS Cosmopolitan Health Prudential Adom Care Sika Health What happened? Yes, fully covered Yes, but I paid extra No, they refused my card Anonymous. We never ask for your name or card number. Hospitals see totals, not people. Send Choose an answer t"
+  },
+  {
+    "name": "05-my-cards",
+    "path": "/cards",
+    "status": 200,
+    "sample": false,
+    "demoLoginButton": 0,
+    "text": "My cards Saved on this phone only No cards yet. Add your card so searches start with it. Only the last 4 digits are kept, on this phone. Add a card Find Cards Saved Help"
+  },
+  {
+    "name": "06-emergency",
+    "path": "/emergency",
+    "status": 200,
+    "sample": true,
+    "demoLoginButton": 0,
+    "text": "Emergency mode Get help now. Cards come later. 112 Emergency line 193 Ambulance Emergency units near Dansoman Use my location SAMPLE DATA Akoma Mission Hospital 1.8 km Accepting · updated 3 h ago Call Go Westhills District Hospital 4.2 km Accepting · updated 4 h ago Call Go Pinecrest Specialist Hospital 3.4 km Says full · updated 2 h ago Call before going Call Go Sorted by status and distance. You"
+  },
+  {
+    "name": "09-saved",
+    "path": "/saved",
+    "status": 200,
+    "sample": false,
+    "demoLoginButton": 0,
+    "text": "Saved Saving hospitals and alerts come in the pilot. Your last search will show here, so you can run it again in one tap. Start a new search Find Cards Saved Help"
+  },
+  {
+    "name": "11-after-a-report",
+    "path": "/report/thanks",
+    "status": 200,
+    "sample": false,
+    "demoLoginButton": 0,
+    "text": "Thank you. The next person will know. Your report is anonymous and is now part of what people see. 0 reports from you 0 waiting to send Done Tell a friend about Veriq"
+  },
+  {
+    "name": "13-help",
+    "path": "/help",
+    "status": 200,
+    "sample": false,
+    "demoLoginButton": 0,
+    "text": "Help No smartphone? No data? Dial Veriq. Works on any phone, any network. The answer comes back by SMS so you can keep it. Dial *[code]# VERIQ HEALTH 1 Find hospital 2 Is my card taken? 3 Report refusal 4 Emergency numbers You chose 1 Your card? 1 NHIS 2 Private 3 No card Need? 1 Antenatal / maternity 2 See a doctor THEN AN SMS LIKE THIS VERIQ (sample data): Antenatal / maternity, NHIS, near Danso"
+  },
+  {
+    "name": "14-how-we-check",
+    "path": "/how-we-check",
+    "status": 200,
+    "sample": false,
+    "demoLoginButton": 0,
+    "text": "How Veriq checks Every badge tells you who said so, and when. We never just copy a list. Strongest first: 1 Hospital confirmed Their front desk confirmed it in the last 14 days. 2 Patients confirmed At least 3 patients said it worked in the last 30 days, and more said yes than no. 3 On a list, not checked Only the NHIA or insurer list says so. Call first. ! Reported refused 3 or more patients were"
+  },
+  {
+    "name": "16-morning-check",
+    "path": "/h/check",
+    "status": 200,
+    "sample": false,
+    "demoLoginButton": 0,
+    "text": "veriq for hospitals Morning check About 30 seconds a day Sign in Work email Password Sign in No account yet, or forgot your password? A Veriq admin makes accounts and resets passwords. Nothing is sent by email or text."
+  },
+  {
+    "name": "18-insurer-network",
+    "path": "/i/network",
+    "status": 200,
+    "sample": false,
+    "demoLoginButton": 0,
+    "text": "veriq for insurers Network health Is your provider list true on the ground? Sign in Work email Password Sign in No account yet, or forgot your password? A Veriq admin makes accounts and resets passwords. Nothing is sent by email or text."
+  },
+  {
+    "name": "admin",
+    "path": "/admin",
+    "status": 200,
+    "sample": false,
+    "demoLoginButton": 0,
+    "text": "veriq for admins Admin Veriq staff only Sign in Work email Password Sign in No account yet, or forgot your password? A Veriq admin makes accounts and resets passwords. Nothing is sent by email or text."
+  },
+  {
+    "name": "staff-sign-in",
+    "path": "/staff/sign-in",
+    "status": 200,
+    "sample": false,
+    "demoLoginButton": 0,
+    "text": "veriq for staff Sign in For hospital, insurer and Veriq staff Work email Password Sign in A Veriq admin makes staff accounts and hands you a one-time password in person or by phone. Nothing is sent by email or text. Forgot your password? Ask a Veriq admin to reset it."
+  },
+  {
+    "name": "18-insurer-network-1280",
+    "path": "/i/network",
+    "status": 200,
+    "sample": false,
+    "demoLoginButton": 0,
+    "text": "veriq for insurers Network health Is your provider list true on the ground? Sign in Work email Password Sign in No account yet, or forgot your password? A Veriq admin makes accounts and resets passwords. Nothing is sent by email or text."
+  },
+  {
+    "name": "admin-1280",
+    "path": "/admin",
+    "status": 200,
+    "sample": false,
+    "demoLoginButton": 0,
+    "text": "veriq for admins Admin Veriq staff only Sign in Work email Password Sign in No account yet, or forgot your password? A Veriq admin makes accounts and resets passwords. Nothing is sent by email or text."
+  },
+  {
+    "name": "admin-staff-1280",
+    "path": "/admin/staff",
+    "status": 200,
+    "sample": false,
+    "demoLoginButton": 0,
+    "text": "veriq for admins Staff accounts Sign in Work email Password Sign in No account yet, or forgot your password? A Veriq admin makes accounts and resets passwords. Nothing is sent by email or text."
+  },
+  {
+    "name": "admin-hospitals-1280",
+    "path": "/admin/hospitals",
+    "status": 200,
+    "sample": false,
+    "demoLoginButton": 0,
+    "text": "veriq for admins Hospitals Sign in Work email Password Sign in No account yet, or forgot your password? A Veriq admin makes accounts and resets passwords. Nothing is sent by email or text."
+  },
+  {
+    "name": "admin-reports-1280",
+    "path": "/admin/reports",
+    "status": 200,
+    "sample": false,
+    "demoLoginButton": 0,
+    "text": "veriq for admins Held reports Sign in Work email Password Sign in No account yet, or forgot your password? A Veriq admin makes accounts and resets passwords. Nothing is sent by email or text."
+  },
+  {
+    "name": "admin-locations-1280",
+    "path": "/admin/locations",
+    "status": 200,
+    "sample": false,
+    "demoLoginButton": 0,
+    "text": "veriq for admins Needs a location Sign in Work email Password Sign in No account yet, or forgot your password? A Veriq admin makes accounts and resets passwords. Nothing is sent by email or text."
+  }
+]

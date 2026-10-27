@@ -382,3 +382,51 @@ describe("the real directory near Dansoman (rules D1, D3 and S2)", () => {
     expect(view.phone).toBeNull();
   });
 });
+
+describe("a private card in the demo (2026-10-27): Cosmopolitan Health near Dansoman", () => {
+  const COSMO = "a0000000-0000-4000-8000-000000000002";
+
+  it("shows hospital confirmed, patients confirmed, on the insurer's list, and refusals, in S1 order", async () => {
+    const candidates = await getSearchCandidates(fakeDb(pg, "anon"), {
+      serviceIds: ["antenatal", "delivery", "c_section"],
+      insurerId: COSMO,
+      ...DANSOMAN,
+      radiusKm: 5,
+      now,
+      demoMode: true,
+    });
+    const results = buildResults({ candidates, serviceNames, withCard: true, origin: DANSOMAN, radiusKm: 5, now });
+    const byName = Object.fromEntries(results.cards.map((c) => [c.name, c.badge!.id]));
+    expect(byName).toMatchObject({
+      "Akoma Mission Hospital": "B2",
+      "Lakeside Family Clinic": "B3",
+      "Gbawe Community Clinic": "B4",
+      "Glefe Seaside Clinic": "B1",
+    });
+    // Rule S1: B2 first, then B3, B4, and B1 last.
+    const order = results.cards.map((c) => c.badge!.id);
+    expect(order).toEqual([...order].sort((a, b) => ["B2", "B3", "B4", "B1"].indexOf(a) - ["B2", "B3", "B4", "B1"].indexOf(b)));
+    expect(order.at(-1)).toBe("B1");
+    expect(results.hadConfirmedResult).toBe(true);
+  });
+});
+
+describe("demo till time (rule F, 2026-10-27): the reset sets 'open till' about 4 hours ahead", () => {
+  it("Akoma's antenatal till time has not passed and is 3.5 to 4.5 hours after the reset", async () => {
+    const [row] = (
+      await pg.query<{ until_time: string; created_at: string }>(
+        `select until_time::text, created_at from public.current_status
+         where facility_id = '${AKOMA}' and service_id = 'antenatal'`,
+      )
+    ).rows;
+    const v = statusView({ status: "open", from_time: null, note: null, source: "hospital", created_at: new Date(row!.created_at).toISOString(), until_time: row!.until_time }, now);
+    expect(v.word).toMatch(/^Open till /);
+    const [h, m] = row!.until_time.split(":").map(Number);
+    const till = new Date(now);
+    till.setUTCHours(h!, m!, 0, 0);
+    if (till.getTime() < now.getTime()) till.setUTCDate(till.getUTCDate() + 1); // past midnight
+    const hoursAhead = (till.getTime() - now.getTime()) / HOUR_MS;
+    expect(hoursAhead).toBeGreaterThanOrEqual(3.5 - 0.1);
+    expect(hoursAhead).toBeLessThanOrEqual(4.5);
+  });
+});

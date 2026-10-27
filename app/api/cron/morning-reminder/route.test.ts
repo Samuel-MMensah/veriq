@@ -28,4 +28,14 @@ describe("GET /api/cron/morning-reminder (rule M)", () => {
     expect(log.mock.calls.map((c) => String(c[0])).join("\n")).not.toContain("233000000101");
     log.mockRestore();
   }, 60_000);
+
+  it("sends nothing on the demo deployment, which shares the database (no one is reminded twice)", async () => {
+    vi.stubEnv("VERIQ_DEMO_SITE", "on");
+    try {
+      const res = await call("Bearer cron-test-secret");
+      expect(await res.json()).toEqual({ sent: 0, skipped: "demo-site" });
+    } finally {
+      vi.stubEnv("VERIQ_DEMO_SITE", "");
+    }
+  });
 });

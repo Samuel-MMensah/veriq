@@ -117,6 +117,7 @@ export function demoModeFrom({
   param,
   demoCookie,
   staffSignedIn,
+  demoSite,
 }: {
   /** The ?demo= value on this request. */
   param: string | undefined;
@@ -124,8 +125,12 @@ export function demoModeFrom({
   demoCookie: string | undefined;
   /** A valid demo login cookie (veriq_staff). */
   staffSignedIn: boolean;
+  /** The demo deployment (VERIQ_DEMO_SITE=on): demo mode unless someone turned it off. */
+  demoSite?: boolean;
 }): boolean {
   if (param === "1") return true;
   if (param === "0") return false;
-  return demoCookie === "1" || staffSignedIn;
+  if (demoCookie === "1" || staffSignedIn) return true;
+  // On the demo deployment, ?demo=0 leaves a "0" cookie so later screens stay real.
+  return Boolean(demoSite) && demoCookie !== "0";
 }

@@ -4,7 +4,7 @@ import { StaffHeader } from "@/components/staff/StaffHeader";
 import { staffGate } from "@/lib/auth/session";
 import { getInsurerNetwork } from "@/lib/db/queries";
 import { serviceDb } from "@/lib/db/server";
-import { insurerFigures } from "@/lib/rules/kpi";
+import { countsNhiaList, insurerFigures } from "@/lib/rules/kpi";
 import { agoText, ageMs } from "@/lib/rules/time";
 
 export const metadata: Metadata = { title: "Insurer network health" };
@@ -37,6 +37,8 @@ export default async function NetworkPage() {
     reports: network.reports,
     searches: network.searches,
     now,
+    // rule K: NHIA listings are the NHIS list; a private insurer counts only its own.
+    nhiaListCounts: countsNhiaList(network.insurer),
   });
   const phoneOf = new Map(network.facilities.map((f) => [f.id, f.phone]));
   const maxGap = Math.max(1, ...k.gaps.map((g) => g.searches));

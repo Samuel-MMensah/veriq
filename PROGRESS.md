@@ -1,5 +1,5 @@
 # Veriq Health progress
-Last updated: 2026-10-26, session 2026-10-26-02
+Last updated: 2026-10-27, session 2026-10-27-02 (pitch-ready fix-up; review: docs/REVIEW-2026-10-27.md)
 Current phase: 2 (pilot). Phase 1 gate met on 2026-10-24. Phase 2 gate: not yet (needs DPC registration, real logins live, rule A in production, USSD aggregator; real logins and admin verification are built but not yet deployed)
 Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-west-1)
 
@@ -17,7 +17,7 @@ Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-w
 
 ### Phase 2: pilot (each prompt written in full in SPEC section 8 before it runs)
 - [x] Prompt 9: Real NHIA directory for Greater Accra (2026-10-26-01; live and checked on the live site 2026-10-26)
-- [x] Prompt 10: Real staff sign-in, admin side, design pass (2026-10-26-02; built and tested locally, not yet deployed: migration 8 and the first admin are your steps)
+- [x] Prompt 10: Real staff sign-in, admin side, design pass (2026-10-26-02; deployed, migration 8 applied, an admin account exists; checked in the 2026-10-27 review)
 - [ ] Prompt 11: Hospital onboarding (screen 15), SMS morning-check reminders
 - [ ] Prompt 12: Map view with Leaflet and OpenStreetMap (screen 8)
 - [ ] Prompt 13: Saved hospitals, alerts, sharing (screens 9 and 10)
@@ -52,13 +52,13 @@ Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-w
 | – | Staff sign-in | `/staff/sign-in`, `/staff/password` | 2 | done | email and password, accounts made by an admin, nothing emailed |
 
 ## Known bugs
-- none open ("Open till 4 pm" after 4 pm fixed by rule F until_time, and the insurer table stacks at 390 px, both 2026-10-26-01)
+- The full 90-second demo doesn't run on the production URL (demo login off there, by design). Fixed by the demo deployment (VERIQ_DEMO_SITE=on, docs/DEPLOY.md), which the team still has to create in Vercel; checked locally only, high, found 2026-10-27-01
+- Live 3G first content was 1.2–2.8 s after Prompt 10 (varies with the network). CSS is now inlined and the font isn't preloaded: 0.34–0.42 s locally (was 0.98 s); not yet measured live (needs the deploy), medium, found 2026-10-27-01
+- Two e2e tests failed once in a slow demo-site run ("emergency: no WCAG 2 AA problems (axe)" timed out; "offline: the report waits…" missed its 10 s poll) and passed 3 of 3 on repeat: flaky, low, found 2026-10-27-02
 
 ## Open questions for the team
-- Keep or delete the unused PDF in data/nhia/ (Greater_Accra_Hospitals_Insurance_List.pdf, untracked)?
+- The review's questions still open: docs/REVIEW-2026-10-27.md, section 14 (Supabase sign-ups off? who places the 360 locations? NHIA permission? DPC registration date? pilot insurer?)
 - Who asks NHIA for permission to republish the provider list, and for a dated copy with NHIA codes and phone numbers?
-- Two deploys (real site with DEMO_LOGIN=off, and a preview for rehearsals)?
-- Who is the first admin, and who runs `npm run create-admin`?
 
 ## Next prompt
-Prompt 11: hospital onboarding (screen 15) and SMS morning-check reminders. Before it: write it in full in SPEC section 8. Apply migration 8, turn off Supabase sign-ups and set DEMO_LOGIN=off in Vercel Production, then deploy and run `npm run create-admin -- you@example.org` (docs/DEPLOY.md, "Prompt 10").
+Before any new prompt: apply migration 9 (`npx supabase db push`), commit and push, create the demo deployment in Vercel (docs/DEPLOY.md, "The demo deployment"), then run the live checks against it and the 3G check on production. Then Prompt 11: hospital onboarding (screen 15) and morning-check reminders (write it in full in SPEC section 8 first).

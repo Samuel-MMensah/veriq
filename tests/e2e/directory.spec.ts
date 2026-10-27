@@ -2,10 +2,15 @@ import { expect, test } from "@playwright/test";
 import { resetDemo, signInAdmin } from "./helpers";
 
 // Prompt 9: the real NHIA directory, outside demo mode (rules 1, D1–D3, S2, R1), and the Call
-// button on "Call first" cards. Item 9 of the prompt runs this file against the live site:
-//   E2E_BASE_URL=https://veriqhealth.vercel.app npx playwright test tests/e2e/directory.spec.ts
+// button on "Call first" cards. Runs locally and against the demo deployment (which opens in demo
+// mode, so every link here says demo=0 or demo=1):
+//   E2E_BASE_URL=<demo deployment URL> npx playwright test tests/e2e/directory.spec.ts
 
-const DANSOMAN_NHIS = "/results?service=antenatal&card=nhis&lat=5.545&lng=-0.265&area=dansoman&r=5";
+const SEARCH = "/results?service=antenatal&card=nhis&lat=5.545&lng=-0.265&area=dansoman&r=5";
+/** Real mode: the NHIA directory. */
+const DANSOMAN_NHIS = `${SEARCH}&demo=0`;
+/** Demo mode: the demo story. */
+const DANSOMAN_DEMO = `${SEARCH}&demo=1`;
 const SOURCE = "From the NHIA list, October 2026";
 const DEMO_NAMES = ["Akoma Mission Hospital", "Lakeside Family Clinic", "Gbawe Community Clinic", "Pinecrest Specialist Hospital"];
 
@@ -45,7 +50,7 @@ test("SAMPLE DATA shows only while a demo hospital is on the screen (rule 1, bot
   await page.goto(DANSOMAN_NHIS);
   await expect(page.getByText("SAMPLE DATA", { exact: true })).toHaveCount(0);
 
-  await page.goto(`${DANSOMAN_NHIS}&demo=1`);
+  await page.goto(DANSOMAN_DEMO);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("4 hospitals near Dansoman");
   await expect(page.getByText("SAMPLE DATA", { exact: true })).toBeVisible();
   // Demo mode shows the demo story alone (rule D2): no NHIA group.
@@ -54,7 +59,7 @@ test("SAMPLE DATA shows only while a demo hospital is on the screen (rule 1, bot
   // ?demo=1 set the cookie, so the next screen is still in demo mode; ?demo=0 leaves it.
   await page.goto("/emergency");
   await expect(page.getByText("SAMPLE DATA", { exact: true })).toBeVisible();
-  await page.goto(`${DANSOMAN_NHIS}&demo=0`);
+  await page.goto(DANSOMAN_NHIS);
   await expect(page.getByText("SAMPLE DATA", { exact: true })).toHaveCount(0);
   await page.goto("/emergency");
   await expect(page.getByText("Emergency not checked. Call first").first()).toBeVisible();
@@ -98,12 +103,12 @@ test("rule R1 on the server: /api/reports refuses a report on a real facility", 
 test("rule R1 on USSD: Report refusal is closed on the real line, open on the demo line", async ({ request }) => {
   const dial = (path: string) =>
     request.post(path, { form: { sessionId: "s1", serviceCode: "*920#", phoneNumber: "+233244000111", text: "3*1*1" } });
-  expect(await (await dial("/api/ussd")).text()).toBe("END Reporting opens soon. Call the hospital to check your card.");
+  expect(await (await dial("/api/ussd?demo=0")).text()).toBe("END Reporting opens soon. Call the hospital to check your card.");
   expect(await (await dial("/api/ussd?demo=1")).text()).toMatch(/^CON Which hospital\?/);
 });
 
 test("emergency mode lists real hospitals as 'Emergency not checked. Call first', with the source line (S2)", async ({ page }) => {
-  await page.goto("/emergency");
+  await page.goto("/emergency?demo=0");
   await expect(page.getByRole("link", { name: /112/ })).toHaveAttribute("href", "tel:112");
   const units = page.getByRole("listitem").filter({ hasText: "Emergency not checked. Call first" });
   // The unit list streams in after 112 and 193 (Suspense), so wait for it before counting.
@@ -118,7 +123,7 @@ test("emergency mode lists real hospitals as 'Emergency not checked. Call first'
 });
 
 test("a 'Call first' card has a Call button beside its link, not inside it", async ({ page }) => {
-  await page.goto(`${DANSOMAN_NHIS}&demo=1`);
+  await page.goto(DANSOMAN_DEMO);
   const gbawe = page.getByRole("listitem").filter({ hasText: "Gbawe Community Clinic" });
   await expect(gbawe).toContainText("Call first");
   const call = gbawe.getByRole("link", { name: "Call Gbawe Community Clinic" });
@@ -132,7 +137,7 @@ test("a 'Call first' card has a Call button beside its link, not inside it", asy
 
 test("/admin/locations lists real facilities with no location; search, preview on the map, then save (rule D1)", async ({ page }) => {
   // It saves a location, so it never runs against the live site.
-  test.skip(Boolean(process.env.E2E_BASE_URL), "changes real data");
+  test.skip(Boolean(process.env.E2E_BASE_URL), "changes real data; never on a deployed site");
   await signInAdmin(page, "/admin/locations");
   const count = async () => Number((await page.getByText(/without a location/).textContent())!.match(/(\d+) without/)![1]);
   const before = await count();

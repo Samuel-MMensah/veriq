@@ -28,7 +28,12 @@ export default defineConfig({
         // Local data mode: fresh sample data in memory on every start, no Supabase needed (see lib/db/server.ts).
         command: `npm run build && npx next start -p ${port}`,
         // A real admin account in the throwaway local database (Prompt 10 sign-in tests); see lib/auth/create-admin.ts.
-        env: { VERIQ_DATA: "local", VERIQ_LOCAL_ADMIN: "admin@veriq.test:local-admin-pass" },
+        // VERIQ_DEMO_SITE=on runs the whole suite as the demo deployment does (it opens in demo mode).
+        env: {
+          VERIQ_DATA: "local",
+          VERIQ_LOCAL_ADMIN: "admin@veriq.test:local-admin-pass",
+          VERIQ_DEMO_SITE: process.env.VERIQ_DEMO_SITE ?? "",
+        },
         url: `http://localhost:${port}`,
         reuseExistingServer: !process.env.CI,
         timeout: 300_000,

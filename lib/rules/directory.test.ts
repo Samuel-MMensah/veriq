@@ -184,3 +184,25 @@ describe("rule D2: demo mode", () => {
     expect(demoModeFrom({ param: "yes", demoCookie: "true", staffSignedIn: false })).toBe(false);
   });
 });
+
+describe("rule D2: the demo deployment (VERIQ_DEMO_SITE=on)", () => {
+  const site = { demoSite: true };
+
+  it("opens in demo mode with no parameter, cookie or login", () => {
+    expect(demoModeFrom({ param: undefined, demoCookie: undefined, staffSignedIn: false, ...site })).toBe(true);
+  });
+
+  it("?demo=0 still turns it off, and its cookie ('0') keeps it off on later screens", () => {
+    expect(demoModeFrom({ param: "0", demoCookie: undefined, staffSignedIn: false, ...site })).toBe(false);
+    expect(demoModeFrom({ param: undefined, demoCookie: "0", staffSignedIn: false, ...site })).toBe(false);
+  });
+
+  it("?demo=1 after ?demo=0 turns it back on", () => {
+    expect(demoModeFrom({ param: "1", demoCookie: "0", staffSignedIn: false, ...site })).toBe(true);
+  });
+
+  it("the real site never opens in demo mode by itself, and an 'off' cookie changes nothing there", () => {
+    expect(demoModeFrom({ param: undefined, demoCookie: undefined, staffSignedIn: false, demoSite: false })).toBe(false);
+    expect(demoModeFrom({ param: undefined, demoCookie: "0", staffSignedIn: false })).toBe(false);
+  });
+});

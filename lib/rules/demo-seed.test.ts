@@ -95,6 +95,7 @@ describe("demo step 8: insurer view (rule K)", () => {
       reports: network!.reports,
       searches: network!.searches,
       now,
+      nhiaListCounts: true, // rule K: NHIS
     });
     expect(figures.refused).toEqual({ count: 23, facilities: 6 });
     expect(figures.turnedAway[0]).toMatchObject({ name: "Pinecrest Specialist Hospital", refusals: 9, listed: true });

@@ -95,3 +95,30 @@ Database first, then the code: the new code reads columns that migration 8 adds.
    - `/admin` shows the three to-do counts.
    - On `/admin/staff`, make a test hospital account. Sign in as it in a private window and set its password. It should say "Waiting for verification".
    - Switch the test account off afterwards.
+
+## The demo deployment (pitch site), added 2026-10-27
+
+A second Vercel project, built from the same GitHub repository and pointing at the same Supabase
+database. It opens in demo mode, so the whole 90-second demo (SPEC section 9) runs, including the
+hospital and insurer demo logins (steps 6 and 8). The real site stays as it is (`DEMO_LOGIN=off`).
+
+1. vercel.com → Add New → Project → import the same `veriq` repository again. Name it `veriq-demo`
+   (the site becomes `https://veriq-demo.vercel.app`, or the name Vercel offers).
+2. Environment Variables, **Production** of this new project:
+   - The same values as the real site: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+     `SUPABASE_SERVICE_ROLE_KEY`, `REPORT_HASH_SECRET`, `SESSION_SECRET`, `CRON_SECRET`.
+   - `VERIQ_DEMO_SITE` = `on` (opens in demo mode; sends no morning reminders, so no one gets two).
+   - Do **not** add `DEMO_LOGIN` (unset means the demo login is on) or `REPORTS_LIVE` (unset means
+     reports on real hospitals stay closed, rule R1).
+3. Settings → Deployment Protection: make sure **Vercel Authentication is off for Production**, so a
+   phone that isn't signed in to Vercel can open the site.
+4. Deploy. Then open `https://<demo site>/admin/demo` → Demo login → **Reset demo data**.
+5. Run the live checks against it:
+   ```powershell
+   $env:E2E_BASE_URL="https://<demo site>"; npx playwright test demo directory staff-demo find-results perf
+   ```
+   They reset the demo data before and after. `staff.spec.ts` and the /admin location test skip
+   themselves on a deployed site, because they would make real accounts or change real data.
+
+Before every pitch: `/admin/demo` → Reset demo data. Akoma's antenatal clinic then reads "Open till"
+about 4 hours ahead, so it can't turn into "Was open till …" during the pitch.

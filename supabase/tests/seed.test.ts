@@ -157,9 +157,38 @@ describe("every badge appears (rule B)", () => {
     expect(f).toMatchObject({ listed_by: "nhia", hospital_says: null, accepted: 1, refused: 0 });
   });
 
-  it("B5: Glefe has no card links at all", async () => {
-    const r = await one<{ n: number }>("select count(*)::int n from public.facility_insurers where facility_id = $1", [F.glefe]);
-    expect(r.n).toBe(0);
+  it("B5: Glefe has no NHIS link and no NHIS reports (since 2026-10-27 it is on Cosmopolitan's list, for B1)", async () => {
+    const r = await one<{ links: number; reports: number }>(
+      `select (select count(*) from public.facility_insurers where facility_id = $1 and insurer_id = $2)::int links,
+              (select count(*) from public.card_reports where facility_id = $1 and insurer_id = $2)::int reports`,
+      [F.glefe, NHIS],
+    );
+    expect(r).toEqual({ links: 0, reports: 0 });
+  });
+
+  it("a private card tells the whole story too: Cosmopolitan has B2, B3, B4 and B1 near Dansoman (2026-10-27)", async () => {
+    const COSMO = "a0000000-0000-4000-8000-000000000002";
+    const links = await rows<{ facility_id: string; listed_by: string; hospital_says: string | null }>(
+      "select facility_id, listed_by, hospital_says from public.facility_insurers where insurer_id = $1",
+      [COSMO],
+    );
+    const byId = new Map(links.map((l) => [l.facility_id, l]));
+    expect(byId.get(F.gbawe)).toMatchObject({ listed_by: "insurer", hospital_says: null }); // B4
+    expect(byId.get(F.glefe)).toMatchObject({ listed_by: "insurer", hospital_says: null }); // B1 with the refusals below
+    expect(byId.get(F.akoma)).toMatchObject({ hospital_says: "accepts" }); // B2
+    expect(byId.has(F.lakeside)).toBe(false); // B3 from patients alone
+    const counts = await rows<{ facility_id: string; outcome: string; n: number }>(
+      `select facility_id, outcome, count(*)::int n from public.card_reports
+       where insurer_id = $1 and state = 'live' and created_at > now() - interval '30 days' and facility_id in ($2, $3)
+       group by facility_id, outcome`,
+      [COSMO, F.lakeside, F.glefe],
+    );
+    expect(counts).toEqual(
+      expect.arrayContaining([
+        { facility_id: F.lakeside, outcome: "covered", n: 5 },
+        { facility_id: F.glefe, outcome: "refused", n: 4 },
+      ]),
+    );
   });
 });
 

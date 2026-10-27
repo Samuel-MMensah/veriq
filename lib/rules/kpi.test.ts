@@ -1,4 +1,4 @@
-import { hadConfirmedResult, insurerFigures, type KpiFacility, type KpiLink, type KpiReport, type KpiSearch } from "./kpi";
+import { countsNhiaList, hadConfirmedResult, insurerFigures, type KpiFacility, type KpiLink, type KpiReport, type KpiSearch } from "./kpi";
 import { DAY_MS } from "./time";
 
 const now = new Date("2026-10-22T12:00:00Z");
@@ -40,11 +40,33 @@ const searches: KpiSearch[] = [
   { day: day(40), area_cell: "5.70,-0.30", had_confirmed_result: false, searches: 999 }, // older than 30 days
 ];
 
-const figures = () => insurerFigures({ facilities, links, reports, searches, now });
+// The NHIS account: NHIA is the NHIS insurer, so NHIA listings count as its list (rule K).
+const figures = () => insurerFigures({ facilities, links, reports, searches, now, nhiaListCounts: true });
 
 describe("rule K: insurer figures, last 30 days", () => {
   it("hospitals on the list", () => {
     expect(figures().onList).toBe(4); // Akoma is not listed
+  });
+
+  it("NHIS: NHIA listings count as the list; a private insurer counts only its own list", () => {
+    expect(countsNhiaList({ slug: "nhis" })).toBe(true);
+    expect(countsNhiaList({ slug: "cosmopolitan" })).toBe(false);
+    expect(countsNhiaList({ slug: "prudential" })).toBe(false);
+    const mixed: KpiLink[] = [
+      { facility_id: "a", listed_by: "insurer", hospital_says: null, hospital_confirmed_at: null },
+      { facility_id: "b", listed_by: "nhia", hospital_says: null, hospital_confirmed_at: null },
+      { facility_id: "c", listed_by: "none", hospital_says: null, hospital_confirmed_at: null },
+    ];
+    const asNhis = insurerFigures({ facilities, links: mixed, reports: [], searches: [], now, nhiaListCounts: true });
+    const asPrivate = insurerFigures({ facilities, links: mixed, reports: [], searches: [], now, nhiaListCounts: false });
+    expect(asNhis.onList).toBe(2);
+    expect(asPrivate.onList).toBe(1);
+  });
+
+  it("a private insurer's refusals table says 'Not listed' for a hospital only NHIA lists", () => {
+    const links2: KpiLink[] = [{ facility_id: "pinecrest", listed_by: "nhia", hospital_says: null, hospital_confirmed_at: null }];
+    const f = insurerFigures({ facilities, links: links2, reports, searches: [], now, nhiaListCounts: false });
+    expect(f.turnedAway.find((t) => t.facilityId === "pinecrest")?.listed).toBe(false);
   });
 
   it("confirmed: hospitals at B2, and the share of the list", () => {
@@ -81,7 +103,7 @@ describe("rule K: insurer figures, last 30 days", () => {
   });
 
   it("handles an insurer with nothing yet", () => {
-    const f = insurerFigures({ facilities: [], links: [], reports: [], searches: [], now });
+    const f = insurerFigures({ facilities: [], links: [], reports: [], searches: [], now, nhiaListCounts: false });
     expect(f).toMatchObject({ onList: 0, confirmed: 0, confirmedShareOfList: 0, refused: { count: 0, facilities: 0 } });
     expect(f.searches).toEqual({ total: 0, confirmedShare: 0 });
   });

@@ -98,3 +98,26 @@ test("Scan / X-ray searches ultrasound, X-ray and CT, and names the service show
   await expect(page.getByRole("link", { name: /Unity Diagnostic Centre/ })).toContainText("Ultrasound scan: Available");
   await expect(page.getByRole("link", { name: /Westhills District Hospital/ })).toContainText("X-ray:");
 });
+
+test("a private card tells the whole story too: Cosmopolitan Health near Dansoman (2026-10-27)", async ({ page }) => {
+  await page.goto("/find");
+  await page.getByText("Antenatal / maternity").click();
+  await page.getByText("Cosmopolitan Health", { exact: true }).click();
+  await page.getByRole("button", { name: "Show hospitals that take Cosmopolitan Health" }).click();
+  await expect(page).toHaveURL(/card=cosmopolitan/);
+
+  const cards = page.getByRole("list").filter({ has: page.getByRole("heading", { level: 2 }) }).getByRole("listitem");
+  const card = (name: string) => cards.filter({ hasText: name });
+  // Hospital confirmed (B2), patients confirmed (B3), on the insurer's list (B4), refusals (B1).
+  await expect(card("Akoma Mission Hospital")).toContainText("Takes Cosmopolitan Health");
+  await expect(card("Akoma Mission Hospital")).toContainText(/Confirmed by hospital \d+ days? ago/);
+  await expect(card("Lakeside Family Clinic")).toContainText("Takes Cosmopolitan Health");
+  await expect(card("Lakeside Family Clinic")).toContainText("5 patients confirmed in the last 30 days");
+  await expect(card("Gbawe Community Clinic")).toContainText("Cosmopolitan Health not confirmed yet");
+  await expect(card("Gbawe Community Clinic")).toContainText("On insurer list, not checked yet. Call first");
+  await expect(card("Glefe Seaside Clinic")).toContainText("Patients report Cosmopolitan Health refusals");
+  await expect(card("Glefe Seaside Clinic")).toContainText("Listed, but 4 patients were refused in the last 30 days");
+  // Rule S1: refusals come last.
+  await expect(cards.last()).toContainText("Glefe Seaside Clinic");
+  await expect(page.getByText("SAMPLE DATA", { exact: true })).toBeVisible();
+});

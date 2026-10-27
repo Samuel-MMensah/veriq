@@ -1,6 +1,7 @@
 // GET /api/cron/morning-reminder: called by Vercel Cron at 07:30 Ghana time (vercel.json).
 // Vercel sends "Authorization: Bearer $CRON_SECRET"; anything else is refused.
 import { isLocalData, serviceDb } from "@/lib/db/server";
+import { isDemoSite } from "@/lib/demo/mode";
 import { getMessenger } from "@/lib/messaging";
 import { sendMorningReminders } from "@/lib/staff/reminders";
 
@@ -10,6 +11,8 @@ export async function GET(request: Request) {
   if (secret && request.headers.get("authorization") !== `Bearer ${secret}`) {
     return Response.json({ error: "Not allowed." }, { status: 401 });
   }
+  // The demo deployment shares the database: only the real site sends reminders, so no one gets two.
+  if (isDemoSite()) return Response.json({ sent: 0, skipped: "demo-site" }, { headers: { "Cache-Control": "no-store" } });
   try {
     const result = await sendMorningReminders({
       db: await serviceDb(),

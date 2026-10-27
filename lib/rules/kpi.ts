@@ -41,26 +41,37 @@ const WINDOW_DAYS = 30;
 /** A gap is named after the nearest hospital's area if one is this close to the cell centre. */
 const NAME_GAP_WITHIN_KM = 10;
 
+/**
+ * rule K: does the NHIA list count as this insurer's own list? Only for NHIS, whose list NHIA keeps.
+ * A private insurer's list is only what it lists itself (listed_by = insurer).
+ */
+export function countsNhiaList(insurer: { slug: string }): boolean {
+  return insurer.slug === "nhis";
+}
+
 export function insurerFigures({
   facilities,
   links,
   reports,
   searches,
   now,
+  nhiaListCounts,
 }: {
   facilities: KpiFacility[];
   links: KpiLink[];
   reports: KpiReport[];
   searches: KpiSearch[];
   now: Date;
+  /** countsNhiaList(insurer): true for NHIS. */
+  nhiaListCounts: boolean;
 }): InsurerFigures {
   // Rule A: held and rejected never count.
   const recent = reports.filter((r) => (r.state ?? "live") === "live" && withinDays(r.created_at, now, WINDOW_DAYS));
   const reportsBy = new Map<string, KpiReport[]>();
   for (const r of recent) reportsBy.set(r.facility_id, [...(reportsBy.get(r.facility_id) ?? []), r]);
 
-  // rule K: hospitals on the list. For NHIS the list is NHIA's, so both list kinds count.
-  const isListed = (l: KpiLink) => l.listed_by !== "none";
+  // rule K: hospitals on the list: the insurer's own list, plus the NHIA list for NHIS.
+  const isListed = (l: KpiLink) => l.listed_by === "insurer" || (nhiaListCounts && l.listed_by === "nhia");
   const listed = links.filter(isListed);
 
   // rule K: confirmed = hospitals at badge B2 (rule B).
