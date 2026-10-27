@@ -121,4 +121,5 @@ hospital and insurer demo logins (steps 6 and 8). The real site stays as it is (
    themselves on a deployed site, because they would make real accounts or change real data.
 
 Before every pitch: `/admin/demo` → Reset demo data. Akoma's antenatal clinic then reads "Open till"
-about 4 hours ahead, so it can't turn into "Was open till …" during the pitch.
+about 4 hours ahead, kept between 12 pm and 8 pm (or plain "Open" after a reset from 7 pm), so it
+can't turn into "Was open till …" during the pitch (migration 10).

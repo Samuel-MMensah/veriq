@@ -50,7 +50,7 @@ describe("USSD menu (screen 13)", () => {
     const text = sms[0]!.text;
     expect(text).toMatch(/^VERIQ \(sample data\): Antenatal \/ maternity, NHIS, near Dansoman\n/);
     expect(text).toContain("1) AKOMA MISSION HOSPITAL, Kaneshie 1.8km. NHIS: Confirmed by hospital 2 days ago.");
-    expect(text).toMatch(/Antenatal clinic: Open till \d{1,2}(:\d{2})? (am|pm)/); // rule F: until_time
+    expect(text).toMatch(/Antenatal clinic: Open(?: till \d{1,2}(?::\d{2})? (?:am|pm))?\./); // rule F: the demo till time, if any
     expect(text).toContain("Scan top-up about GHS 80"); // SMS can't show ¢
     expect(text.indexOf("2) LAKESIDE")).toBeGreaterThan(text.indexOf("1) AKOMA"));
     expect(text.indexOf("3) GBAWE")).toBeGreaterThan(text.indexOf("2) LAKESIDE"));

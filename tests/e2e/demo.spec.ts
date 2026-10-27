@@ -41,8 +41,9 @@ test("the 90-second demo (SPEC section 9)", async ({ page }) => {
   await cards.nth(0).getByRole("link").click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Akoma Mission Hospital");
   await expect(page.getByText(/^Updated by hospital \d{1,2}:\d{2} (am|pm)$/)).toBeVisible();
-  // Rule F: the till time is an until_time; before 3 pm it is 4 pm, later it is two hours ahead.
-  await expect(page.getByText(/^Open till \d{1,2}(:\d{2})? (am|pm)$/)).toBeVisible();
+  // Rule F: the demo till time is "Open till 12 pm" to "8 pm", or plain "Open" after a reset from 19:00.
+  await expect(page.getByText(/^Open(?: till \d{1,2}(?::\d{2})? (?:am|pm))?$/).first()).toBeVisible();
+  await expect(page.getByText(/Was open till/)).toHaveCount(0);
   await expect(page.getByText("Accepting")).toBeVisible();
   await expect(page.getByText("Confirmed by hospital 2 days ago").first()).toBeVisible();
   await expect(page.getByText("On insurer list, not checked yet. Call first")).toBeVisible();

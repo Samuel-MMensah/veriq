@@ -16,7 +16,7 @@ const RESULTS = "/results?service=antenatal&card=nhis&lat=5.545&lng=-0.265&area=
 test("the hospital marks antenatal Closed, and the results page shows it (demo step 6)", async ({ page }) => {
   await page.goto(RESULTS);
   const akoma = page.getByRole("link", { name: /Akoma Mission Hospital/ });
-  await expect(akoma).toContainText(/Antenatal clinic: Open till \d{1,2}(:\d{2})? (am|pm)/); // rule F: until_time
+  await expect(akoma).toContainText(/Antenatal clinic: Open(?: till \d{1,2}(?::\d{2})? (?:am|pm))?/); // rule F: the demo till time, if any
 
   await page.goto("/h/check");
   await expect(page.getByText("Rehearsal only")).toBeVisible();

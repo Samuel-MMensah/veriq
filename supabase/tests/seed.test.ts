@@ -4,6 +4,7 @@
 import type { PGlite } from "@electric-sql/pglite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { as, createDb, seedSql } from "@/lib/db/pglite";
+import { demoUntilTime } from "@/lib/rules/demo-time";
 
 const id = (n: number) => `f0000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
 const F = {
@@ -225,13 +226,15 @@ describe("every freshness state appears (rule F)", () => {
 
   it("under 24 hours: Akoma antenatal, and the newest row wins", async () => {
     expect(await ageHours(F.akoma, "antenatal")).toBeLessThan(24);
-    const r = await one<{ status: string; note: string | null; until_time: string }>(
-      "select status, note, until_time::text from public.current_status where facility_id = $1 and service_id = 'antenatal'",
+    const r = await one<{ status: string; note: string | null; until_time: string | null; created_at: Date }>(
+      "select status, note, until_time::text, created_at from public.current_status where facility_id = $1 and service_id = 'antenatal'",
       [F.akoma],
     );
-    // Rule F: "Open till 4 pm" is an until_time, so it stops counting once that time has passed.
+    // Rule F: the demo till time follows demoUntilTime() at the reset (the seed writes this row 40 min
+    // before the reset): between 12:00 and 20:00, or none from 19:00 on.
     expect(r).toMatchObject({ status: "open", note: null });
-    expect(r.until_time).toMatch(/^\d{2}:00:00$/);
+    const resetAt = new Date(new Date(r.created_at).getTime() + 40 * 60_000);
+    expect(r.until_time).toBe(demoUntilTime(resetAt));
   });
 
   it("24 to 72 hours: Lakeside antenatal", async () => {

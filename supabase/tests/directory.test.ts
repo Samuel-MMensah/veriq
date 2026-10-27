@@ -163,12 +163,12 @@ describe("the NHIA directory (Prompt 9, rules D1 and D2)", () => {
     ).rejects.toThrow(/facilities_location_known/);
   });
 
-  it("the demo seed's 'Open till 4 pm' is an until_time now (rule F)", async () => {
+  it("the demo seed's 'Open till 4 pm' is an until_time, or none after 19:00 (rule F)", async () => {
     const [r] = await rows<{ note: string | null; until_time: string | null }>(
       `select note, until_time::text from public.current_status
        where facility_id = 'f0000000-0000-4000-8000-000000000001' and service_id = 'antenatal'`,
     );
     expect(r!.note).toBeNull();
-    expect(r!.until_time).toMatch(/^\d{2}:00:00$/);
+    expect(r!.until_time === null || /^(1[2-9]|20):00:00$/.test(r!.until_time)).toBe(true);
   });
 });

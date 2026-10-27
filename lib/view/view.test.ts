@@ -19,13 +19,14 @@ import { submitReport } from "@/lib/reports/submit";
 import { buildEmergency, buildNotChecked, cardNote } from "./emergency";
 import { buildNotListed, buildResults } from "./results";
 import { whatChanged } from "./thanks";
+import { demoUntilTime } from "@/lib/rules/demo-time";
 import { clockFromTime, statusView } from "./status";
 
 const NHIS = "a0000000-0000-4000-8000-000000000001";
 const AKOMA = "f0000000-0000-4000-8000-000000000001";
 const DANSOMAN = { lat: 5.545, lng: -0.265 };
-/** Rule F: the demo seed sets Akoma's till time to 4 pm, or two hours ahead after 3 pm. */
-const OPEN_TILL = /^Open till \d{1,2}(:\d{2})? (am|pm)$/;
+/** Rule F: the demo seed's till time (demoUntilTime): "Open till 12 pm" to "8 pm", or plain "Open" from 19:00. */
+const OPEN_TILL = /^Open(?: till \d{1,2}(?::\d{2})? (?:am|pm))?$/;
 let pg: PGlite;
 let serviceNames = new Map<string, string>();
 // Taken after seeding: the seed's times are relative to the moment it runs.
@@ -411,22 +412,19 @@ describe("a private card in the demo (2026-10-27): Cosmopolitan Health near Dans
   });
 });
 
-describe("demo till time (rule F, 2026-10-27): the reset sets 'open till' about 4 hours ahead", () => {
-  it("Akoma's antenatal till time has not passed and is 3.5 to 4.5 hours after the reset", async () => {
+describe("demo till time (rule F): the reset gives a daytime 'open till', or plain 'Open' from 19:00", () => {
+  it("Akoma's antenatal till time is demoUntilTime() at the reset, and patients see it as current", async () => {
     const [row] = (
-      await pg.query<{ until_time: string; created_at: string }>(
+      await pg.query<{ until_time: string | null; created_at: string }>(
         `select until_time::text, created_at from public.current_status
          where facility_id = '${AKOMA}' and service_id = 'antenatal'`,
       )
     ).rows;
+    // The seed writes this row 40 minutes before the reset.
+    const resetAt = new Date(new Date(row!.created_at).getTime() + 40 * 60_000);
+    expect(row!.until_time).toBe(demoUntilTime(resetAt));
     const v = statusView({ status: "open", from_time: null, note: null, source: "hospital", created_at: new Date(row!.created_at).toISOString(), until_time: row!.until_time }, now);
-    expect(v.word).toMatch(/^Open till /);
-    const [h, m] = row!.until_time.split(":").map(Number);
-    const till = new Date(now);
-    till.setUTCHours(h!, m!, 0, 0);
-    if (till.getTime() < now.getTime()) till.setUTCDate(till.getUTCDate() + 1); // past midnight
-    const hoursAhead = (till.getTime() - now.getTime()) / HOUR_MS;
-    expect(hoursAhead).toBeGreaterThanOrEqual(3.5 - 0.1);
-    expect(hoursAhead).toBeLessThanOrEqual(4.5);
+    expect(v.word).toMatch(row!.until_time ? /^Open till (12|[1-8]) pm$/ : /^Open$/);
+    expect(v.word).not.toMatch(/Was open|am$/);
   });
 });
