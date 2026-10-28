@@ -25,7 +25,7 @@ Write the role only (for example "Front desk"), never the person's name.
 
 ## 3. The questions, one card at a time
 
-Ask about **NHIS first**, then each private card in the table: Adom Care, Cosmopolitan Health, Prudential and Sika Health.
+Ask about **NHIS first**, then each private card: Cosmopolitan Health and Prudential.
 
 > Do you accept [card] for outpatient visits today?
 

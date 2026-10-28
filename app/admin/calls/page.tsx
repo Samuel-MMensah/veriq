@@ -9,7 +9,7 @@ import { SourceLine } from "@/components/ui/SourceLine";
 import { Toast } from "@/components/ui/Toast";
 import { staffGate } from "@/lib/auth/session";
 import { adminMayAct } from "@/lib/auth/staff";
-import { cardOrder } from "@/lib/calls/context";
+import { callCards } from "@/lib/calls/context";
 import { ANSWER_TEXT } from "@/lib/calls/input";
 import { listCalls } from "@/lib/calls/record";
 import { listInsurers } from "@/lib/db/queries";
@@ -31,7 +31,7 @@ export default async function CallsPage({ searchParams }: { searchParams: Promis
   const db = await serviceDb();
   const now = new Date();
   const [calls, insurers] = await Promise.all([listCalls(db), listInsurers(db)]);
-  const cards = cardOrder(insurers);
+  const cards = callCards(insurers);
   const saved = first(sp.saved);
   const savedName = saved ? calls.find((c) => c.facility_id === saved)?.facility?.name : null;
   const canSave = adminMayAct(gate.staff, { source: "nhia" });

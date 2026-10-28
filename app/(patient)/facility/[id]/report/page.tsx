@@ -6,7 +6,7 @@ import { Icon } from "@/components/ui/Icon";
 import { SampleDataTag } from "@/components/ui/SampleDataTag";
 import { getFacility, listInsurers } from "@/lib/db/queries";
 import { readDb } from "@/lib/db/server";
-import { REPORTS_CLOSED_TEXT, reportsLive, reportsOpen, showSampleTag } from "@/lib/rules/directory";
+import { REPORTS_CLOSED_TEXT, insurerVisibleInMode, reportsLive, reportsOpen, showSampleTag } from "@/lib/rules/directory";
 import { displayName } from "@/lib/view/names";
 import { CARD_OPTIONS, type SearchParams } from "@/lib/view/catalog";
 
@@ -36,6 +36,8 @@ export default async function ReportPage({
     return i === -1 ? CARD_OPTIONS.length : i;
   };
   const cards = [...insurers]
+    // rule D2: invented demo cards only on a demo hospital.
+    .filter((i) => insurerVisibleInMode(i, facility.source === "demo"))
     .sort((a, b) => order(a.slug) - order(b.slug) || a.name.localeCompare(b.name))
     .map((i) => ({ id: i.id, slug: i.slug, name: i.name }));
   if (cards.length === 0) notFound();

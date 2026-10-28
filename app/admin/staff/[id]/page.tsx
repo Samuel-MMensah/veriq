@@ -37,7 +37,7 @@ export default async function StaffAccountPage({ params, searchParams }: { param
   const isSelf = account.user_id === staff.userId;
   const [history, options] = await Promise.all([
     historyFor(db, { profile_id: id }),
-    account.role === "hospital" ? facilityOptions(db) : account.role === "insurer" ? listInsurers(db).then((l) => l.map((i) => ({ id: i.id, label: i.name }))) : [],
+    account.role === "hospital" ? facilityOptions(db) : account.role === "insurer" ? listInsurers(db).then((l) => l.filter((i) => !i.is_sample).map((i) => ({ id: i.id, label: i.name }))) : [],
   ]);
   const done = first((await searchParams).done);
 

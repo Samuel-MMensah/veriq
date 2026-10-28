@@ -34,6 +34,14 @@ export function visibleInMode(f: { source: FacilitySource }, demoMode: boolean):
   return demoMode ? f.source === "demo" : f.source !== "demo";
 }
 
+/**
+ * rule D2 for cards: an invented demo insurer (is_sample) shows only in demo mode, like the demo
+ * hospitals. Real insurers show in both. The real site, real calls and their summary never list one.
+ */
+export function insurerVisibleInMode(insurer: { is_sample: boolean }, demoMode: boolean): boolean {
+  return demoMode || !insurer.is_sample;
+}
+
 /** rule 1: the SAMPLE DATA tag shows whenever a demo facility is on the screen, and only then. */
 export function showSampleTag(facilities: { source: FacilitySource }[]): boolean {
   return facilities.some((f) => f.source === "demo");

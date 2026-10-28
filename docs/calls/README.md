@@ -18,7 +18,7 @@ The Veriq team phones real facilities and records what each says about every car
 | `caller_email` | Email of the admin account that made the call |
 | `answered_role` | Role only, never a name: `Front desk` |
 | `phone_reached` | The number you reached: `030 222 1234` |
-| `nhis`, `adom-care`, `cosmopolitan`, `prudential`, `sika-health` | `accepts`, `does_not`, `partial` or `not_asked` (blank means not asked) |
+| `nhis`, `cosmopolitan`, `prudential` | `accepts`, `does_not`, `partial` or `not_asked` (blank means not asked). Only real insurers: the invented demo cards (Sika Health, Adom Care) are never asked about |
 | `{card}_note` | Needed for `partial`, e.g. `top-up for scans`; 120 characters at most |
 | `services` | Optional, separated by `;`: `antenatal;lab;gp`. Ids: antenatal, delivery, c_section, emergency, ultrasound, xray, ct, lab, gp, paediatrics, dental, obstetrician |
 | `usual_hours` | Optional: `Mon–Sat 8 am to 5 pm` |

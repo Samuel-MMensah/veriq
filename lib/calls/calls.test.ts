@@ -13,7 +13,7 @@ import { createDb } from "@/lib/db/pglite";
 import type { Db } from "@/lib/db/supabase";
 import type { FacilityInsurerRow, FacilityRow, InsurerRow, ProfileRow } from "@/lib/db/types";
 import { badge } from "@/lib/rules/badge";
-import { cardOrder } from "./context";
+import { callCards } from "./context";
 import { callCsvHeader, previewCallCsv, type ImportContext } from "./csv";
 import { checkCall, normalizePhone, parseCallTime, type CallContext, type RawCall } from "./input";
 import { callerAccounts, listCalls, loadCallSummary, recordCall } from "./record";
@@ -284,7 +284,7 @@ describe("recording a call (Prompt 10b): real facilities, rule B-V facts", () =>
         calledAt: new Date(Date.now() - 3_600_000).toISOString().slice(0, 16),
         ...over,
       }),
-      { insurerIds: insurers.map((i) => i.id), serviceIds: ["antenatal", "lab"], callers, now: new Date() },
+      { insurerIds: callCards(insurers).map((i) => i.id), serviceIds: ["antenatal", "lab"], callers, now: new Date() },
     );
     if (!r.ok) throw new Error(JSON.stringify(r.errors));
     return r.payload;
@@ -347,13 +347,20 @@ describe("recording a call (Prompt 10b): real facilities, rule B-V facts", () =>
 
   it("docs/calls: the blank template matches the import, and all 30 suggested facilities are real", async () => {
     const template = readFileSync(join(process.cwd(), "docs/calls/calls-template.csv"), "utf8").trim();
-    expect(template).toBe(callCsvHeader(cardOrder(insurers).map((i) => i.slug)).join(","));
+    expect(template).toBe(callCsvHeader(callCards(insurers).map((i) => i.slug)).join(","));
     const readme = readFileSync(join(process.cwd(), "docs/calls/README.md"), "utf8");
     const refs = [...readme.matchAll(/\| `(greater-accra-[^`]+)` \|$/gm)].map((m) => m[1]!);
     expect(new Set(refs).size).toBe(30);
     const found = (await pg.query<{ source_ref: string; nhia_type: string }>("select source_ref, nhia_type from public.facilities where source = 'nhia' and source_ref = any($1)", [refs])).rows;
     expect(found).toHaveLength(30);
     expect(found.filter((f) => /pharmacy|chemical/i.test(f.nhia_type))).toEqual([]);
+  });
+
+  it("rule D2: the call form, the CSV and the summary never list an invented demo card", async () => {
+    expect(insurers.filter((i) => i.is_sample).map((i) => i.slug).sort()).toEqual(["adom-care", "sika-health"]);
+    expect(callCards(insurers).map((i) => i.slug)).toEqual(["nhis", "cosmopolitan", "prudential"]);
+    const s = await loadCallSummary(db, insurers);
+    expect(s.cards.map((c) => c.slug)).toEqual(["nhis", "cosmopolitan", "prudential"]);
   });
 
   it("the database keeps calls append-only and real-only", async () => {

@@ -119,3 +119,36 @@ describe("rule K: did a search find a confirmed hospital?", () => {
     expect(hadConfirmedResult([])).toBe(false);
   });
 });
+
+describe("rule K: 'Confirmed by Veriq call' is its own figure, never merged with 'Confirmed by hospital'", () => {
+  const callLinks: KpiLink[] = [
+    // Veriq call says yes, listed: counts as confirmed by call, not by hospital.
+    { facility_id: "ashaiman", listed_by: "nhia", hospital_says: null, hospital_confirmed_at: null, call_says: "accepts", call_at: daysAgo(3) },
+    // Partial also counts (rule B-V shows "with top-ups").
+    { facility_id: "madina", listed_by: "nhia", hospital_says: null, hospital_confirmed_at: null, call_says: "partial", call_at: daysAgo(30) },
+    // Not listed, but the call says yes: in the count, not in the share of the list.
+    { facility_id: "x", listed_by: "none", hospital_says: null, hospital_confirmed_at: null, call_says: "accepts", call_at: daysAgo(1) },
+    // A fresh hospital answer wins (B2), so this one is "by hospital" only.
+    { facility_id: "gbawe", listed_by: "nhia", hospital_says: "accepts", hospital_confirmed_at: daysAgo(1), call_says: "accepts", call_at: daysAgo(2) },
+    // A "does not accept" call (BVx) and a call older than 30 days don't count.
+    { facility_id: "y", listed_by: "nhia", hospital_says: null, hospital_confirmed_at: null, call_says: "does_not", call_at: daysAgo(2) },
+    { facility_id: "z", listed_by: "nhia", hospital_says: null, hospital_confirmed_at: null, call_says: "accepts", call_at: daysAgo(31) },
+  ];
+  const k = insurerFigures({ facilities, links: callLinks, reports: [], searches: [], now, nhiaListCounts: true });
+
+  it("counts hospitals at B-V, apart from those at B2", () => {
+    expect(k.confirmedByCall).toBe(3);
+    expect(k.confirmed).toBe(1);
+  });
+
+  it("gives its share of the list: 2 of the 5 listed hospitals", () => {
+    expect(k.onList).toBe(5);
+    expect(k.confirmedByCallShareOfList).toBeCloseTo(2 / 5);
+    expect(k.confirmedShareOfList).toBeCloseTo(1 / 5);
+  });
+
+  it("is zero with no calls", () => {
+    expect(figures().confirmedByCall).toBe(0);
+    expect(figures().confirmedByCallShareOfList).toBe(0);
+  });
+});

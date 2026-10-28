@@ -91,7 +91,7 @@ export default async function StaffPage() {
               <CreateAccountForm
                 action={createAccountAction}
                 facilities={facilities}
-                insurers={insurers.map((i) => ({ id: i.id, label: i.name }))}
+                insurers={insurers.filter((i) => !i.is_sample).map((i) => ({ id: i.id, label: i.name }))}
               />
             ) : (
               <p className="text-small text-muted">Demo login: sign in with your admin account to make accounts.</p>

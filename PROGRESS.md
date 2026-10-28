@@ -1,5 +1,5 @@
 # Veriq Health progress
-Last updated: 2026-10-28, session 2026-10-28-03 (Prompt 10b: verification calls; rule D2 tightened; red = emergency and errors)
+Last updated: 2026-10-28, session 2026-10-28-04 (Prompt 10b follow-up: demo insurers demo-only, rule K Veriq-call figure, number source on cards)
 Current phase: 2 (pilot). Phase 1 gate met on 2026-10-24. Phase 2 gate: not yet. Built and live: real logins, admin verification (0 hospitals verified so far). Still needed: Data Protection Commission registration, real patient reports under rule A, USSD through an aggregator
 Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-west-1). Demo site for pitches: https://veriq-demo-snowy.vercel.app (`VERIQ_DEMO_SITE=on`, same database)
 
@@ -18,7 +18,7 @@ Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-w
 ### Phase 2: pilot (each prompt written in full in SPEC section 8 before it runs)
 - [x] Prompt 9: Real NHIA directory for Greater Accra (2026-10-26-01; live and checked on the live site 2026-10-26)
 - [x] Prompt 10: Real staff sign-in, admin side, design pass (2026-10-26-02; deployed, migration 8 applied, an admin account exists; checked in the 2026-10-27 review)
-- [x] Prompt 10b: Verification calls by the Veriq team, rule B-V, call summary and CSV import (2026-10-28-03; built and tested locally, migration 11 not yet applied; docs/calls/)
+- [x] Prompt 10b: Verification calls by the Veriq team, rule B-V, call summary and CSV import (2026-10-28-03; deployed e637167, migration 11 applied; follow-up 2026-10-28-04 with migration 12 not yet applied or pushed; docs/calls/)
 - [x] Prompt 10c: Look and copy polish, all four sides (2026-10-28-01; follow-up 2026-10-28-02; deployed 7400669, live 3G under 1 s warm; docs/DESIGN.md, docs/polish/)
 - [ ] Prompt 11: Hospital onboarding (screen 15), SMS morning-check reminders
 - [ ] Prompt 12: Map view with Leaflet and OpenStreetMap (screen 8)
@@ -48,19 +48,18 @@ Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-w
 | 15 | Hospital: claim your page | `/h/onboard` | 2 | not started | |
 | 16 | Hospital morning check | `/h/check` | 1 | done | real accounts (verified hospitals publish) and the demo login (Akoma); optional till time per service (rule F); reminder via console stub |
 | 17 | Link to national bed system | `/h/national` | 3 | not started | Only after a signed agreement |
-| 18 | Insurer network health | `/i/network` | 1 (read-only) | done | real insurer accounts see real facilities; demo login (NHIS) sees the demo; "Add to list" waits for screen 19; "Call" only for a callable number |
+| 18 | Insurer network health | `/i/network` | 1 (read-only) | done | real insurer accounts see real facilities; demo login (NHIS) sees the demo; "Add to list" waits for screen 19; "Call" only for a callable number; "Confirmed by Veriq call" tile (rule K) |
 | 19 | Insurer list upload | `/i/upload` | 2 | not started | |
 | – | Admin | `/admin` | 2 | done | overview, staff accounts, hospital verification, held reports, locations (search and map preview), admin log, demo data, design sample (`/admin/design`), verification calls (`/admin/calls`, summary with CSV, paper import; Prompt 10b) |
 | – | Staff sign-in | `/staff/sign-in`, `/staff/password` | 2 | done | email and password, accounts made by an admin, nothing emailed |
 
 ## Known bugs
-- none open. One cold-start reading of 3.4 s on the demo site's /emergency (3G); warm runs are 0.65 to 0.9 s.
+- none open. 3G first content is slow on cold runs on this machine (1–3 s live and locally), 0.35–0.4 s once warm; watch the live numbers after the push.
 
 ## Open questions for the team
-- Sika Health and Adom Care are invented insurers (demo seed), yet the call form asks about every insurer in the table. Remove them from real calls, or keep them as "not asked"?
-- Should insurer figures (rule K) and the "found a confirmed hospital" search count include Veriq-call confirmations (B-V)? Today they use B2 and B3 only, as SPEC says.
+- Should "found a confirmed hospital" (searches) and coverage gaps (rule K) also count Veriq-call confirmations (B-V)? Today they use B2 and B3 only; the new "Confirmed by Veriq call" tile is separate.
 - The review's questions still open: docs/REVIEW-2026-10-27.md, section 14 (Supabase sign-ups off? who places the 360 locations? NHIA permission? DPC registration date? pilot insurer?)
 - Who asks NHIA for permission to republish the provider list, and for a dated copy with NHIA codes and phone numbers?
 
 ## Next prompt
-Apply migration 11 (`supabase db push`), then commit and push session 2026-10-28-03. Run the live 3G check on both sites. Then start the first 30 calls (docs/calls/README.md) and record them at /admin/calls. Then Prompt 11: hospital onboarding (screen 15) and morning-check reminders; write it in full in SPEC section 8 first. Before every pitch: https://veriq-demo-snowy.vercel.app/admin/demo, then Demo login, then Reset demo data.
+Apply migration 12 with `npx supabase db push --db-url "<SUPABASE_DB_URL from .env.local>"`, then commit and push session 2026-10-28-04, and run the live 3G check on both sites. Start the first 30 calls (docs/calls/README.md) at /admin/calls. Then Prompt 11: hospital onboarding (screen 15) and morning-check reminders; write it in full in SPEC section 8 first. Before every pitch: https://veriq-demo-snowy.vercel.app/admin/demo, then Demo login, then Reset demo data.

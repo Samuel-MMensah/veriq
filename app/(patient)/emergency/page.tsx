@@ -163,29 +163,33 @@ function UnitNotChecked({ unit: u, names }: { unit: NotCheckedUnit; names: Recor
   );
 }
 
-function CallAndGo({ unit: u }: { unit: { name: string; phone: string | null; directionsUrl: string } }) {
+function CallAndGo({ unit: u }: { unit: { name: string; phone: string | null; phoneSource: string | null; directionsUrl: string } }) {
   return (
-    <div className="mt-3 grid grid-cols-2 gap-2">
-      {u.phone ? (
+    <>
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        {u.phone ? (
+          <a
+            href={`tel:${u.phone.replace(/\s/g, "")}`}
+            aria-label={`Call ${u.name}`}
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-(--radius-control) border border-emergency font-semibold text-emergency"
+          >
+            <Icon name="phone" className="h-5 w-5" /> Call
+          </a>
+        ) : (
+          <span className="inline-flex min-h-12 items-center justify-center text-small text-muted">No phone listed</span>
+        )}
         <a
-          href={`tel:${u.phone.replace(/\s/g, "")}`}
-          aria-label={`Call ${u.name}`}
-          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-(--radius-control) border border-emergency font-semibold text-emergency"
+          href={u.directionsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Go: directions to ${u.name}`}
+          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-(--radius-control) bg-emergency font-semibold text-white"
         >
-          <Icon name="phone" className="h-5 w-5" /> Call
+          <Icon name="map" className="h-5 w-5" /> Go
         </a>
-      ) : (
-        <span className="inline-flex min-h-12 items-center justify-center text-small text-muted">No phone listed</span>
-      )}
-      <a
-        href={u.directionsUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={`Go: directions to ${u.name}`}
-        className="inline-flex min-h-12 items-center justify-center gap-2 rounded-(--radius-control) bg-emergency font-semibold text-white"
-      >
-        <Icon name="map" className="h-5 w-5" /> Go
-      </a>
-    </div>
+      </div>
+      {/* Rule 4: where the number came from, e.g. "Number: Veriq call, 28 Oct 2026". */}
+      {u.phone && u.phoneSource && <p className="mt-1.5 text-small text-muted">Number: {u.phoneSource}</p>}
+    </>
   );
 }

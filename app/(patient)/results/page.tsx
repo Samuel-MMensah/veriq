@@ -12,7 +12,7 @@ import { getInsurerBySlug, getSearchCandidates, getUnlistedCandidates, listServi
 import { readDb, serviceDb } from "@/lib/db/server";
 import { isDemoMode } from "@/lib/demo/mode";
 import { areaCell } from "@/lib/geo";
-import { NOT_LISTED_PAGE, servicesNotListedApplies, showSampleTag } from "@/lib/rules/directory";
+import { NOT_LISTED_PAGE, insurerVisibleInMode, servicesNotListedApplies, showSampleTag } from "@/lib/rules/directory";
 import { CASH, RADIUS_OPTIONS_KM, cardName, parseSearch, type SearchParams } from "@/lib/view/catalog";
 import { buildNotListed, buildResults } from "@/lib/view/results";
 
@@ -33,7 +33,8 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
   const [insurer, services] = await Promise.all([withCard ? getInsurerBySlug(db, search.card) : null, listServices(db)]);
   const serviceNames = new Map(services.map((s) => [s.id, s.name]));
   const known = search.serviceIds.filter((id) => serviceNames.has(id));
-  if (known.length === 0 || (withCard && !insurer)) return <BrokenSearch />;
+  // rule D2: an invented demo card is unknown outside demo mode.
+  if (known.length === 0 || (withCard && (!insurer || !insurerVisibleInMode(insurer, demoMode)))) return <BrokenSearch />;
   const serviceLabel = search.serviceLabel ?? serviceNames.get(known[0]!)!;
 
   const query = {

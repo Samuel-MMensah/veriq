@@ -95,6 +95,8 @@ export type InsurerRow = {
   slug: string;
   name: string;
   kind: InsurerKind;
+  /** An invented demo insurer (Sika Health, Adom Care): demo mode only, never on the real site (rule D2). */
+  is_sample: boolean;
   created_at: string;
 };
 

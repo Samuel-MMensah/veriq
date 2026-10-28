@@ -45,7 +45,7 @@ export function ResultCardView({
         </div>
       </Link>
       {/* Rule B4 says "Call first", so the card lets you call. */}
-      {card.callFirst && <CallRow name={card.name} phone={card.phone} />}
+      {card.callFirst && <CallRow name={card.name} phone={card.phone} source={card.phoneSource} />}
     </li>
   );
 }
@@ -68,7 +68,7 @@ export function UnlistedCardView({ card, href, cardName }: { card: UnlistedCard;
         )}
         {card.sourceLine && <p className="mt-2 text-small text-muted">{card.sourceLine}</p>}
       </Link>
-      <CallRow name={card.name} phone={card.phone} />
+      <CallRow name={card.name} phone={card.phone} source={card.phoneSource} />
     </li>
   );
 }
@@ -89,13 +89,17 @@ function CardHead({ name, area, distanceKm }: { name: string; area: string | nul
 }
 
 /** The Call button, or plainly no number: we never show a number the source doesn't have (rule D1). */
-function CallRow({ name, phone }: { name: string; phone: string | null }) {
+function CallRow({ name, phone, source }: { name: string; phone: string | null; source: string | null }) {
   return (
     <div className="border-t border-line px-4 py-2">
       {phone ? (
-        <a href={`tel:${phone.replace(/\s/g, "")}`} aria-label={`Call ${name}`} className={buttonClass({ variant: "secondary" })}>
-          <Icon name="phone" className="h-5 w-5" /> Call
-        </a>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <a href={`tel:${phone.replace(/\s/g, "")}`} aria-label={`Call ${name}`} className={buttonClass({ variant: "secondary" })}>
+            <Icon name="phone" className="h-5 w-5" /> Call
+          </a>
+          {/* Rule 4: where the number came from, e.g. "Veriq call, 28 Oct 2026". */}
+          {source && <span className="text-small text-muted">{source}</span>}
+        </div>
       ) : (
         <p className="flex min-h-11 items-center text-small text-muted">No phone listed</p>
       )}

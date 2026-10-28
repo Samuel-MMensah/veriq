@@ -213,6 +213,51 @@ describe("the NHIA directory (Prompt 9, rules D1 and D2)", () => {
     }
   });
 
+  it("the invented insurers (Sika Health, Adom Care) are demo-only, and nothing real links to them (rule D2)", async () => {
+    const SIKA = "a0000000-0000-4000-8000-000000000004";
+    const demoCards = (await rows<{ slug: string }>("select slug from public.insurers where is_sample order by slug")).map((r) => r.slug);
+    expect(demoCards).toEqual(["adom-care", "sika-health"]);
+    const real = "select id from public.facilities where source = 'nhia'";
+    const demoIns = "select id from public.insurers where is_sample";
+    for (const table of ["facility_insurers", "card_reports", "hospital_responses"]) {
+      expect(await count(`select count(*)::int n from public.${table} where facility_id in (${real}) and insurer_id in (${demoIns})`), table).toBe(0);
+    }
+    expect(await count(`select count(*)::int n from public.verification_call_answers where insurer_id in (${demoIns})`)).toBe(0);
+    expect(await count(`select count(*)::int n from public.profiles where insurer_id in (${demoIns})`)).toBe(0);
+
+    // "Reset demo data" puts them back still marked as demo.
+    await db.exec("select public.reset_demo()");
+    expect(await count("select count(*)::int n from public.insurers where is_sample")).toBe(2);
+
+    // The database refuses to tie a demo card to a real facility, a call or a staff account.
+    const [f] = await rows<{ id: string }>(`${real} limit 1`);
+    await expect(db.query("insert into public.facility_insurers (facility_id, insurer_id, listed_by) values ($1, $2, 'none')", [f!.id, SIKA])).rejects.toThrow(
+      /demo insurers are for demo facilities only/,
+    );
+    await expect(
+      db.query("select public.record_verification_call($1)", [
+        {
+          facility_id: f!.id,
+          called_at: "2026-10-28T09:00:00Z",
+          caller_label: "ama@veriq.org",
+          answered_role: "Front desk",
+          phone_reached: "0302221234",
+          answers: [{ insurer_id: SIKA, answer: "accepts", note: null }],
+          actor_label: "ama@veriq.org",
+        },
+      ]),
+    ).rejects.toThrow(/never asked about on a real call/);
+    await db.exec("begin");
+    try {
+      const [u] = await rows<{ id: string }>("insert into auth.users (email) values ('x@sika.test') returning id");
+      await expect(db.query("insert into public.profiles (user_id, role, insurer_id) values ($1, 'insurer', $2)", [u!.id, SIKA])).rejects.toThrow(
+        /never linked to a demo insurer/,
+      );
+    } finally {
+      await db.exec("rollback");
+    }
+  });
+
   it("an admin-set location survives a re-import", async () => {
     const [f] = await rows<{ id: string }>("select id from public.facilities where source = 'nhia' and location_source = 'none' limit 1");
     await db.query("update public.facilities set lat = 5.55, lng = -0.25, location_source = 'admin' where id = $1", [f!.id]);

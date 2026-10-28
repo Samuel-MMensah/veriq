@@ -10,6 +10,7 @@ import { emergencyNotChecked, sortEmergency } from "@/lib/rules/sort";
 import { directionsUrl } from "./facility";
 import { displayName } from "./names";
 import { statusView, type StatusView } from "./status";
+import { phoneSourceText } from "./phone";
 
 export type EmergencyUnit = {
   id: string;
@@ -18,6 +19,8 @@ export type EmergencyUnit = {
   status: StatusView;
   /** To call ahead, "+233 …", or null when we have no number. */
   phone: string | null;
+  /** Rule 4: "Veriq call, 28 Oct 2026" beside the Call button, or null. */
+  phoneSource: string | null;
   directionsUrl: string;
   /** Badge per card slug at this hospital, for information only. */
   cardBadges: Record<string, BadgeId>;
@@ -81,6 +84,7 @@ export function buildEmergency({
       distanceKm: s.distanceKm,
       status: statusView(c.status, now),
       phone: c.facility.phone,
+      phoneSource: phoneSourceText(c.facility),
       directionsUrl: directionsUrl(c.facility),
       cardBadges: badgesBySlug(c, slugOf, now),
       sourceLine: sourceLine(c.facility),
@@ -118,6 +122,7 @@ export function buildNotChecked({
     name: displayName(s.candidate.facility.name),
     distanceKm: s.distanceKm,
     phone: s.candidate.facility.phone,
+    phoneSource: phoneSourceText(s.candidate.facility),
     directionsUrl: directionsUrl(s.candidate.facility),
     cardBadges: badgesBySlug(s.candidate, slugOf, now),
     sourceLine: sourceLine(s.candidate.facility),

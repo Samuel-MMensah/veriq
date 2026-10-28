@@ -81,14 +81,28 @@ test("patients see rule B-V with its source and date, the phone and the services
   await expect(page.getByText(/Veriq call · .* · with top-ups/)).toBeVisible();
 });
 
+test("emergency cards say where a called number came from (rule 4)", async ({ page }) => {
+  await page.goto("/emergency?lat=5.68&lng=-0.165&area=madina&demo=0");
+  const unit = page.getByRole("listitem").filter({ has: page.getByRole("heading", { name: MADINA, exact: true }) });
+  await expect(unit.getByRole("link", { name: `Call ${MADINA}` })).toHaveAttribute("href", "tel:0302541234");
+  await expect(unit.getByText(/^Number: Veriq call, \d+ \w{3} \d{4}$/)).toBeVisible();
+});
+
+test("rule D2: the invented demo cards are unknown on the real site, but work in demo mode", async ({ page }) => {
+  await page.goto("/results?service=antenatal&card=sika-health&lat=5.545&lng=-0.265&area=dansoman&demo=0");
+  await expect(page.getByText("We couldn't read this search")).toBeVisible();
+  await page.goto("/results?service=antenatal&card=sika-health&lat=5.545&lng=-0.265&area=dansoman&demo=1");
+  await expect(page.getByText("We couldn't read this search")).toHaveCount(0);
+});
+
 test("a paper call imports after a dry-run preview; a repeat is skipped, never counted twice", async ({ page }) => {
   await signInAdmin(page, "/admin/calls/import");
   const before = await nhisSummary(page);
   const header = (await (await page.request.get("/admin/calls/template")).text()).trim();
   expect(header).toBe(
-    "called_at,facility_ref,facility_name,caller_email,answered_role,phone_reached,nhis,nhis_note,adom-care,adom-care_note,cosmopolitan,cosmopolitan_note,prudential,prudential_note,sika-health,sika-health_note,services,usual_hours,location",
+    "called_at,facility_ref,facility_name,caller_email,answered_role,phone_reached,nhis,nhis_note,cosmopolitan,cosmopolitan_note,prudential,prudential_note,services,usual_hours,location",
   );
-  const row = `${minutesAgo(30)},${TEMA_REF},Tema Polyclinic,${LOCAL_ADMIN.email},Records,0303 202 123,does_not,,not_asked,,,,,,,,lab,,`;
+  const row = `${minutesAgo(30)},${TEMA_REF},Tema Polyclinic,${LOCAL_ADMIN.email},Records,0303 202 123,does_not,,not_asked,,,,lab,,`;
   await page.getByLabel("Or paste the rows").fill(`${header}\n${row}\n`);
   await page.getByRole("button", { name: "Preview" }).click();
   const preview = page.getByRole("region", { name: /Check the preview/ });

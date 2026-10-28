@@ -51,11 +51,14 @@ export default async function NetworkPage() {
     <StaffShell staff={staff} area="insurers" nav={NAV} signOutTo={PATH}>
       <StaffPageHeader title="Network health" description={`${network.insurer.name} · Last 30 days`} sample={staff.kind === "demo"} />
       <StaffBody>
-        <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Last 30 days">
+        <ul className="grid grid-cols-2 gap-3 lg:grid-cols-5" aria-label="Last 30 days">
           <Tile label="Hospitals on your list" value={n(k.onList)} />
           <Tile label="Confirmed by hospital" value={n(k.confirmed)} note={`${pct(k.confirmedShareOfList)} of your list`} tone="brand" />
+          {/* rule K: a Veriq call is its own figure, never added to "Confirmed by hospital". */}
+          <Tile label="Confirmed by Veriq call" value={n(k.confirmedByCall)} note={`${pct(k.confirmedByCallShareOfList)} of your list`} tone="brand" />
           <Tile label="Members refused" value={n(k.refused.count)} note={`at ${k.refused.facilities} hospitals`} tone="refused" />
           <Tile
+            wide
             label="Member searches"
             value={n(k.searches.total)}
             note={`${pct(k.searches.confirmedShare)} found a confirmed hospital`}
@@ -150,10 +153,11 @@ export default async function NetworkPage() {
 }
 
 /** A KPI tile: the number first, then what it counts. Every tile in a row is the same height. */
-function Tile({ label, value, note, tone }: { label: string; value: string; note?: string; tone?: "brand" | "refused" }) {
+function Tile({ label, value, note, tone, wide }: { label: string; value: string; note?: string; tone?: "brand" | "refused"; wide?: boolean }) {
   const color = tone === "brand" ? "text-brand" : tone === "refused" ? "text-warn-ink" : "text-ink";
   return (
-    <li className="flex h-full flex-col rounded-(--radius-card) bg-surface p-4 shadow-card">
+    // An odd fifth tile spans the row on a phone, so the grid has no hole.
+    <li className={`flex h-full flex-col rounded-(--radius-card) bg-surface p-4 shadow-card ${wide ? "col-span-2 lg:col-span-1" : ""}`}>
       <p className={`text-display ${color}`}>{value}</p>
       <p className="mt-1 text-small font-semibold">{label}</p>
       {note && <p className="mt-auto pt-2 text-small text-muted">{note}</p>}

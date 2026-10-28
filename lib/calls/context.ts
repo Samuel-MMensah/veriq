@@ -10,6 +10,11 @@ export function cardOrder(insurers: InsurerRow[]): InsurerRow[] {
   return [...insurers].sort((a, b) => (a.kind === b.kind ? a.name.localeCompare(b.name) : a.kind === "public" ? -1 : 1));
 }
 
+/** The cards a real call asks about: real insurers only, never an invented demo one (rule D2). */
+export function callCards(insurers: InsurerRow[]): InsurerRow[] {
+  return cardOrder(insurers.filter((i) => !i.is_sample));
+}
+
 export async function loadCallContext(db: Db, now: Date): Promise<{ ctx: CallContext; insurers: InsurerRow[]; services: ServiceRow[] }> {
   const [ins, svc, callers] = await Promise.all([
     db.from("insurers").select("*"),
@@ -17,7 +22,7 @@ export async function loadCallContext(db: Db, now: Date): Promise<{ ctx: CallCon
     callerAccounts(db),
   ]);
   if (ins.error || svc.error) throw new Error(`Could not load cards and services: ${(ins.error ?? svc.error)!.message}`);
-  const insurers = cardOrder((ins.data ?? []) as InsurerRow[]);
+  const insurers = callCards((ins.data ?? []) as InsurerRow[]);
   const services = (svc.data ?? []) as ServiceRow[];
   return { ctx: { insurerIds: insurers.map((i) => i.id), serviceIds: services.map((s) => s.id), callers, now }, insurers, services };
 }

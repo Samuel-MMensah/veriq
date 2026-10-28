@@ -1,6 +1,7 @@
 import {
   demoModeFrom,
   demoParamAllowed,
+  insurerVisibleInMode,
   hasLocation,
   isPharmacy,
   reportsLive,
@@ -222,5 +223,14 @@ describe("rule D2: ?demo=1 never works on the real site (team decision 2026-10-2
     expect(demoModeFrom({ param: "1", demoCookie: undefined, ...real })).toBe(false);
     expect(demoModeFrom({ param: undefined, demoCookie: "1", ...real })).toBe(false);
     expect(demoModeFrom({ param: "1", demoCookie: "1", ...real })).toBe(false);
+  });
+});
+
+describe("rule D2 for cards: invented demo insurers show only in demo mode", () => {
+  it("a demo insurer is hidden on the real site and shown in demo mode; a real one always shows", () => {
+    expect(insurerVisibleInMode({ is_sample: true }, false)).toBe(false);
+    expect(insurerVisibleInMode({ is_sample: true }, true)).toBe(true);
+    expect(insurerVisibleInMode({ is_sample: false }, false)).toBe(true);
+    expect(insurerVisibleInMode({ is_sample: false }, true)).toBe(true);
   });
 });

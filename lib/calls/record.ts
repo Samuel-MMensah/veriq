@@ -63,5 +63,6 @@ export async function loadCallSummary(db: Db, insurers: InsurerRow[]): Promise<C
   const calls = await listCalls(db);
   const ids = [...new Set(calls.map((c) => c.facility_id))];
   const links = ids.length ? (((await db.from("facility_insurers").select("*").in("facility_id", ids)).data ?? []) as FacilityInsurerRow[]) : [];
-  return summarizeCalls({ calls, answers: calls.flatMap((c) => c.answers), links, insurers });
+  // Real cards only (rule D2); the database never holds a call answer for a demo card anyway.
+  return summarizeCalls({ calls, answers: calls.flatMap((c) => c.answers), links, insurers: insurers.filter((i) => !i.is_sample) });
 }

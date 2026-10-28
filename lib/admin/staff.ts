@@ -25,6 +25,8 @@ async function linkTarget(db: Db, role: StaffRole, facilityId?: string, insurerI
   if (role === "insurer") {
     const { data } = insurerId ? await db.from("insurers").select("*").eq("id", insurerId).maybeSingle() : { data: null };
     if (!data) return fail("Choose the insurer this person works for.");
+    // rule D2: invented demo insurers never get a real account.
+    if ((data as InsurerRow).is_sample) return fail("Staff accounts link to real insurers only, not demo ones.");
     return { ok: true as const, facility_id: null, insurer_id: (data as InsurerRow).id };
   }
   return { ok: true as const, facility_id: null, insurer_id: null };

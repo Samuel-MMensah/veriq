@@ -11,6 +11,9 @@ export type KpiLink = {
   listed_by: ListedBy;
   hospital_says: HospitalSays | null;
   hospital_confirmed_at: string | null;
+  /** rule B-V: the newest Veriq call's answer, so confirmed-by-call can be counted on its own. */
+  call_says?: HospitalSays | null;
+  call_at?: string | null;
 };
 export type KpiReport = { facility_id: string; outcome: ReportOutcome; created_at: string; state?: ReportState };
 export type KpiSearch = { day: string; area_cell: string; had_confirmed_result: boolean; searches: number };
@@ -31,6 +34,9 @@ export type InsurerFigures = {
   onList: number;
   confirmed: number;
   confirmedShareOfList: number;
+  /** rule K: hospitals at badge B-V (a Veriq call), counted apart from the hospital's own word. */
+  confirmedByCall: number;
+  confirmedByCallShareOfList: number;
   refused: { count: number; facilities: number };
   searches: { total: number; confirmedShare: number };
   turnedAway: TurnedAwayRow[];
@@ -74,9 +80,12 @@ export function insurerFigures({
   const isListed = (l: KpiLink) => l.listed_by === "insurer" || (nhiaListCounts && l.listed_by === "nhia");
   const listed = links.filter(isListed);
 
-  // rule K: confirmed = hospitals at badge B2 (rule B).
-  const atB2 = links.filter((l) => badge({ link: l, reports: reportsBy.get(l.facility_id) ?? [], now }).id === "B2");
+  // rule K: confirmed = hospitals at badge B2 (rule B); confirmed by Veriq call = badge B-V. Never merged.
+  const badgeOf = (l: KpiLink) => badge({ link: l, reports: reportsBy.get(l.facility_id) ?? [], now }).id;
+  const atB2 = links.filter((l) => badgeOf(l) === "B2");
   const listedAtB2 = atB2.filter(isListed).length;
+  const atBV = links.filter((l) => badgeOf(l) === "BV");
+  const listedAtBV = atBV.filter(isListed).length;
 
   // rule K: members refused, and at how many hospitals.
   const refusals = recent.filter((r) => r.outcome === "refused");
@@ -119,6 +128,8 @@ export function insurerFigures({
     onList: listed.length,
     confirmed: atB2.length,
     confirmedShareOfList: listed.length ? listedAtB2 / listed.length : 0,
+    confirmedByCall: atBV.length,
+    confirmedByCallShareOfList: listed.length ? listedAtBV / listed.length : 0,
     refused: { count: refusals.length, facilities: new Set(refusals.map((r) => r.facility_id)).size },
     searches: { total, confirmedShare: total ? found / total : 0 },
     turnedAway,

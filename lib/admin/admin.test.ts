@@ -89,6 +89,11 @@ describe("staff accounts (/admin/staff)", () => {
     expect(await make({})).toMatchObject({ ok: false, message: "Choose the hospital this person works at." });
     expect(await make({ facilityId: AKOMA })).toMatchObject({ ok: false, message: expect.stringMatching(/real facilities only/) });
     expect(await make({ role: "insurer" })).toMatchObject({ ok: false, message: "Choose the insurer this person works for." });
+    // rule D2: Sika Health is an invented demo insurer; no real account links to it.
+    expect(await make({ role: "insurer", insurerId: "a0000000-0000-4000-8000-000000000004" })).toMatchObject({
+      ok: false,
+      message: "Staff accounts link to real insurers only, not demo ones.",
+    });
   });
 
   it("the demo admin can't touch staff accounts", async () => {

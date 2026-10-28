@@ -9,6 +9,7 @@ import { bestStatus, sortNoCard, sortResults } from "@/lib/rules/sort";
 import { topUps } from "@/lib/rules/topup";
 import { displayName, displayPlace } from "./names";
 import { statusView, type StatusView } from "./status";
+import { phoneSourceText } from "./phone";
 
 export type ResultCard = {
   id: string;
@@ -22,6 +23,8 @@ export type ResultCard = {
   source: FacilitySource;
   /** To call ahead, or null when we have no number. */
   phone: string | null;
+  /** Rule 4: "Veriq call, 28 Oct 2026" beside the Call button, or null. */
+  phoneSource: string | null;
   /** The badge says "Call first" (rule B4): the card offers a Call button. */
   callFirst: boolean;
   /** null for "No card/cash". */
@@ -95,6 +98,7 @@ export function buildResults({
     sourceLine: sourceLine(r.candidate.facility),
     source: r.candidate.facility.source,
     phone: r.candidate.facility.phone,
+    phoneSource: phoneSourceText(r.candidate.facility),
     callFirst: r.badgeResult?.id === "B4",
     badge: r.badgeResult,
     serviceName: serviceNames.get(r.shown.serviceId) ?? r.shown.serviceId,
@@ -132,6 +136,8 @@ export type UnlistedCard = {
   /** Rule D1: "From the NHIA list, October 2026". */
   sourceLine: string | null;
   phone: string | null;
+  /** Rule 4: "Veriq call, 28 Oct 2026" beside the Call button, or null. */
+  phoneSource: string | null;
 };
 
 const unlistedCard = (f: LocatedFacility, distanceKm: number, b: Badge | null): UnlistedCard => ({
@@ -143,6 +149,7 @@ const unlistedCard = (f: LocatedFacility, distanceKm: number, b: Badge | null): 
   badge: b,
   sourceLine: sourceLine(f),
   phone: f.phone,
+  phoneSource: phoneSourceText(f),
 });
 
 /**
