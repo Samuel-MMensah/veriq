@@ -1,6 +1,6 @@
 import { cx } from "./cx";
 
-/** A white card on the page, one idea per card. Optional heading with something on the right. */
+/** The one card style: white, hairline border, 12 px corners, no heavy shadow. One idea per card. */
 export function Card({
   title,
   titleId,
@@ -33,11 +33,11 @@ export function Card({
       {(title || aside) && (
         <div className="mb-3 flex items-baseline justify-between gap-3">
           {title && (
-            <h2 id={titleId} className="text-lg font-bold leading-snug">
+            <h2 id={titleId} className="text-section">
               {title}
             </h2>
           )}
-          {aside && <div className="shrink-0 text-sm text-muted">{aside}</div>}
+          {aside && <div className="shrink-0 text-small text-muted">{aside}</div>}
         </div>
       )}
       {children}

@@ -41,9 +41,9 @@ function saveLastArea(place: Place) {
 }
 
 const chip =
-  "inline-flex min-h-12 cursor-pointer items-center rounded-full border border-line-strong bg-surface px-5 text-base font-medium transition-colors hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand has-[:checked]:font-bold has-[:checked]:text-white has-[:focus-visible]:outline has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-brand";
+  "inline-flex min-h-12 cursor-pointer items-center rounded-full border border-line-strong bg-surface px-5 text-body font-semibold transition-colors hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand has-[:checked]:font-bold has-[:checked]:text-white has-[:focus-visible]:outline has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-brand";
 const cardBox =
-  "flex min-h-16 cursor-pointer flex-col justify-center rounded-(--radius-control) border border-line-strong bg-surface px-4 py-2 transition-colors hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand-soft has-[:checked]:ring-1 has-[:checked]:ring-brand has-[:focus-visible]:outline has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-brand";
+  "flex min-h-12 cursor-pointer flex-col justify-center rounded-(--radius-control) border border-line-strong bg-surface px-4 py-2 transition-colors hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand-soft has-[:checked]:ring-1 has-[:checked]:ring-brand has-[:focus-visible]:outline has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-brand";
 
 export function FindForm() {
   const [card, setCard] = useState("nhis");
@@ -52,8 +52,6 @@ export function FindForm() {
   const [changing, setChanging] = useState(false);
   const [locating, setLocating] = useState(false);
   const [locateError, setLocateError] = useState<string | null>(null);
-  // The area is Dansoman until the person picks one or it comes from their last search.
-  const [areaIsDefault, setAreaIsDefault] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   const [saved, setSaved] = useState<SavedCard[]>([]);
@@ -65,7 +63,6 @@ export function FindForm() {
     if (last) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setPlace(last);
-      setAreaIsDefault(false);
     }
     // Coming back to this page (browser back) must not leave the button saying "Finding…".
     const reset = () => setSubmitting(false);
@@ -89,9 +86,10 @@ export function FindForm() {
     ...savedSlugs.flatMap((slug) => {
       const option = CARD_OPTIONS.find((c) => c.slug === slug);
       const holder = saved.find((c) => c.insurerSlug === slug);
-      return option ? [{ ...option, note: `Saved card${holder ? ` · ${holder.nickname}` : ""}` }] : [];
+      return option ? [{ ...option, note: `Saved card${holder ? ` · ${holder.nickname}` : ""}` as string | null }] : [];
     }),
-    ...CARD_OPTIONS.filter((c) => !savedSlugs.includes(c.slug)),
+    // Prompt 10c: no "Public/Private" notes; only a saved card says so.
+    ...CARD_OPTIONS.filter((c) => !savedSlugs.includes(c.slug)).map((c) => ({ ...c, note: null as string | null })),
   ];
   const reminder = renewalReminder(saved, new Date());
 
@@ -105,7 +103,6 @@ export function FindForm() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setPlace({ lat: pos.coords.latitude, lng: pos.coords.longitude, name: "you", slug: null });
-        setAreaIsDefault(false);
         setLocating(false);
         setChanging(false);
       },
@@ -137,7 +134,7 @@ export function FindForm() {
         <RenewalNotice reminder={reminder} hasNhisWithoutExpiry={false} />
       )}
       <fieldset>
-        <legend className="text-xl font-bold">What do you need?</legend>
+        <legend className="text-section">What do you need?</legend>
         <div className="mt-3 flex flex-wrap gap-2">
           {SERVICE_CHIPS.map((s, i) => (
             <label key={s.slug} className={chip}>
@@ -149,7 +146,7 @@ export function FindForm() {
       </fieldset>
 
       <fieldset>
-        <legend className="text-xl font-bold">Which card will you use?</legend>
+        <legend className="text-section">Your card</legend>
         <div className="mt-3 grid grid-cols-2 gap-3">
           {cardOptions.map((c) => (
             <label key={c.slug} className={cardBox}>
@@ -164,8 +161,8 @@ export function FindForm() {
                 }}
                 className="sr-only"
               />
-              <span className="font-bold leading-tight">{c.name}</span>
-              <span className="text-sm text-muted">{c.note}</span>
+              <span className="font-semibold leading-tight">{c.name}</span>
+              {c.note && <span className="text-small text-muted">{c.note}</span>}
             </label>
           ))}
         </div>
@@ -176,17 +173,14 @@ export function FindForm() {
           <Icon name="pin" className="h-6 w-6 text-brand" />
           <div className="flex-1">
             <p className="font-semibold">{place.name === "you" ? "Near you" : `Near ${place.name}, Accra`}</p>
-            <p className="text-sm text-muted">
-              Within {radius} km
-              {areaIsDefault && !changing && <span className="font-semibold text-muted"> · Not here? Tap Change</span>}
-            </p>
+            <p className="text-small text-muted">Within {radius} km</p>
           </div>
           <button
             type="button"
             aria-expanded={changing}
             aria-controls="area-panel"
             onClick={() => setChanging((v) => !v)}
-            className="min-h-11 px-2 font-bold text-brand"
+            className="min-h-11 px-2 font-semibold text-brand"
           >
             {changing ? "Done" : "Change"}
           </button>
@@ -197,17 +191,17 @@ export function FindForm() {
               type="button"
               onClick={useMyLocation}
               disabled={locating}
-              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-(--radius-control) border border-brand font-bold text-brand disabled:opacity-60"
+              className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-(--radius-control) border border-line-strong font-semibold text-ink hover:border-brand hover:text-brand disabled:opacity-60"
             >
               <Icon name="locate" className="h-5 w-5" />
               {locating ? "Finding you…" : "Use my location"}
             </button>
             {locateError && (
-              <p role="alert" className="text-sm font-semibold text-danger-ink">
+              <p role="alert" className="text-small font-semibold text-warn-ink">
                 {locateError}
               </p>
             )}
-            <label className="block text-sm font-semibold">
+            <label className="block text-small font-semibold">
               Or pick an area
               <select
                 value={place.slug ?? ""}
@@ -215,10 +209,9 @@ export function FindForm() {
                   const a = AREAS.find((x) => x.slug === e.target.value);
                   if (a) {
                     setPlace(fromArea(a));
-                    setAreaIsDefault(false);
                   }
                 }}
-                className="mt-1 block min-h-12 w-full rounded-(--radius-control) border border-line-strong bg-surface px-3 text-base font-normal"
+                className="mt-1 block min-h-12 w-full rounded-(--radius-control) border border-line-strong bg-surface px-3 text-body font-normal"
               >
                 {place.slug === null && <option value="">Your location</option>}
                 {AREAS.map((a) => (
@@ -228,12 +221,12 @@ export function FindForm() {
                 ))}
               </select>
             </label>
-            <label className="block text-sm font-semibold">
+            <label className="block text-small font-semibold">
               How far
               <select
                 value={radius}
                 onChange={(e) => setRadius(Number(e.target.value))}
-                className="mt-1 block min-h-12 w-full rounded-(--radius-control) border border-line-strong bg-surface px-3 text-base font-normal"
+                className="mt-1 block min-h-12 w-full rounded-(--radius-control) border border-line-strong bg-surface px-3 text-body font-normal"
               >
                 {RADIUS_OPTIONS_KM.map((r) => (
                   <option key={r} value={r}>
@@ -256,7 +249,7 @@ export function FindForm() {
         <button
           type="submit"
           aria-busy={submitting}
-          className="min-h-14 w-full rounded-(--radius-control) bg-brand px-4 text-lg font-bold text-white transition-colors hover:bg-brand-strong aria-busy:opacity-80"
+          className="min-h-12 w-full rounded-(--radius-control) bg-brand px-4 font-semibold text-white transition-colors hover:bg-brand-strong aria-busy:opacity-80"
         >
           {submitting ? "Finding hospitals…" : buttonText}
         </button>

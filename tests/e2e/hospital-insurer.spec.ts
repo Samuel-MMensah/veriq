@@ -19,10 +19,10 @@ test("the hospital marks antenatal Closed, and the results page shows it (demo s
   await expect(akoma).toContainText(/Antenatal clinic: Open(?: till \d{1,2}(?::\d{2})? (?:am|pm))?/); // rule F: the demo till time, if any
 
   await page.goto("/h/check");
-  await expect(page.getByText("Rehearsal only")).toBeVisible();
+  await expect(page.getByText(/^Rehearsals only, as /)).toBeVisible();
   await page.getByRole("button", { name: "Demo login" }).click();
-  await expect(page.getByText("Front desk · Esi")).toBeVisible();
-  await expect(page.getByText("Akoma Mission Hospital · about 30 seconds")).toBeVisible();
+  await expect(page.getByText("Front desk · Esi").filter({ visible: true })).toBeVisible();
+  await expect(page.getByText("Akoma Mission Hospital", { exact: true })).toBeVisible();
   await expect(page.getByText("SAMPLE DATA", { exact: true })).toBeVisible();
   await expect(page.getByText("3 patients said", { exact: false })).toBeVisible();
   await expect(page.getByText("214 people found you on Veriq last week")).toBeVisible();
@@ -30,11 +30,11 @@ test("the hospital marks antenatal Closed, and the results page shows it (demo s
   const antenatal = page.getByRole("group", { name: "Antenatal clinic" });
   await expect(antenatal.getByLabel("Open")).toBeChecked();
   await antenatal.getByText("Closed").click();
-  await page.getByRole("button", { name: "Confirm and publish" }).click();
-  await expect(page.getByRole("status")).toContainText("Patients see it now. (4 services confirmed");
+  await page.getByRole("button", { name: "Publish" }).click();
+  await expect(page.getByRole("status")).toContainText("Patients see it now. 4 services");
 
   await page.goto(RESULTS);
-  await expect(akoma).toContainText("Antenatal clinic: Closed · updated by hospital just now");
+  await expect(akoma).toContainText("Antenatal clinic: Closed · Hospital · just now");
   // Still first: it is the only hospital-confirmed one (rule S1 sorts by badge first).
   await expect(page.getByRole("heading", { level: 2 }).first()).toHaveText("Akoma Mission Hospital");
 });
@@ -42,7 +42,7 @@ test("the hospital marks antenatal Closed, and the results page shows it (demo s
 test("the insurer sees rule K figures: 23 refusals at 6 hospitals, Pinecrest first (demo step 8)", async ({ page }) => {
   await page.goto("/i/network");
   await page.getByRole("button", { name: "Demo login" }).click();
-  await expect(page.getByText("Network team · Kojo")).toBeVisible();
+  await expect(page.getByText("Network team · Kojo").filter({ visible: true })).toBeVisible();
   await expect(page.getByText("SAMPLE DATA", { exact: true })).toBeVisible();
 
   const refused = page.getByRole("listitem").filter({ hasText: "Members refused" });
@@ -72,7 +72,7 @@ test("staff views need the demo login, and signing out ends it", async ({ page }
   // The hospital account can't open the insurer view.
   await page.goto("/h/check");
   await page.getByRole("button", { name: "Demo login" }).click();
-  await expect(page.getByText("Front desk · Esi")).toBeVisible();
+  await expect(page.getByText("Front desk · Esi").filter({ visible: true })).toBeVisible();
   await page.goto("/i/network");
   await expect(page.getByRole("button", { name: "Demo login" })).toBeVisible();
   await expect(page.getByText("Members refused")).toHaveCount(0);
@@ -81,7 +81,7 @@ test("staff views need the demo login, and signing out ends it", async ({ page }
 test("the insurer view fits a 390 px phone without sideways scrolling (rule 7)", async ({ page }) => {
   await page.goto("/i/network");
   await page.getByRole("button", { name: "Demo login" }).click();
-  await expect(page.getByText("Network team · Kojo")).toBeVisible();
+  await expect(page.getByText("Network team · Kojo").filter({ visible: true })).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBe(0);
 });

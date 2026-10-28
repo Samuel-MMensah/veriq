@@ -33,7 +33,7 @@ export default async function StaffPage() {
 
   return (
     <>
-      <AdminPageHeader title="Staff accounts" description="Hospital, insurer and admin accounts. You make them here and hand over a one-time password yourself." />
+      <AdminPageHeader title="Staff accounts" />
       <AdminBody>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_24rem] lg:items-start lg:gap-6">
           <Card title={`Accounts (${list.length})`} titleId="accounts">
@@ -55,7 +55,7 @@ export default async function StaffPage() {
                   ))}
                 </ul>
                 <table className="hidden w-full text-left lg:table">
-                  <thead className="text-sm text-muted">
+                  <thead className="text-small text-muted">
                     <tr className="border-b border-line">
                       <th className="py-2 pr-3 font-semibold">Person</th>
                       <th className="py-2 pr-3 font-semibold">Role</th>
@@ -70,13 +70,13 @@ export default async function StaffPage() {
                         <td className="py-3 pr-3">
                           <Link href={`/admin/staff/${p.user_id}`} className="inline-flex min-h-11 flex-col justify-center font-semibold text-brand hover:underline">
                             {p.display_name ?? p.email}
-                            <span className="text-sm font-normal text-muted">{p.email}</span>
+                            <span className="text-small font-normal text-muted">{p.email}</span>
                           </Link>
                         </td>
                         <td className="py-3 pr-3">{ROLE[p.role]}</td>
                         <td className="py-3 pr-3">{p.linkedTo ?? "—"}</td>
                         <td className="py-3 pr-3">{accountStatus(p)}</td>
-                        <td className="py-3 text-sm text-muted">{whenText(p.created_at, now)}</td>
+                        <td className="py-3 text-small text-muted">{whenText(p.created_at, now)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -94,7 +94,7 @@ export default async function StaffPage() {
                 insurers={insurers.map((i) => ({ id: i.id, label: i.name }))}
               />
             ) : (
-              <p className="text-muted">The demo login can&apos;t make real accounts. Sign in with your admin account.</p>
+              <p className="text-small text-muted">Demo login: sign in with your admin account to make accounts.</p>
             )}
           </Card>
         </div>

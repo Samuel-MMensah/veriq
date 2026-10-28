@@ -52,23 +52,21 @@ export default async function FacilityPage({
           <BackLink fallback="/find" label="Back to results" />
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">
-              <h1 className="text-2xl font-extrabold leading-tight">{view.name}</h1>
+              <h1 className="text-title">{view.name}</h1>
               {/* Rule 1: only for a demo hospital. */}
               {showSampleTag([detail.facility]) && <SampleDataTag className="mt-1 shrink-0" />}
             </div>
             <p className="mt-1 text-muted">{view.subtitle}</p>
-            {/* Rule D1: where each directory fact comes from. */}
-            {view.sourceLine && <p className="mt-1 text-sm text-muted">{view.sourceLine}</p>}
-            {view.locationNote && (
-              <p className="text-sm text-muted">
-                {view.locationNote}
-                {view.locationNote.includes("OpenStreetMap") && (
+            {/* Rule D1: where each directory fact comes from, in one quiet line. */}
+            {(view.sourceLine || view.locationNote) && (
+              <p className="mt-1 text-small text-muted">
+                {[view.sourceLine, view.locationNote].filter(Boolean).join(" · ")}
+                {view.locationNote?.includes("OpenStreetMap") && (
                   <>
-                    {" ("}
+                    {" · "}
                     <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" className="underline">
                       © OpenStreetMap contributors
                     </a>
-                    {")"}
                   </>
                 )}
               </p>
@@ -90,7 +88,7 @@ export default async function FacilityPage({
                 </a>
               )}
               {!view.phone && view.real && (
-                <span className="inline-flex min-h-11 items-center text-sm text-muted">No phone number on the list yet</span>
+                <span className="inline-flex min-h-11 items-center text-small text-muted">No phone listed</span>
               )}
             </div>
           </div>
@@ -101,8 +99,8 @@ export default async function FacilityPage({
         {yourCard && <YourCard card={yourCard} />}
         {view.real && view.today.length === 0 ? (
           // Rule D1: the NHIA list names no services, so none are shown or guessed.
-          <Card title="Services and opening times" titleId="today">
-            <p className="-mt-1 text-muted">Not listed yet. Call the hospital to ask before you go.</p>
+          <Card title="Today" titleId="today">
+            <p className="-mt-1 text-muted">Services not listed yet. Call to ask.</p>
           </Card>
         ) : (
           <TodayGrid tiles={view.today} updated={view.todayUpdated} />
@@ -114,21 +112,15 @@ export default async function FacilityPage({
           howWeCheck={!yourCard}
         />
         {!canReport ? (
-          <p className="flex items-start gap-3 rounded-(--radius-card) border border-line p-4 text-muted">
-            <Icon name="lock" className="mt-0.5 h-5 w-5" />
-            {REPORTS_CLOSED_TEXT}
-          </p>
+          <p className="rounded-(--radius-card) bg-surface p-4 text-small text-muted shadow-card">{REPORTS_CLOSED_TEXT}</p>
         ) : (
           <Link
             href={`/facility/${view.id}/report${first(sp.card) ? `?card=${first(sp.card)}` : ""}`}
-            className="flex min-h-16 items-center gap-3 rounded-(--radius-card) bg-surface px-4 py-3 shadow-card transition-shadow hover:shadow-raised"
+            className="flex min-h-14 items-center gap-3 rounded-(--radius-card) bg-surface px-4 py-3 shadow-card transition-colors hover:bg-brand-soft/40"
           >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
-              <Icon name="people" className="h-5 w-5" />
-            </span>
             <span className="min-w-0 flex-1">
-              <span className="block font-bold">Been here?</span>{" "}
-              <span className="block text-sm text-muted">Tell others if your card worked</span>
+              <span className="block font-semibold">Been here?</span>{" "}
+              <span className="block text-small text-muted">Tell others if your card worked</span>
             </span>
             <Icon name="chevron" className="h-5 w-5 text-brand" />
           </Link>

@@ -20,9 +20,9 @@ const routes = [
   { path: "/cards", title: "My cards", sample: false },
   { path: "/emergency", title: "Get help now. Cards come later.", sample: true },
   { path: "/help", title: "No smartphone? No data? Dial Veriq.", sample: false },
-  // Signed out, the staff screens show the demo sign-in (no data yet).
-  { path: "/h/check", title: "Morning check", sample: false },
-  { path: "/i/network", title: "Network health", sample: false },
+  // Signed out, the staff screens show the sign-in card (no data yet).
+  { path: "/h/check", title: "Sign in", sample: false },
+  { path: "/i/network", title: "Sign in", sample: false },
 ];
 
 for (const route of routes) {

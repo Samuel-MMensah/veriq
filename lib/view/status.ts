@@ -1,6 +1,7 @@
 // How a service's status reads on screen, with its source and age (rules F and 4).
 import type { CurrentStatusRow, ServiceStatus, StatusSource } from "@/lib/db/types";
 import { freshness, type Freshness } from "@/lib/rules/freshness";
+import { agoText } from "@/lib/rules/time";
 
 export type StatusTone = "good" | "later" | "bad" | "unknown";
 
@@ -43,13 +44,15 @@ export function accraClock(iso: string): string {
 }
 
 export const SOURCE_LABEL: Record<StatusSource, string> = { hospital: "hospital", admin: "Veriq" };
+/** Who said it, as the first word of a compact source line: "Hospital · 40 min ago" (rule 4, Prompt 10c). */
+export const SOURCE_WHO: Record<StatusSource, string> = { hospital: "Hospital", admin: "Veriq" };
 
 export type StatusView = {
   /** "Open till 4 pm", "From 2 pm", "No update yet". */
   word: string;
   tone: StatusTone;
   freshness: Freshness;
-  /** "updated by hospital 40 min ago", or null when never updated. */
+  /** "Hospital · 40 min ago": who and when (rule 4), or null when never updated. */
   sourceText: string | null;
 };
 
@@ -75,6 +78,6 @@ export function statusView(status: StatusInput | null, now: Date): StatusView {
     // rule F: a status over 72 hours old, or past its until_time, can't be trusted as good or bad.
     tone: f.state === "stale" || f.state === "ended" ? "unknown" : TONE[status.status],
     freshness: f,
-    sourceText: f.updatedText ? f.updatedText.replace("updated", `updated by ${SOURCE_LABEL[status.source]}`) : null,
+    sourceText: f.ageMs !== null ? `${SOURCE_WHO[status.source]} · ${agoText(f.ageMs)}` : null,
   };
 }

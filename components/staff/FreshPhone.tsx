@@ -28,7 +28,7 @@ export function FreshPhone() {
         Make this phone fresh
       </button>
       {done && (
-        <p role="status" className="mt-2 text-sm font-semibold text-good-ink">
+        <p role="status" className="mt-2 text-small font-semibold text-good-ink">
           Done. Open the app&apos;s start page to see first open again.
         </p>
       )}

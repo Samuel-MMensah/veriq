@@ -1,5 +1,5 @@
 # Veriq Health progress
-Last updated: 2026-10-27, session 2026-10-27-02 (pitch-ready fix-up; review: docs/REVIEW-2026-10-27.md)
+Last updated: 2026-10-28, session 2026-10-28-01 (Prompt 10c, look and copy polish)
 Current phase: 2 (pilot). Phase 1 gate met on 2026-10-24. Phase 2 gate: not yet. Built and live: real logins, admin verification (0 hospitals verified so far). Still needed: Data Protection Commission registration, real patient reports under rule A, USSD through an aggregator
 Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-west-1). Demo site for pitches: https://veriq-demo-snowy.vercel.app (`VERIQ_DEMO_SITE=on`, same database)
 
@@ -18,6 +18,7 @@ Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-w
 ### Phase 2: pilot (each prompt written in full in SPEC section 8 before it runs)
 - [x] Prompt 9: Real NHIA directory for Greater Accra (2026-10-26-01; live and checked on the live site 2026-10-26)
 - [x] Prompt 10: Real staff sign-in, admin side, design pass (2026-10-26-02; deployed, migration 8 applied, an admin account exists; checked in the 2026-10-27 review)
+- [x] Prompt 10c: Look and copy polish, all four sides (2026-10-28-01; built and tested locally, not yet deployed; docs/DESIGN.md, docs/polish/)
 - [ ] Prompt 11: Hospital onboarding (screen 15), SMS morning-check reminders
 - [ ] Prompt 12: Map view with Leaflet and OpenStreetMap (screen 8)
 - [ ] Prompt 13: Saved hospitals, alerts, sharing (screens 9 and 10)
@@ -52,14 +53,13 @@ Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-w
 | – | Staff sign-in | `/staff/sign-in`, `/staff/password` | 2 | done | email and password, accounts made by an admin, nothing emailed |
 
 ## Known bugs
-- none open. Fixed in 2026-10-27-02:
-  - the demo can't run on production: the demo site https://veriq-demo-snowy.vercel.app runs all 8 steps;
-  - live 3G regression: production first content 0.67–0.82 s (was 1.2–2.8 s);
-  - two flaky e2e tests: they now wait for content, with longer timeouts.
+- none open. Live 3G after Prompt 10c is still to be measured after the deploy.
 
 ## Open questions for the team
+- Make SPEC's Find button a verb ("Search")? SPEC sections 2 and 9 fix "Show hospitals that take {card}".
+- Show SAMPLE DATA on screens with no hospital (Find, Cards, Help) in demo mode? Rule 1 says no today.
 - The review's questions still open: docs/REVIEW-2026-10-27.md, section 14 (Supabase sign-ups off? who places the 360 locations? NHIA permission? DPC registration date? pilot insurer?)
 - Who asks NHIA for permission to republish the provider list, and for a dated copy with NHIA codes and phone numbers?
 
 ## Next prompt
-Prompt 11: hospital onboarding (screen 15) and morning-check reminders. Before it: write it in full in SPEC section 8. Before every pitch: https://veriq-demo-snowy.vercel.app/admin/demo → Demo login → Reset demo data.
+Commit and push Prompt 10c (no migration), then run the live 3G check on both sites. Then Prompt 11: hospital onboarding (screen 15) and morning-check reminders; write it in full in SPEC section 8 first. Before every pitch: https://veriq-demo-snowy.vercel.app/admin/demo, then Demo login, then Reset demo data.

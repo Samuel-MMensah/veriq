@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Icon } from "@/components/ui/Icon";
 import { ROOT_MENU } from "@/lib/ussd/menu";
 
 export const metadata: Metadata = { title: "Help: USSD and SMS" };
@@ -20,34 +19,30 @@ export default function HelpPage() {
   return (
     // Help is a bottom-bar tab, so it has no back arrow.
     <main className="flex min-h-full flex-col px-4 pb-6 pt-6">
-      <p className="text-lg text-muted">Help</p>
-      <h1 className="mt-2 text-3xl font-extrabold leading-tight">No smartphone? No data? Dial Veriq.</h1>
-      <p className="mt-2 text-lg text-muted">
-        Works on any phone, any network. The answer comes back by SMS so you can keep it.
-      </p>
+      <p className="text-small font-semibold text-muted">Help</p>
+      <h1 className="mt-1 text-title">No smartphone? No data? Dial Veriq.</h1>
+      <p className="mt-2 text-muted">Any phone, any network. The answer comes by SMS.</p>
 
       <div className="mt-5 grid grid-cols-2 gap-3">
         {SCREENS.map((s) => (
-          <figure key={s.title} className="rounded-(--radius-card) bg-ink p-4 font-mono text-sm leading-relaxed text-white">
-            <figcaption className="font-bold text-patient">{s.title}</figcaption>
+          <figure key={s.title} className="rounded-(--radius-card) bg-ink p-4 font-mono text-small text-white">
+            <figcaption className="font-semibold text-white/80">{s.title}</figcaption>
             <pre className="mt-2 whitespace-pre-wrap font-mono">{s.body}</pre>
           </figure>
         ))}
       </div>
 
-      <h2 className="mt-6 text-sm font-bold uppercase tracking-wide text-muted">Then an SMS like this</h2>
-      <pre className="mt-2 whitespace-pre-wrap rounded-(--radius-card) border border-line-strong bg-page p-4 font-sans text-base text-ink">
+      <h2 className="mt-6 text-section">Then an SMS</h2>
+      <pre className="mt-2 whitespace-pre-wrap rounded-(--radius-card) bg-surface p-4 font-sans text-small text-ink shadow-card">
         {SMS}
       </pre>
 
-      <p className="mt-4 flex gap-3 rounded-(--radius-card) bg-refused-bg p-4 text-refused-ink">
-        <Icon name="info" className="mt-0.5 h-5 w-5" />
-        Code not yet registered. A short code comes through a USSD aggregator after the pilot.
-      </p>
+      {/* SPEC screen 13: the code is a placeholder until the aggregator gives one (Prompt 15). */}
+      <p className="mt-3 text-small text-muted">The short code comes with the pilot.</p>
 
       <a
         href="tel:112"
-        className="mt-6 flex min-h-14 w-full items-center justify-center rounded-(--radius-control) bg-emergency text-lg font-bold text-white"
+        className="mt-6 flex min-h-12 w-full items-center justify-center rounded-(--radius-control) bg-emergency font-semibold text-white"
       >
         Emergency? Call 112
       </a>

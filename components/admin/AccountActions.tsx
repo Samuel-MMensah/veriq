@@ -40,7 +40,7 @@ export function AccountActions({ userId, email, disabled, isSelf }: { userId: st
             title="Switch this account off?"
             body={<>{email} is signed out at once and can&apos;t sign in or publish anything until an admin switches it back on.</>}
             confirmLabel="Switch off"
-            variant="danger"
+            variant="primary"
             reason={{ label: "Why?", hint: "Required, for the admin log.", required: true }}
           />
         )

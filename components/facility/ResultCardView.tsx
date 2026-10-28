@@ -41,7 +41,7 @@ export function ResultCardView({
           <StatusLine label={card.serviceName} status={card.status} usualHours={card.usualHours} />
           {/* Rule T: only shown when patients reported one; no line for "nothing reported". */}
           {cardName && card.topUps.length > 0 && <p className="text-muted">{card.topUps.join(" · ")}</p>}
-          {card.sourceLine && <p className="text-sm text-muted">{card.sourceLine}</p>}
+          {card.sourceLine && <p className="text-small text-muted">{card.sourceLine}</p>}
         </div>
       </Link>
       {/* Rule B4 says "Call first", so the card lets you call. */}
@@ -57,8 +57,8 @@ export function UnlistedCardView({ card, href, cardName }: { card: UnlistedCard;
       <Link href={href} className="block rounded-(--radius-card) p-4 transition-colors hover:bg-brand-soft/40">
         <CardHead name={card.name} area={card.area} distanceKm={card.distanceKm} />
         {card.nhiaType && (
-          <p className="mt-1 text-sm text-muted">
-            Type on the NHIA list: <span className="font-semibold">{card.nhiaType}</span>
+          <p className="mt-1 text-small text-muted">
+            NHIA type: <span className="font-semibold">{card.nhiaType}</span>
           </p>
         )}
         {card.badge && cardName && (
@@ -66,7 +66,7 @@ export function UnlistedCardView({ card, href, cardName }: { card: UnlistedCard;
             <BadgeLine badge={card.badge} cardName={cardName} />
           </div>
         )}
-        {card.sourceLine && <p className="mt-2 text-sm text-muted">{card.sourceLine}</p>}
+        {card.sourceLine && <p className="mt-2 text-small text-muted">{card.sourceLine}</p>}
       </Link>
       <CallRow name={card.name} phone={card.phone} />
     </li>
@@ -77,8 +77,8 @@ function CardHead({ name, area, distanceKm }: { name: string; area: string | nul
   return (
     <div className="flex items-start justify-between gap-3">
       <div className="min-w-0">
-        <h2 className="text-lg font-bold leading-snug">{name}</h2>
-        <p className="text-sm text-muted">
+        <h2 className="text-section">{name}</h2>
+        <p className="text-small text-muted">
           {area && <>{area} · </>}
           <span className="font-semibold text-muted">{distanceKm} km</span>
         </p>
@@ -97,7 +97,7 @@ function CallRow({ name, phone }: { name: string; phone: string | null }) {
           <Icon name="phone" className="h-5 w-5" /> Call
         </a>
       ) : (
-        <p className="flex min-h-11 items-center text-sm text-muted">No phone number on the list yet</p>
+        <p className="flex min-h-11 items-center text-small text-muted">No phone listed</p>
       )}
     </div>
   );

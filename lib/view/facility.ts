@@ -7,7 +7,7 @@ import { hasLocation, sourceLine } from "@/lib/rules/directory";
 import { agoText, ageMs } from "@/lib/rules/time";
 import { topUps } from "@/lib/rules/topup";
 import { displayName, displayPlace } from "./names";
-import { SOURCE_LABEL, accraClock, statusView, type StatusView } from "./status";
+import { SOURCE_WHO, accraClock, statusView, type StatusView } from "./status";
 
 export const TYPE_LABEL: Record<FacilityType, string> = {
   public: "Public",
@@ -83,7 +83,7 @@ export function buildFacilityView({
 
   const newest = [...detail.statuses].sort((a, b) => b.created_at.localeCompare(a.created_at))[0];
   const todayUpdated = newest
-    ? `Updated by ${SOURCE_LABEL[newest.source]} ${
+    ? `${SOURCE_WHO[newest.source]} · ${
         ageMs(newest.created_at, now) < 12 * 60 * 60 * 1000 ? accraClock(newest.created_at) : agoText(ageMs(newest.created_at, now))
       }`
     : null;
@@ -120,10 +120,10 @@ export function buildFacilityView({
     locationNote: !real
       ? null
       : f.location_source === "osm"
-        ? "Map location from OpenStreetMap"
+        ? "Map: OpenStreetMap"
         : f.location_source === "admin"
-          ? "Map location set by Veriq"
-          : "Map location not checked yet",
+          ? "Map: Veriq"
+          : "Map: not checked yet",
     real,
     todayUpdated,
     today,

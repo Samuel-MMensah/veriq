@@ -40,7 +40,7 @@ test("my cards: saved on the phone, last 4 digits only, and never sent to the se
 
   await addCard(page, { type: "NHIS", last4: "4821", name: "Ama", expires: "2030-03", family: "Kofi (son)" });
   await addCard(page, { type: "Cosmopolitan Health", last4: "0193", name: "Ama", family: "Kofi (son), Esi" });
-  await expect(page.getByText("DEFAULT", { exact: true })).toHaveCount(1);
+  await expect(page.getByText("Default", { exact: true })).toHaveCount(1);
   await expect(page.getByText("Renew by Mar 2030")).toBeVisible();
   await expect(page.getByText("NHIS · Cosmopolitan Health dependant")).toBeVisible(); // Kofi
   await expect(page.getByText(/We'll remind you a month before your NHIS card expires \(Mar 2030\)\. Renew by dialling \*929#\./)).toBeVisible();
@@ -92,7 +92,7 @@ test("help: explains the USSD menu and the SMS; emergency call button", async ({
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("No smartphone? No data? Dial Veriq.");
   await expect(page.getByText("Dial *[code]#")).toBeVisible();
   await expect(page.getByText("1 Find hospital")).toBeVisible();
-  await expect(page.getByText("Code not yet registered.", { exact: false })).toBeVisible();
+  await expect(page.getByText("The short code comes with the pilot.")).toBeVisible(); // SPEC screen 13: placeholder code
   await expect(page.getByRole("link", { name: "Emergency? Call 112" })).toHaveAttribute("href", "tel:112");
 });
 
@@ -101,4 +101,21 @@ test("the USSD endpoint answers in the aggregator format", async ({ request }) =
     form: { sessionId: "e2e", serviceCode: "*000#", phoneNumber: "+233200000000", text: "4" },
   });
   expect(await res.text()).toBe("END Emergency: call 112\nAmbulance: call 193\nYour card never stops emergency care.");
+});
+
+// Team decision 2026-10-28: the demo site shows a "Demo" strip on every screen, also where no
+// hospital (and so no SAMPLE DATA tag, rule 1) is shown. The real site shows none.
+const demoSiteRun = process.env.VERIQ_DEMO_SITE === "on" || /veriq-demo/.test(process.env.E2E_BASE_URL ?? "");
+
+test(`the site-level Demo tag is ${demoSiteRun ? "on every screen" : "absent"}`, async ({ page }) => {
+  for (const path of ["/find", "/cards", "/help", "/staff/sign-in"]) {
+    await page.goto(path);
+    const tag = page.getByTestId("demo-site-tag");
+    if (demoSiteRun) {
+      await expect(tag, path).toBeVisible();
+      await expect(tag.getByRole("note", { name: "Demo site: hospitals and figures are sample data" })).toHaveText("Demo");
+    } else {
+      await expect(tag, path).toHaveCount(0);
+    }
+  }
 });

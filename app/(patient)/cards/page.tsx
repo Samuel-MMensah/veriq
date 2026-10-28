@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "My cards" };
 export default function CardsPage() {
   return (
     <main className="px-4 pb-6 pt-6">
-      <h1 className="text-3xl font-extrabold">My cards</h1>
+      <h1 className="text-title">My cards</h1>
       <p className="mt-1 text-muted">Saved on this phone only</p>
       <CardsManager />
     </main>

@@ -74,7 +74,7 @@ describe("statusView (rules F and 4)", () => {
       { status: "open", from_time: null, note: "Open till 4 pm", source: "hospital", created_at: new Date(now.getTime() - 40 * 60_000).toISOString() },
       now,
     );
-    expect(v).toMatchObject({ word: "Open till 4 pm", tone: "good", sourceText: "updated by hospital 40 min ago" });
+    expect(v).toMatchObject({ word: "Open till 4 pm", tone: "good", sourceText: "Hospital · 40 min ago" });
   });
 
   it("reads 'From 2 pm' for a specialist time", () => {
@@ -184,7 +184,7 @@ describe("buildFacilityView (screen 3)", () => {
 
     expect(view.subtitle).toBe("Mission · Kaneshie · 1.8 km");
     expect(view.directionsUrl).toBe(directionsUrl({ lat: detail.facility.lat!, lng: detail.facility.lng! }));
-    expect(view.todayUpdated).toMatch(/^Updated by hospital \d{1,2}:\d{2} (am|pm)$/);
+    expect(view.todayUpdated).toMatch(/^Hospital · \d{1,2}:\d{2} (am|pm)$/);
     const words = Object.fromEntries(view.today.map((t) => [t.label, t.status.word]));
     expect(words).toMatchObject({
       "Antenatal clinic": expect.stringMatching(OPEN_TILL),
@@ -377,7 +377,7 @@ describe("the real directory near Dansoman (rules D1, D3 and S2)", () => {
     expect(view.name).toBe("Dansoman Polyclinic");
     expect(view.subtitle).toMatch(/^POLY2005 · Dansoman · Ablekuma · \d+(\.\d)? km$/);
     expect(view.sourceLine).toBe("From the NHIA list, October 2026");
-    expect(view.locationNote).toBe("Map location from OpenStreetMap");
+    expect(view.locationNote).toBe("Map: OpenStreetMap");
     expect(view.today).toEqual([]);
     expect(view.cards.map((c) => [c.insurer.slug, c.badge.id])).toEqual([["nhis", "B4"]]);
     expect(view.phone).toBeNull();

@@ -14,8 +14,8 @@ export function ScreenPlaceholder({ title, screen, prompt, sampleData = false, c
   return (
     <main className="px-4 pt-6 pb-4">
       {sampleData && <SampleDataTag className="mb-3" />}
-      <h1 className="text-2xl font-extrabold">{title}</h1>
-      <p className="mt-2 text-sm text-muted">
+      <h1 className="text-title">{title}</h1>
+      <p className="mt-2 text-small text-muted">
         Screen {screen}. This page is a placeholder. Prompt {prompt} builds it.
       </p>
       {children}

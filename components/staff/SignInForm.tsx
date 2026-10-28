@@ -55,7 +55,7 @@ export function NewPasswordForm({ next, first }: { next: string; first: boolean 
       <Field id="current" label={first ? "The password you were given" : "Your password now"}>
         <input id="current" name="current" type="password" autoComplete="current-password" required className={inputClass()} />
       </Field>
-      <Field id="new-password" label="New password" hint="At least 10 characters. A short sentence is easy to remember.">
+      <Field id="new-password" label="New password" hint="At least 10 characters.">
         <input
           id="new-password"
           name="password"

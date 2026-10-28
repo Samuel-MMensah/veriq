@@ -34,7 +34,7 @@ export function BottomBar() {
               <Link
                 href={tab.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex min-h-14 flex-col items-center justify-center gap-0.5 text-xs font-semibold ${
+                className={`flex min-h-14 flex-col items-center justify-center gap-0.5 text-small font-semibold ${
                   active ? "text-brand" : "text-ink/75"
                 }`}
               >

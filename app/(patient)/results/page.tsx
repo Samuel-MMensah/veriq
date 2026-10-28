@@ -88,12 +88,12 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
         <div className="flex items-start gap-2">
           <BackLink fallback="/find" label="Back to search" />
           <div className="min-w-0 flex-1">
-            <h1 className="text-xl font-extrabold leading-tight">
+            <h1 className="text-title">
               {count === 0 && unlisted.length > 0
                 ? `Near ${search.areaName}: services not listed yet`
                 : `${count} ${count === 1 ? "hospital" : "hospitals"} near ${search.areaName}`}
             </h1>
-            <p className="text-sm text-muted">
+            <p className="text-small text-muted">
               {serviceLabel} · {card} · within {search.radiusKm} km
             </p>
           </div>
@@ -103,15 +103,9 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
       </header>
 
       <main className="space-y-3 px-4 py-4">
-        {count > 0 &&
-          (withCard ? <BadgeLegend /> : <p className="text-sm text-muted">Without a card, every hospital nearby is shown.</p>)}
+        {count > 0 && withCard && <BadgeLegend />}
 
-        {count === 0 && unlisted.length > 0 ? (
-          <p className="text-muted">
-            No hospital near here has told us its services yet. The places below are on the NHIA list. Call to ask
-            before you go.
-          </p>
-        ) : count === 0 ? (
+        {count === 0 && unlisted.length > 0 ? null : count === 0 ? (
           <EmptyResults
             withCard={withCard}
             card={card}
@@ -135,11 +129,13 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
 
         {unlisted.length > 0 && (
           <section aria-labelledby="not-listed" className="space-y-3 pt-2">
-            <h2 id="not-listed" className="text-lg font-bold">
-              Services not listed. Call to ask
-            </h2>
-            {/* Rule D3 sorts this group by distance only (rule 4: say how it is sorted). */}
-            <p className="text-sm text-muted">Sorted by distance only. Pharmacies are not shown.</p>
+            <div className="flex items-baseline justify-between gap-3">
+              <h2 id="not-listed" className="text-section">
+                Services not listed. Call to ask
+              </h2>
+              {/* Rule D3 sorts this group by distance only (rule 4: say how it is sorted). */}
+              <p className="shrink-0 text-small text-muted">By distance</p>
+            </div>
             <ul className="space-y-3" aria-labelledby="not-listed">
               {unlistedShown.map((c) => (
                 <UnlistedCardView
@@ -159,26 +155,18 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
         )}
 
         {results.hiddenCount > 0 && (
-          <p className="text-sm text-muted">
-            {results.hiddenCount} more {results.hiddenCount === 1 ? "hospital" : "hospitals"} nearby{" "}
-            {results.hiddenCount === 1 ? "doesn't" : "don't"} take {card} or {results.hiddenCount === 1 ? "hasn't" : "haven't"} been
-            checked.{" "}
-            <Link href={cashHref} className="font-semibold text-brand underline">
-              See all under No card / cash
+          <p className="text-small text-muted">
+            {results.hiddenCount} more nearby, not confirmed for {card}.{" "}
+            <Link href={cashHref} className="inline-flex min-h-11 items-center font-semibold text-brand">
+              See all
             </Link>
           </p>
         )}
 
-        <p className="pt-2 text-center text-sm text-muted">
-          {/* Says what rules S1 and the no-card sort really do (rule 4); only when they sorted something. */}
-          {count > 0 && (
-            <>
-              {withCard ? "Sorted by how sure we are, then today's status, then distance" : "Sorted by today's status, then distance"}{" "}
-              ·{" "}
-            </>
-          )}
-          <Link href="/how-we-check" className="font-semibold text-brand underline">
-            How Veriq checks
+        {/* How results are sorted (rule 4) is explained on /how-we-check, one tap away. */}
+        <p className="pt-2 text-center">
+          <Link href="/how-we-check" className="inline-flex min-h-11 items-center text-small font-semibold text-brand">
+            How we check
           </Link>
         </p>
       </main>
@@ -186,7 +174,7 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
   );
 }
 
-/** No hospital found: offer the next step in one tap instead of a dead end. */
+/** No hospital found: an icon, one line, one action (a wider search), never a dead end. */
 function EmptyResults({
   withCard,
   card,
@@ -200,27 +188,29 @@ function EmptyResults({
   widerHref: (r: number) => string;
   cashHref: string | null;
 }) {
-  const wider = RADIUS_OPTIONS_KM.filter((r) => r > radiusKm);
+  const wider = RADIUS_OPTIONS_KM.find((r) => r > radiusKm);
   return (
     <Card>
-      <EmptyState icon="search" title={`No hospitals within ${radiusKm} km ${withCard ? `that we know take ${card}` : "offer this"}`}>
-        That doesn&apos;t mean none do: we may not have checked them yet. Try one of these:
+      <EmptyState
+        icon="search"
+        title={`None within ${radiusKm} km${withCard ? ` confirmed for ${card}` : ""}`}
+        action={
+          <div className="flex flex-col items-center gap-1">
+            {wider ? (
+              <Button href={widerHref(wider)}>Search within {wider} km</Button>
+            ) : (
+              <Button href="/find">Change search</Button>
+            )}
+            {cashHref && (
+              <Button href={cashHref} variant="text">
+                See every hospital nearby
+              </Button>
+            )}
+          </div>
+        }
+      >
+        We may not have checked them yet.
       </EmptyState>
-      <div className="flex flex-col gap-2">
-        {wider.slice(0, 2).map((r, i) => (
-          <Button key={r} href={widerHref(r)} variant={i === 0 ? "primary" : "secondary"}>
-            Search within {r} km
-          </Button>
-        ))}
-        {cashHref && (
-          <Button href={cashHref} variant="secondary">
-            See every hospital nearby
-          </Button>
-        )}
-        <Button href="/find" variant="quiet">
-          Change the search
-        </Button>
-      </div>
     </Card>
   );
 }
@@ -229,9 +219,7 @@ function BrokenSearch() {
   return (
     <main className="px-4 pt-10">
       <h1 className="sr-only">Results</h1>
-      <EmptyState icon="search" title="We couldn't read this search" action={<Button href="/find">Find care</Button>}>
-        Please start again.
-      </EmptyState>
+      <EmptyState icon="search" title="We couldn't read this search" action={<Button href="/find">Search again</Button>} />
     </main>
   );
 }

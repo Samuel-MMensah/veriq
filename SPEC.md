@@ -405,6 +405,7 @@ End-of-session protocol.
 | --- | --- |
 | 9 | Real NHIA directory for Greater Accra (written in full below) |
 | 10 | Real staff sign-in (email and password, accounts made by an admin), admin side, design pass on admin and patient screens |
+| 10c | Look and copy polish across patients, hospital staff, insurers and admin (written in full below) |
 | 11 | Screen 15, hospital onboarding, plus SMS morning-check reminders |
 | 12 | Screen 8, map view with Leaflet and OpenStreetMap |
 | 13 | Screens 9 and 10: saved hospitals, alerts, sharing |
@@ -497,6 +498,79 @@ win over looks: every fact keeps its source, targets stay at least 44 px, words 
 Do not touch USSD going live, SMS or email sending, insurer list upload or the map view: those are
 later prompts.
 End-of-session protocol.
+```
+
+**Prompt 10c: look and copy polish**
+
+```text
+Start-of-session protocol first. This prompt is about how the app LOOKS and READS. Do not change any
+rule, data, privacy behaviour or feature.
+
+Goal: a calm, professional, minimal app that looks like a finished product from a serious health
+company, across all four sides: patients, hospital staff, insurers and admin. Standard patterns,
+nothing clever. Less text, more clarity.
+
+Step 1: Audit (don't skip)
+- Screenshot every built screen BEFORE changes: patient screens at 390x844, staff/insurer/admin at
+  1280x800, in demo mode. Save to docs/polish/before/.
+- List every piece of on-screen text longer than one line, every repeated message, and every place
+  two components do the same job in different styles.
+
+Step 2: Design system (update docs/DESIGN.md and the Tailwind tokens)
+- Type: Plus Jakarta Sans only. Four sizes: page title, section title, body, small. Weights 400,
+  600, 700. Tabular numbers for all figures.
+- Colour: green (#0B6E4F) for primary actions and "confirmed"; neutrals for everything else; orange
+  only for refusals and warnings; red only for emergency. No other colours, no gradients.
+- Spacing on an 8px grid; 16px page gutter on phones; one card style (white, hairline border, 12px
+  radius, no heavy shadow); one badge style; one list-row style; buttons in three kinds only
+  (primary, secondary, text).
+- One icon set, one stroke width, used sparingly.
+- Every state designed: loading (skeletons), empty (icon + one line + one action), error (one line +
+  retry), offline.
+
+Step 3: Copy: cut hard
+- Default to no helper text. Keep one short line only where a user would otherwise get stuck.
+- Labels: 1-3 words. Buttons: verbs ("Search", "Call", "Publish").
+- Shorten sources but never remove them. Every fact still shows who said it and when, compactly,
+  e.g. "Hospital · 40 min ago", "Patients · 14 this month", "NHIA list".
+- Move all explanations to /how-we-check and link to it with one small "How we check" link.
+- Exactly one SAMPLE DATA tag per screen in demo mode: small, consistent, in the same place. Never
+  remove it.
+- Remove duplicate notices, repeated reassurance lines and "coming soon" text from the main flows.
+- Keep: 112 and 193 first in emergency mode; "the card never hides a hospital" (one short line);
+  the privacy line on the report form (one line).
+
+Step 4: Apply across every side
+- Patients (phone): clean header, one clear primary action per screen, sticky bottom action where
+  useful, consistent result cards (name, distance, badge, one status line), hospital page in clear
+  sections (Your card, Today, Other cards, Report).
+- Hospital staff: an app shell with the hospital name and a simple nav. The morning check is a clean
+  form: one row per service with a segmented control, a single "Publish" button, and a success state
+  that says what changed.
+- Insurers: a dashboard shell with sidebar nav and a page header. KPI tiles of equal height with the
+  number first. Tables with aligned columns, right-aligned numbers, clear empty states. Disabled
+  placeholders hidden, not shown.
+- Admin: the same shell as insurers, with a consistent page header (title + primary action), filter
+  bar, tables, row actions in one place, and confirmation dialogs for destructive actions.
+- Staff sign-in: a centred card, logo, two fields, one button. Nothing else.
+- Desktop widths: content max ~1200px. Phone: no sideways scroll.
+
+Rules
+- Accessibility stays WCAG 2.1 AA, with 44px touch targets. All existing tests must pass. Update e2e
+  selectors only where wording changed, keeping what each test checks. Prefer roles and test ids
+  over visible text.
+- 3G first content must stay under 1 second on the live site. No new heavy libraries.
+- No new features. If you find a bug, list it; don't fix it here unless it's one line.
+
+Report
+- AFTER screenshots of every screen at the same sizes in docs/polish/after/, plus a side-by-side
+  contact sheet (docs/polish/compare.png).
+- A table of every copy change: screen, old text, new text.
+- Test counts, lint, typecheck and 3G numbers.
+If this is too big for one session, finish the design system and the patient screens first, then
+wrap up and continue in the next session.
+
+Don't push or apply migrations; give me the commands. End-of-session protocol.
 ```
 
 

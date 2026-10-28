@@ -1,82 +1,81 @@
 import type { Metadata } from "next";
 import { BackLink } from "@/components/ui/BackLink";
+import { Icon, type IconName } from "@/components/ui/Icon";
 
 export const metadata: Metadata = { title: "How Veriq checks" };
 
-// Screen 14. The words follow rules B and F in lib/rules (and the team decision of 2026-10-22).
-const BADGES = [
+// Screen 14: the one place that explains (Prompt 10c moves the explanations here). The words follow
+// rules B, F, S1, S2 and D3 in lib/rules and the team decisions in docs/DECISIONS.md.
+const BADGES: { title: string; text: string; icon: IconName; tone: string }[] = [
+  { title: "Hospital confirmed", text: "Their front desk confirmed it in the last 14 days.", icon: "check", tone: "bg-brand-soft text-brand-strong" },
   {
-    n: "1",
-    title: "Hospital confirmed",
-    text: "Their front desk confirmed it in the last 14 days.",
-    box: "bg-brand-soft text-brand",
-    dot: "bg-brand text-white",
-  },
-  {
-    n: "2",
     title: "Patients confirmed",
     text: "At least 3 patients said it worked in the last 30 days, and more said yes than no.",
-    box: "bg-patient/15 text-patient-ink",
-    dot: "bg-patient text-ink",
+    icon: "person",
+    tone: "bg-brand-soft text-brand-strong",
   },
+  { title: "On a list, not checked", text: "Only the NHIA or insurer list says so. Call first.", icon: "info", tone: "bg-neutral-bg text-neutral-ink" },
   {
-    n: "3",
-    title: "On a list, not checked",
-    text: "Only the NHIA or insurer list says so. Call first.",
-    box: "bg-ink/[0.05] text-ink",
-    dot: "bg-ink/60 text-white",
-  },
-  {
-    n: "!",
     title: "Reported refused",
-    text: "3 or more patients were turned away since the hospital last confirmed, and more were turned away than served. This beats any list.",
-    box: "bg-refused-bg text-refused-ink",
-    dot: "bg-refused text-white",
+    text: "3 or more patients were turned away since the hospital last confirmed, and more than were served. This beats any list.",
+    icon: "cross",
+    tone: "bg-warn-bg text-warn-ink",
+  },
+];
+
+const NOTES: { title: string; text: string }[] = [
+  {
+    title: "How results are sorted",
+    text: "Strongest answer first, then today's status, then distance. Without a card: today's status, then distance. Places with no services listed come after, by distance; pharmacies aren't shown.",
+  },
+  {
+    title: "Today's status ages",
+    text: "Under 24 hours: shown as is. 1 to 3 days: \"may have changed\". Older: greyed out until the hospital checks in.",
+  },
+  {
+    title: "Every number says its period",
+    text: "Counts cover the last 7 days, 30 days or 12 months, and say which. Reports we hold back or reject are kept, never counted.",
+  },
+  {
+    title: "Emergency mode",
+    text: "Sorted by status and distance only. Your card never hides a hospital.",
   },
 ];
 
 export default function HowWeCheckPage() {
   return (
-    <main className="flex min-h-dvh flex-col px-4 pb-8 pt-4">
+    <main className="flex min-h-dvh flex-col bg-page px-4 pb-8 pt-4">
       <div className="flex items-center gap-2">
         <BackLink fallback="/find" />
-        <p className="text-lg text-muted">How Veriq checks</p>
+        <p className="text-muted">How Veriq checks</p>
       </div>
 
-      <h1 className="mt-4 text-3xl font-extrabold leading-tight">Every badge tells you who said so, and when.</h1>
-      <p className="mt-2 text-lg text-muted">We never just copy a list. Strongest first:</p>
+      <h1 className="mt-4 text-title">Every badge tells you who said so, and when.</h1>
 
-      <ol className="mt-5 space-y-3">
+      <ol className="mt-5 space-y-2">
         {BADGES.map((b) => (
-          <li key={b.title} className={`flex gap-4 rounded-(--radius-card) p-4 ${b.box}`}>
-            <span aria-hidden="true" className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-bold ${b.dot}`}>
-              {b.n}
+          <li key={b.title} className="flex gap-3 rounded-(--radius-card) bg-surface p-4 shadow-card">
+            <span aria-hidden="true" className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${b.tone}`}>
+              <Icon name={b.icon} className="h-4 w-4" />
             </span>
             <span>
-              <span className="block text-lg font-bold">{b.title}</span>
-              <span className="block">{b.text}</span>
+              <span className="block font-semibold">{b.title}</span>
+              <span className="block text-small text-muted">{b.text}</span>
             </span>
           </li>
         ))}
       </ol>
 
-      <section className="mt-4 rounded-(--radius-card) border border-line-strong p-4">
-        <h2 className="font-bold">Today&apos;s status ages too</h2>
-        <p className="mt-1 text-muted">
-          Under 24 hours: shown normally. 1 to 3 days: marked &quot;may have changed&quot;. Older: greyed out until the
-          hospital checks in.
-        </p>
-      </section>
+      <div className="mt-4 space-y-2">
+        {NOTES.map((n) => (
+          <section key={n.title} className="rounded-(--radius-card) bg-surface p-4 shadow-card">
+            <h2 className="font-semibold">{n.title}</h2>
+            <p className="mt-1 text-small text-muted">{n.text}</p>
+          </section>
+        ))}
+      </div>
 
-      <section className="mt-3 rounded-(--radius-card) border border-line-strong p-4">
-        <h2 className="font-bold">Every number says its period</h2>
-        <p className="mt-1 text-muted">
-          Counts always say if they cover the last 7 days, the last 30 days or the last 12 months. We keep the history.
-          Reports we hold back or reject are kept, but never counted.
-        </p>
-      </section>
-
-      <p className="mt-auto pt-10 text-muted">
+      <p className="mt-auto pt-8 text-small text-muted">
         Hospitals can&apos;t pay to change a badge. Paid partners get tools and reports, never a better rating.
       </p>
     </main>

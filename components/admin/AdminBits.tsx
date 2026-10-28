@@ -7,7 +7,7 @@ import { whenText } from "@/lib/view/when";
 
 /** An account's state in words: active, not signed in yet (one-time password not used), or switched off. */
 export function accountStatus(p: Pick<ProfileRow, "disabled_at" | "must_change_password">) {
-  if (p.disabled_at) return <Badge tone="danger">Switched off</Badge>;
+  if (p.disabled_at) return <Badge tone="neutral">Switched off</Badge>;
   if (p.must_change_password) return <Badge tone="warn">Not signed in yet</Badge>;
   return <Badge tone="good">Active</Badge>;
 }
@@ -23,8 +23,8 @@ export function AdminHistory({ actions, now }: { actions: AdminActionRow[]; now:
             <span aria-hidden="true" className="absolute top-1.5 -left-[1.6rem] h-3 w-3 rounded-full border-2 border-surface bg-brand" />
             <p className="font-semibold">{actionText(a.action)}</p>
             {a.reason && <p className="text-ink">&ldquo;{a.reason}&rdquo;</p>}
-            {typeof a.details?.known_number === "string" && <p className="text-sm text-muted">Called back on {a.details.known_number}</p>}
-            <p className="text-sm text-muted">
+            {typeof a.details?.known_number === "string" && <p className="text-small text-muted">Called back on {a.details.known_number}</p>}
+            <p className="text-small text-muted">
               {a.actor_label} · {whenText(a.created_at, now)}
             </p>
           </li>

@@ -9,14 +9,14 @@ import { setSeenCookie } from "@/lib/local/prefs";
 /** Screen 7 shows once; after that "/" goes straight to Find care. */
 export const SEEN_WELCOME_KEY = "veriq.seenWelcome";
 
-const POINTS: { icon: IconName; title: string; text: string }[] = [
-  { icon: "card", title: "Check your card first", text: "NHIS or private, confirmed by hospitals and patients." },
-  { icon: "clock", title: "See what's open today", text: "Clinics, scans and specialists, with the time it was updated." },
-  { icon: "people", title: "Help the next person", text: "One tap after your visit keeps Veriq true." },
+// Prompt 10c: three short points, no paragraphs.
+const POINTS: { icon: IconName; title: string }[] = [
+  { icon: "card", title: "Check your card first" },
+  { icon: "clock", title: "See what's open today" },
+  { icon: "people", title: "Help the next person" },
 ];
 
-// Phase 2 (Prompt 16) adds these. One line instead of five dead buttons.
-const LANGUAGES = "Twi, Ga, Ewe, Dagbani and Hausa";
+// Phase 2 (Prompt 17) adds Twi, Ga, Ewe, Dagbani and Hausa; SPEC screen 7 marks them as coming soon.
 
 function markSeen() {
   try {
@@ -39,63 +39,52 @@ export function Welcome() {
   }, [router]);
 
   return (
-    <main className="flex min-h-dvh flex-col bg-brand px-6 pb-6 pt-12 text-white">
-      <div className="flex items-start justify-between gap-3">
-        <p aria-hidden="true" className="text-6xl font-extrabold leading-none tracking-tight">
-          veriq
+    <main className="flex min-h-dvh flex-col bg-surface px-4 pb-6 pt-10">
+      <div className="flex items-center justify-between gap-3">
+        <p aria-hidden="true" className="text-title text-brand">
+          veriq <span className="font-semibold text-muted">health</span>
         </p>
         {/* Someone may open Veriq for the first time in an emergency: one tap, no welcome to read. */}
-        <Link
-          href="/emergency"
-          className="inline-flex min-h-11 items-center gap-2 rounded-full bg-surface px-4 font-bold text-emergency"
-        >
+        <Link href="/emergency" className="inline-flex min-h-11 items-center gap-1.5 font-semibold text-emergency">
           <Icon name="alert" className="h-5 w-5" />
           Emergency
         </Link>
       </div>
-      <p aria-hidden="true" className="mt-2 text-lg font-semibold tracking-[0.3em] text-white/85">
-        HEALTH
-      </p>
-      <h1 className="mt-6 animate-enter text-3xl font-extrabold">Know before you go.</h1>
-      <p className="mt-3 text-lg text-white/85">
-        See which hospitals really take your card, what&apos;s open today, and what other patients paid.
-      </p>
 
-      <ul className="mt-8 space-y-5">
+      <h1 className="mt-12 animate-enter text-title">Know before you go.</h1>
+      <p className="mt-2 text-muted">Which hospitals really take your card, before you travel.</p>
+
+      <ul className="mt-8 space-y-4">
         {POINTS.map((p, i) => (
-          <li key={p.title} className="flex animate-enter gap-4" style={{ animationDelay: `${80 + i * 60}ms` }}>
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/15">
-              <Icon name={p.icon} className="h-6 w-6" />
+          <li key={p.title} className="flex animate-enter items-center gap-3" style={{ animationDelay: `${80 + i * 60}ms` }}>
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
+              <Icon name={p.icon} className="h-5 w-5" />
             </span>
-            <span>
-              <span className="block text-lg font-bold">{p.title}</span>
-              <span className="block text-white/85">{p.text}</span>
-            </span>
+            <span className="font-semibold">{p.title}</span>
           </li>
         ))}
       </ul>
 
       <fieldset className="mt-8">
-        <legend className="font-bold">Language</legend>
-        <div className="mt-3 flex items-center gap-3">
-          <span className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-surface px-5 font-bold text-brand" aria-current="true">
+        <legend className="text-small font-semibold text-muted">Language</legend>
+        <div className="mt-2 flex items-center gap-3">
+          <span className="inline-flex min-h-11 shrink-0 items-center rounded-full border border-brand bg-brand-soft px-4 font-semibold text-brand-strong" aria-current="true">
             English
           </span>
-          <span className="text-sm text-white/85">{LANGUAGES} coming soon</span>
+          <span className="text-small text-muted">More languages soon</span>
         </div>
       </fieldset>
 
-      <div className="mt-auto pt-10">
+      <div className="mt-auto space-y-1 pt-10">
         <Link
           href="/find"
           onClick={markSeen}
-          className="flex min-h-14 w-full items-center justify-center rounded-(--radius-control) bg-surface text-lg font-bold text-brand transition-colors hover:bg-brand-soft"
+          className="flex min-h-12 w-full items-center justify-center rounded-(--radius-control) bg-brand font-semibold text-white transition-colors hover:bg-brand-strong"
         >
           Get started
         </Link>
-        <p className="mt-4 text-center text-sm text-white/85">
-          No sign-up needed. Every answer shows who confirmed it and when.{" "}
-          <Link href="/how-we-check" onClick={markSeen} className="font-bold text-white underline">
+        <p className="text-center">
+          <Link href="/how-we-check" onClick={markSeen} className="inline-flex min-h-11 items-center text-small font-semibold text-brand">
             How we check
           </Link>
         </p>

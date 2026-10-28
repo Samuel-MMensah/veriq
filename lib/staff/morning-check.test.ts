@@ -98,7 +98,7 @@ describe("publishMorningCheck (rule M)", () => {
       now: t,
     });
     const akoma = results.cards.find((c) => c.name === "Akoma Mission Hospital")!;
-    expect(akoma.status).toMatchObject({ word: "Closed", tone: "bad", sourceText: "updated by hospital just now" });
+    expect(akoma.status).toMatchObject({ word: "Closed", tone: "bad", sourceText: "Hospital · just now" });
     expect(results.cards[0]!.name).toBe("Akoma Mission Hospital"); // still B2, so still first (rule S1)
   });
 

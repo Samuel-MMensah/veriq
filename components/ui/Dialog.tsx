@@ -29,7 +29,9 @@ export function ConfirmAction({
   title: string;
   body: React.ReactNode;
   confirmLabel: string;
+  /** The confirm button inside the dialog. */
   variant?: ButtonVariant;
+  /** The button that opens it: secondary unless said otherwise (row actions are never primary). */
   triggerVariant?: ButtonVariant;
   /** Ask why; the answer goes in the admin log. */
   reason?: { label: string; hint?: string; required?: boolean };
@@ -40,7 +42,7 @@ export function ConfirmAction({
   const done = Boolean(state?.secret || state?.message);
   return (
     <>
-      <Button type="button" variant={triggerVariant ?? (variant === "danger" ? "secondary" : variant)} onClick={() => ref.current?.showModal()}>
+      <Button type="button" variant={triggerVariant ?? "secondary"} onClick={() => ref.current?.showModal()}>
         {label}
       </Button>
       <dialog
@@ -50,14 +52,14 @@ export function ConfirmAction({
       >
         {done ? (
           <div className="space-y-4 p-5">
-            <h2 id={`${id}-title`} className="text-xl font-bold">
+            <h2 id={`${id}-title`} className="text-section">
               {state?.message ?? "Done"}
             </h2>
             {state?.secret && (
               <div className="rounded-(--radius-control) bg-brand-soft p-4">
-                <p className="text-sm text-muted">{state.secret.label}</p>
-                <p className="mt-1 font-mono text-2xl font-bold tracking-wide select-all">{state.secret.value}</p>
-                <p className="mt-2 text-sm text-muted">It is shown only now. It works once; the person then sets their own.</p>
+                <p className="text-small text-muted">{state.secret.label}</p>
+                <p className="mt-1 font-mono text-title tracking-wide select-all">{state.secret.value}</p>
+                <p className="mt-2 text-small text-muted">It is shown only now. It works once; the person then sets their own.</p>
               </div>
             )}
             <Button type="button" full onClick={() => ref.current?.close()}>
@@ -69,7 +71,7 @@ export function ConfirmAction({
             {Object.entries(fields).map(([name, value]) => (
               <input key={name} type="hidden" name={name} value={value} />
             ))}
-            <h2 id={`${id}-title`} className="text-xl font-bold">
+            <h2 id={`${id}-title`} className="text-section">
               {title}
             </h2>
             <div className="text-muted">{body}</div>
@@ -78,7 +80,7 @@ export function ConfirmAction({
                 <label htmlFor={`${id}-reason`} className="block font-semibold">
                   {reason.label}
                 </label>
-                {reason.hint && <p className="mt-0.5 text-sm text-muted">{reason.hint}</p>}
+                {reason.hint && <p className="mt-0.5 text-small text-muted">{reason.hint}</p>}
                 <textarea
                   id={`${id}-reason`}
                   name="reason"
@@ -90,7 +92,7 @@ export function ConfirmAction({
               </div>
             )}
             {state?.error && (
-              <p role="alert" className="text-sm font-semibold text-danger-ink">
+              <p role="alert" className="text-small font-semibold text-danger-ink">
                 {state.error}
               </p>
             )}

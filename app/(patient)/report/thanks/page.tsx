@@ -49,35 +49,33 @@ export default async function ThanksPage({ searchParams }: { searchParams: Promi
       : state === "held"
         ? "Thank you. We'll check it first."
         : "Thank you. The next person will know.";
+  // Prompt 10c: one short line, only where it explains what happens next.
   const lead =
     state === "queued"
-      ? "You're offline right now. We'll send your report as soon as you're back online. Nothing else to do."
+      ? "It sends when you're back online."
       : state === "held"
-        ? "Many reports came in for this hospital in the last hour, so we check new ones before they count."
-        : "Your report is anonymous and is now part of what people see.";
+        ? "Many reports came in this hour, so we check new ones before they count."
+        : null;
 
   return (
-    <main className="flex min-h-dvh animate-enter flex-col px-6 pt-10 pb-6">
+    <main className="flex min-h-dvh animate-enter flex-col px-4 pt-10 pb-6">
       <div className="flex items-start justify-between">
-        <span className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-soft text-brand">
-          <Icon name={state === "queued" ? "clock" : "check"} className="h-10 w-10" />
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft text-brand">
+          <Icon name={state === "queued" ? "clock" : "check"} className="h-6 w-6" />
         </span>
         {demoFacility && <SampleDataTag />}
       </div>
-      <h1 className="mt-6 text-3xl font-extrabold leading-tight">{title}</h1>
-      <p className="mt-2 text-lg text-muted">{lead}</p>
+      <h1 className="mt-4 text-title">{title}</h1>
+      {lead && <p className="mt-2 text-muted">{lead}</p>}
 
       {facilityName && state === "counted" && (
-        <section aria-labelledby="changed" className="mt-6 rounded-(--radius-card) border border-line bg-page p-5">
-          <h2 id="changed" className="text-sm font-bold uppercase tracking-wide text-muted">
+        <section aria-labelledby="changed" className="mt-6 rounded-(--radius-card) bg-surface p-4 shadow-card">
+          <h2 id="changed" className="text-section">
             What changed
           </h2>
           <ChangeText facilityName={facilityName} change={change} />
           {wasTopUp && (
-            <p className="mt-3 text-sm text-muted">
-              When 2 or more patients report the same top-up in a week, we ask the hospital to confirm or correct it at
-              its morning check.
-            </p>
+            <p className="mt-3 text-small text-muted">We&apos;ll ask the hospital to confirm this top-up.</p>
           )}
         </section>
       )}
@@ -87,14 +85,14 @@ export default async function ThanksPage({ searchParams }: { searchParams: Promi
       </div>
 
       <div className="mt-auto space-y-3 pt-10">
-        <Link href={back} className="flex min-h-14 w-full items-center justify-center rounded-(--radius-control) bg-brand text-lg font-bold text-white">
+        <Link href={back} className="flex min-h-12 w-full items-center justify-center rounded-(--radius-control) bg-brand font-semibold text-white">
           Done
         </Link>
         <a
           href={`https://wa.me/?text=${encodeURIComponent(shareText)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex min-h-11 items-center justify-center font-bold text-brand"
+          className="flex min-h-11 items-center justify-center font-semibold text-brand"
         >
           Tell a friend about Veriq
         </a>
@@ -105,21 +103,21 @@ export default async function ThanksPage({ searchParams }: { searchParams: Promi
 
 function ChangeText({ facilityName, change }: { facilityName: string; change: Change }) {
   if (change.kind === "none") {
-    return <p className="mt-2 text-lg">Your report is saved. It will show on {facilityName}&apos;s page shortly.</p>;
+    return <p className="mt-2">Saved. It will show on {facilityName}&apos;s page shortly.</p>;
   }
   if (change.kind === "history") {
     return (
-      <p className="mt-2 text-lg">
-        {facilityName} still shows: <strong>{change.headline}</strong>. Your report is now part of these numbers.
+      <p className="mt-2">
+        {facilityName} still shows: <strong className="font-semibold">{change.headline}</strong>. Your report is counted.
       </p>
     );
   }
   return (
     <>
-      <p className="mt-2 text-lg">
-        {facilityName} now shows: <strong>{change.headline}</strong>.
+      <p className="mt-2">
+        {facilityName} now shows: <strong className="font-semibold">{change.headline}</strong>.
       </p>
-      {change.before && <p className="mt-2 text-muted">Before your report: {change.before}.</p>}
+      {change.before && <p className="mt-2 text-small text-muted">Before your report: {change.before}.</p>}
     </>
   );
 }

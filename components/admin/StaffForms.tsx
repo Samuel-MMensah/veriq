@@ -51,9 +51,9 @@ export function SecretPanel({ state }: { state: NonNullable<ActionState> }) {
       </p>
       {state.secret && (
         <>
-          <p className="mt-3 text-sm">{state.secret.label}</p>
-          <p className="mt-1 font-mono text-2xl font-bold tracking-wide text-ink select-all">{state.secret.value}</p>
-          <p className="mt-2 text-sm">
+          <p className="mt-3 text-small">{state.secret.label}</p>
+          <p className="mt-1 font-mono text-title tracking-wide text-ink select-all">{state.secret.value}</p>
+          <p className="mt-2 text-small">
             It is shown only now and works once: at first sign-in they choose their own. Don&apos;t send it by email or text.
           </p>
         </>
@@ -89,7 +89,7 @@ export function CreateAccountForm({ action, facilities, insurers }: { action: Ac
               >
                 <input type="radio" name="role" value={r.value} checked={role === r.value} onChange={() => setRole(r.value)} className="sr-only" />
                 <span className="font-semibold">{r.label}</span>
-                <span className="text-sm text-muted">{r.hint}</span>
+                <span className="text-small text-muted">{r.hint}</span>
               </label>
             ))}
           </div>

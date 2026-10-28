@@ -27,7 +27,7 @@ export default async function DemoAdminPage({ searchParams }: { searchParams: Pr
 
   return (
     <>
-      <AdminPageHeader title="Demo data" description="For rehearsals. None of this touches real hospitals." action={<SampleDataTag />} />
+      <AdminPageHeader title="Demo data" description="Rehearsals only. Real hospitals are never touched." action={<SampleDataTag />} />
       <AdminBody className="max-w-3xl">
         {resetAt > 0 && <Toast>Demo data reset at {accraClock(new Date(resetAt).toISOString())}. The demo story starts fresh.</Toast>}
         {error && <Toast tone="error">Reset failed: {error}</Toast>}
@@ -50,7 +50,7 @@ export default async function DemoAdminPage({ searchParams }: { searchParams: Pr
           <FreshPhone />
         </Card>
 
-        <Button href="/?demo=1" variant="quiet" full>
+        <Button href="/?demo=1" variant="text" full>
           Open the app in demo mode
         </Button>
       </AdminBody>

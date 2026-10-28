@@ -15,7 +15,7 @@ test.beforeAll(async ({ browser }) => {
 test("role checks with demo accounts: hospital staff can't open admin pages, insurer staff can't verify", async ({ page }) => {
   await page.goto("/h/check");
   await page.getByRole("button", { name: "Demo login" }).click();
-  await expect(page.getByRole("button", { name: "Confirm and publish" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Publish" })).toBeVisible();
 
   await page.goto("/admin");
   await expect(page.getByText("This page is for Veriq admins.")).toBeVisible();
@@ -88,7 +88,7 @@ test("morning check (rule F): the demo hospital sets 'open till' a time, and pat
   const till = antenatal.getByLabel(/time for Antenatal clinic/);
   if (!(await till.isVisible())) await antenatal.getByText(/till time/i).click();
   await till.fill(typed);
-  await page.getByRole("button", { name: "Confirm and publish" }).click();
+  await page.getByRole("button", { name: "Publish" }).click();
   await expect(page.getByRole("status")).toContainText("Published");
   await page.goto("/facility/f0000000-0000-4000-8000-000000000001?card=nhis&demo=1");
   await expect(page.getByText(shown).first()).toBeVisible();

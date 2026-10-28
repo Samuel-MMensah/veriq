@@ -40,7 +40,7 @@ test("the 90-second demo (SPEC section 9)", async ({ page }) => {
   // 4. Open Akoma: today's status with times, cards with sources, the GH¢ 80 scan top-up.
   await cards.nth(0).getByRole("link").click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Akoma Mission Hospital");
-  await expect(page.getByText(/^Updated by hospital \d{1,2}:\d{2} (am|pm)$/)).toBeVisible();
+  await expect(page.getByText(/^Hospital · \d{1,2}:\d{2} (am|pm)$/)).toBeVisible();
   // Rule F: the demo till time is "Open till 12 pm" to "8 pm", or plain "Open" after a reset from 19:00.
   await expect(page.getByText(/^Open(?: till \d{1,2}(?::\d{2})? (?:am|pm))?$/).first()).toBeVisible();
   await expect(page.getByText(/Was open till/)).toHaveCount(0);
@@ -62,7 +62,7 @@ test("the 90-second demo (SPEC section 9)", async ({ page }) => {
   await page.goto("/h/check");
   await page.getByRole("button", { name: "Demo login" }).click();
   await page.getByRole("group", { name: "Antenatal clinic" }).getByText("Closed").click();
-  await page.getByRole("button", { name: "Confirm and publish" }).click();
+  await page.getByRole("button", { name: "Publish" }).click();
   await expect(page.getByRole("status")).toContainText("Patients see it now.");
   await page.goto("/results?service=antenatal&card=nhis&lat=5.545&lng=-0.265&area=dansoman&r=5");
   await expect(page.getByRole("link", { name: /Akoma Mission Hospital/ })).toContainText("Antenatal clinic: Closed");

@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 /*
- * Veriq design tokens (Prompt 10). One set for the patient and staff sides; docs/DESIGN.md explains
- * each choice. Colour is for meaning (badges, status, actions), not decoration.
+ * Veriq design tokens (Prompt 10, tightened in Prompt 10c). One set for patients, hospital staff,
+ * insurers and admin; docs/DESIGN.md explains each choice. Colour is for meaning only: green for
+ * actions and "confirmed", orange for refusals and warnings, red for emergency, neutrals for the rest.
  */
 @theme {
   /* Section 2 colours, kept by name: bg-brand, text-ink, bg-page, ... */
@@ -12,10 +13,8 @@
   --color-emergency: #8a1c12;
   --color-refused: #c2570c;
   --color-refused-bg: #fdf0e6;
-  --color-patient: #5fae8e;
   /* Darker text shades on the pale badge backgrounds, for readable contrast (WCAG AA). */
   --color-refused-ink: #8f3d07;
-  --color-patient-ink: #2c6b52;
   --color-emergency-bg: #fdecea;
 
   /* Roles. Surfaces and lines */
@@ -40,12 +39,12 @@
   /* Type: Plus Jakarta Sans. The scale is Tailwind's sm..3xl, used by role (docs/DESIGN.md). */
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 
-  /* Radius: controls (inputs, buttons) and cards */
+  /* Radius: one for controls and cards, 12 px */
   --radius-control: 0.75rem;
-  --radius-card: 1rem;
+  --radius-card: 0.75rem;
 
-  /* Shadow: cards sit on the page; raised things (toasts, dialogs) float */
-  --shadow-card: 0 1px 2px rgb(22 32 28 / 0.06), 0 0 0 1px rgb(22 32 28 / 0.04);
+  /* Cards: a hairline, no shadow. Only raised things (toasts, dialogs) float. */
+  --shadow-card: 0 0 0 1px var(--color-line);
   --shadow-raised: 0 12px 32px -8px rgb(22 32 28 / 0.22), 0 0 0 1px rgb(22 32 28 / 0.06);
 
   /* Motion: short and soft, and off for people who ask for less motion */
@@ -75,6 +74,29 @@ html {
 body {
   min-height: 100dvh;
   -webkit-tap-highlight-color: transparent;
+  /* Figures line up in every list, table and tile. */
+  font-variant-numeric: tabular-nums;
+}
+
+/* The four type sizes (docs/DESIGN.md). Weights: 400 body, 600 labels, 700 titles. */
+@utility text-title {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+@utility text-section {
+  font-size: 1.125rem;
+  line-height: 1.625rem;
+  font-weight: 700;
+}
+@utility text-body {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+@utility text-small {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 
 :focus-visible {

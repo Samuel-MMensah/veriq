@@ -2,7 +2,7 @@ import { cx } from "./cx";
 
 export function inputClass(invalid = false): string {
   return cx(
-    "block min-h-12 w-full rounded-(--radius-control) border bg-surface px-3 text-base text-ink placeholder:text-muted",
+    "block min-h-12 w-full rounded-(--radius-control) border bg-surface px-3 text-body text-ink placeholder:text-muted",
     "transition-colors focus:border-brand",
     invalid ? "border-danger-ink" : "border-line-strong",
   );
@@ -38,13 +38,13 @@ export function Field({
         {label}
       </label>
       {hint && (
-        <p id={`${id}-hint`} className="mt-0.5 text-sm text-muted">
+        <p id={`${id}-hint`} className="mt-0.5 text-small text-muted">
           {hint}
         </p>
       )}
       <div className="mt-1.5">{children}</div>
       {error && (
-        <p id={`${id}-error`} className="mt-1.5 text-sm font-semibold text-danger-ink">
+        <p id={`${id}-error`} className="mt-1.5 text-small font-semibold text-danger-ink">
           {error}
         </p>
       )}

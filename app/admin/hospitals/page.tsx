@@ -48,14 +48,14 @@ export default async function HospitalsPage({ searchParams }: { searchParams: Pr
     <>
       <AdminPageHeader
         title="Hospitals"
-        description="A hospital staff account is a claim: “I work here.” Check it before that hospital can publish anything."
+        description="Check each claim before the hospital can publish."
         action={demo ? <SampleDataTag /> : undefined}
       />
       <AdminBody>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start lg:gap-6">
           <Card title={`Waiting for verification (${waiting.length})`} titleId="waiting">
             {waiting.length === 0 ? (
-              <EmptyState title="Nothing waiting">When you make a hospital staff account, its hospital shows here until you verify it.</EmptyState>
+              <EmptyState title="Nothing waiting">New hospital accounts show here.</EmptyState>
             ) : (
               <ul className="divide-y divide-line">{waiting.map(row)}</ul>
             )}

@@ -26,8 +26,8 @@ export function ListRow({
     <>
       <span className="min-w-0 flex-1">
         <span className="block font-semibold leading-snug">{title}</span>
-        {detail && <span className="mt-0.5 block text-sm text-muted">{detail}</span>}
-        {meta && <span className="mt-0.5 block text-sm text-muted">{meta}</span>}
+        {detail && <span className="mt-0.5 block text-small text-muted">{detail}</span>}
+        {meta && <span className="mt-0.5 block text-small text-muted">{meta}</span>}
       </span>
       {trailing && <span className="shrink-0">{trailing}</span>}
       {href && <Icon name="chevron" className="h-5 w-5 text-brand" />}

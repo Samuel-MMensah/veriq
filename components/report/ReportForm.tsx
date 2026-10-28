@@ -17,7 +17,7 @@ const ITEMS: { value: ReportItem; label: string }[] = [
 ];
 
 const OPTION =
-  "block cursor-pointer rounded-(--radius-card) border border-line-strong bg-surface p-4 transition-colors hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand-soft has-[:checked]:ring-1 has-[:checked]:ring-brand has-[:focus-visible]:outline has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-brand";
+  "block cursor-pointer rounded-(--radius-card) border border-line bg-surface p-4 transition-colors hover:border-brand has-[:checked]:border-brand has-[:checked]:bg-brand-soft has-[:checked]:ring-1 has-[:checked]:ring-brand has-[:focus-visible]:outline has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-brand";
 const RADIO_DOT =
   "h-7 w-7 shrink-0 appearance-none rounded-full border-2 border-line-strong bg-surface transition-[border-width,border-color] duration-150 checked:border-[9px] checked:border-brand";
 const CHIP =
@@ -81,16 +81,14 @@ export function ReportForm({
   if (queued) {
     return (
       <div role="status" className="flex flex-1 animate-enter flex-col">
-        <span className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-soft text-brand">
-          <Icon name="clock" className="h-10 w-10" />
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft text-brand">
+          <Icon name="clock" className="h-6 w-6" />
         </span>
-        <h1 className="mt-6 text-3xl font-extrabold leading-tight">Saved on your phone.</h1>
-        <p className="mt-2 text-lg text-muted">
-          You&apos;re offline right now. We&apos;ll send your report as soon as you&apos;re back online. Nothing else to do.
-        </p>
+        <h1 className="mt-4 text-title">Saved on your phone.</h1>
+        <p className="mt-2 text-muted">It sends when you&apos;re back online.</p>
         <Link
           href={`/facility/${facilityId}?card=${card.slug}`}
-          className="mt-auto flex min-h-14 w-full items-center justify-center rounded-(--radius-control) bg-brand text-lg font-bold text-white transition-colors hover:bg-brand-strong"
+          className="mt-auto flex min-h-12 w-full items-center justify-center rounded-(--radius-control) bg-brand font-semibold text-white transition-colors hover:bg-brand-strong"
         >
           Done
         </Link>
@@ -100,15 +98,14 @@ export function ReportForm({
 
   return (
     <form onSubmit={send} className="flex flex-1 flex-col">
-      <h1 className="text-3xl font-extrabold leading-tight">Was your {card.name} card accepted?</h1>
-      <p className="mt-2 text-lg text-muted">Your answer helps the next person decide where to go. Takes 10 seconds.</p>
+      <h1 className="text-title">Was your {card.name} card accepted?</h1>
       {cards.length > 1 && (
-        <label className="mt-3 flex items-center gap-2 text-sm text-muted">
+        <label className="mt-3 flex items-center gap-2 text-small text-muted">
           Another card?
           <select
             value={cardId}
             onChange={(e) => setCardId(e.target.value)}
-            className="min-h-11 rounded-(--radius-control) border border-line-strong bg-surface px-3 text-base"
+            className="min-h-11 rounded-(--radius-control) border border-line-strong bg-surface px-3 text-body"
           >
             {cards.map((c) => (
               <option key={c.id} value={c.id}>
@@ -124,20 +121,20 @@ export function ReportForm({
         <label className={OPTION}>
           <span className="flex items-center gap-4">
             <input type="radio" name="outcome" value="covered" checked={outcome === "covered"} onChange={() => setOutcome("covered")} className={RADIO_DOT} />
-            <span className="text-lg font-bold">Yes, fully covered</span>
+            <span className="font-semibold">Yes, fully covered</span>
           </span>
         </label>
 
         <div className={OPTION}>
           <label className="flex min-h-11 cursor-pointer items-center gap-4">
             <input type="radio" name="outcome" value="topup" checked={outcome === "topup"} onChange={() => setOutcome("topup")} className={RADIO_DOT} />
-            <span className="text-lg font-bold">Yes, but I paid extra</span>
+            <span className="font-semibold">Yes, but I paid extra</span>
           </label>
           {outcome === "topup" && (
             <div className="mt-4 space-y-4 pl-11">
-              <label className="block text-sm font-semibold text-muted">
+              <label className="block text-small font-semibold text-muted">
                 How much? (optional)
-                <span className="mt-1 flex min-h-12 items-center rounded-(--radius-control) border border-line-strong bg-surface px-4 text-lg font-normal focus-within:outline focus-within:outline-3 focus-within:outline-brand">
+                <span className="mt-1 flex min-h-12 items-center rounded-(--radius-control) border border-line-strong bg-surface px-4 font-normal focus-within:outline focus-within:outline-3 focus-within:outline-brand">
                   <span aria-hidden="true" className="mr-2 text-muted">
                     GH¢
                   </span>
@@ -152,7 +149,7 @@ export function ReportForm({
                 </span>
               </label>
               <fieldset>
-                <legend className="text-sm font-semibold text-muted">For what?</legend>
+                <legend className="text-small font-semibold text-muted">For what?</legend>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {ITEMS.map((i) => (
                     <label key={i.value} className={CHIP}>
@@ -176,14 +173,15 @@ export function ReportForm({
         <label className={OPTION}>
           <span className="flex items-center gap-4">
             <input type="radio" name="outcome" value="refused" checked={outcome === "refused"} onChange={() => setOutcome("refused")} className={RADIO_DOT} />
-            <span className="text-lg font-bold">No, they refused my card</span>
+            <span className="font-semibold">No, they refused my card</span>
           </span>
         </label>
       </fieldset>
 
-      <p className="mt-5 flex gap-3 text-muted">
-        <Icon name="lock" className="mt-0.5 h-5 w-5" />
-        Anonymous. We never ask for your name or card number. Hospitals see totals, not people.
+      {/* The one privacy line (Prompt 10c keeps it). */}
+      <p className="mt-5 flex gap-2 text-small text-muted">
+        <Icon name="lock" className="mt-0.5 h-4 w-4" />
+        Anonymous. We never ask for your name or card number.
       </p>
 
       {notice && (
@@ -193,7 +191,7 @@ export function ReportForm({
         >
           <p className="font-semibold">{notice.text}</p>
           {notice.tone === "info" && (
-            <Link href={`/facility/${facilityId}?card=${card.slug}`} className="mt-2 inline-flex min-h-11 items-center font-bold underline">
+            <Link href={`/facility/${facilityId}?card=${card.slug}`} className="mt-2 inline-flex min-h-11 items-center font-semibold underline">
               Back to the hospital
             </Link>
           )}
@@ -204,11 +202,11 @@ export function ReportForm({
         <button
           type="submit"
           disabled={!outcome || busy}
-          className="min-h-14 w-full rounded-(--radius-control) bg-brand text-lg font-bold text-white transition-colors hover:bg-brand-strong disabled:bg-ink/30"
+          className="min-h-12 w-full rounded-(--radius-control) bg-brand font-semibold text-white transition-colors hover:bg-brand-strong disabled:bg-ink/30"
         >
           {busy ? "Sending…" : "Send"}
         </button>
-        {!outcome && <p className="mt-2 text-center text-sm text-muted">Choose an answer to send.</p>}
+
       </div>
     </form>
   );

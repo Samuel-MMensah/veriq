@@ -16,24 +16,24 @@ export const metadata: Metadata = { title: "Design sample" };
 
 const PATH = "/admin/design";
 
+// Prompt 10c: green for actions and "confirmed", orange for refusals and warnings, red for emergency
+// only, neutrals for everything else.
 const COLOURS: { name: string; token: string; use: string }[] = [
-  { name: "Brand", token: "bg-brand", use: "Primary action, hospital confirmed" },
-  { name: "Ink", token: "bg-ink", use: "Text, staff headers" },
+  { name: "Green", token: "bg-brand", use: "Primary action, confirmed" },
+  { name: "Green, soft", token: "bg-brand-soft", use: "Confirmed badges, selected" },
+  { name: "Orange", token: "bg-warn-bg", use: "Refusals and warnings" },
+  { name: "Red", token: "bg-emergency", use: "Emergency only" },
+  { name: "Ink", token: "bg-ink", use: "Text, staff side bar" },
   { name: "Muted", token: "bg-muted", use: "Secondary text, source lines" },
   { name: "Page", token: "bg-page", use: "Page background" },
-  { name: "Line", token: "bg-line", use: "Dividers" },
-  { name: "Good", token: "bg-good-bg", use: "Done, confirmed" },
-  { name: "Warn", token: "bg-warn-bg", use: "Refused reports, needs attention" },
-  { name: "Danger", token: "bg-danger-bg", use: "Emergency, errors" },
+  { name: "Line", token: "bg-line", use: "Hairlines and dividers" },
 ];
 
 const TYPE: { role: string; cls: string }[] = [
-  { role: "Display 30", cls: "text-3xl font-extrabold" },
-  { role: "Heading 24", cls: "text-2xl font-extrabold" },
-  { role: "Title 20", cls: "text-xl font-bold" },
-  { role: "Section 18", cls: "text-lg font-bold" },
-  { role: "Body 16", cls: "text-base" },
-  { role: "Caption 14", cls: "text-sm text-muted" },
+  { role: "Page title 24 / 700", cls: "text-title" },
+  { role: "Section title 18 / 700", cls: "text-section" },
+  { role: "Body 16 / 400 and 600", cls: "text-body" },
+  { role: "Small 14", cls: "text-small text-muted" },
 ];
 
 // The one-page visual sample for docs/DESIGN.md (Prompt 10): every token and shared component.
@@ -42,7 +42,7 @@ export default async function DesignPage() {
   if (!gate.ok) return <StaffGateScreen role="admin" staff={gate.staff} title="Design sample" path={PATH} />;
   return (
     <>
-      <AdminPageHeader title="Design sample" description="Veriq's tokens and shared components, as used on every screen. See docs/DESIGN.md." />
+      <AdminPageHeader title="Design sample" description="Tokens and components. See docs/DESIGN.md." />
       <AdminBody>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
           <Card title="Colour, for meaning" titleId="colour">
@@ -52,7 +52,7 @@ export default async function DesignPage() {
                   <span aria-hidden="true" className={`h-10 w-10 shrink-0 rounded-(--radius-control) border border-line ${c.token}`} />
                   <span className="min-w-0">
                     <span className="block font-semibold">{c.name}</span>
-                    <span className="block text-sm text-muted">{c.use}</span>
+                    <span className="block text-small text-muted">{c.use}</span>
                   </span>
                 </li>
               ))}
@@ -64,7 +64,7 @@ export default async function DesignPage() {
               {TYPE.map((t) => (
                 <li key={t.role} className="flex items-baseline justify-between gap-3">
                   <span className={t.cls}>Know before you go</span>
-                  <span className="shrink-0 text-sm text-muted">{t.role}</span>
+                  <span className="shrink-0 text-small text-muted">{t.role}</span>
                 </li>
               ))}
             </ul>
@@ -76,10 +76,10 @@ export default async function DesignPage() {
               <Button type="button" variant="secondary">
                 Secondary
               </Button>
-              <Button type="button" variant="quiet">
+              <Button type="button" variant="text">
                 Quiet
               </Button>
-              <Button type="button" variant="danger">
+              <Button type="button" variant="primary">
                 Danger
               </Button>
             </div>
@@ -92,7 +92,7 @@ export default async function DesignPage() {
             <div className="flex flex-wrap gap-2">
               <Badge tone="good">Verified</Badge>
               <Badge tone="warn">Waiting</Badge>
-              <Badge tone="danger">Switched off</Badge>
+              <Badge tone="neutral">Switched off</Badge>
               <Badge>Not checked</Badge>
             </div>
             <div className="mt-3 space-y-2">

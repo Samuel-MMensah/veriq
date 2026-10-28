@@ -50,7 +50,7 @@ export function AreaSwitch({ hasPoint }: { hasPoint: boolean }) {
         {locating ? "Finding you…" : "Use my location"}
       </button>
       {error && (
-        <p role="alert" className="text-sm text-emergency">
+        <p role="alert" className="text-small text-emergency">
           {error}
         </p>
       )}

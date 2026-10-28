@@ -25,11 +25,11 @@ const PATH = "/admin/reports";
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 const ITEM = { scan: "a scan", drugs: "drugs", lab: "a lab test", registration: "registration" } as const;
 
-function outcomeText(r: HeldReport): { text: string; tone: "good" | "warn" | "danger" } {
+function outcomeText(r: HeldReport): { text: string; tone: "good" | "warn" | "neutral" } {
   if (r.outcome === "covered") return { text: "Card worked", tone: "good" };
-  if (r.outcome === "refused") return { text: "Card refused", tone: "danger" };
+  if (r.outcome === "refused") return { text: "Card refused", tone: "warn" };
   const amount = r.amount_ghs !== null ? `GH¢ ${r.amount_ghs}` : "extra";
-  return { text: `Paid ${amount}${r.item ? ` for ${ITEM[r.item]}` : ""}`, tone: "warn" };
+  return { text: `Paid ${amount}${r.item ? ` for ${ITEM[r.item]}` : ""}`, tone: "neutral" };
 }
 
 // Rule A: more than 10 reports for one hospital in an hour are held. Release or reject each.
@@ -49,7 +49,7 @@ export default async function HeldReportsPage({ searchParams }: { searchParams: 
     <>
       <AdminPageHeader
         title="Held reports"
-        description="More than 10 reports for one hospital in an hour are held, not counted. Look at each one, then release it (it counts from now on) or reject it (it never counts)."
+        description="Held by the burst rule. Release or reject each one."
         action={demo && held.length > 0 ? <SampleDataTag /> : undefined}
       />
       <AdminBody>
@@ -96,7 +96,7 @@ export default async function HeldReportsPage({ searchParams }: { searchParams: 
                       title="Reject this report?"
                       body="It will never count. This can't be undone."
                       confirmLabel="Reject"
-                      variant="danger"
+                      variant="primary"
                       reason={{ label: "Why?", hint: "e.g. \"Same pattern as a burst of fake reports\".", required: true }}
                     />
                   </div>
@@ -105,7 +105,7 @@ export default async function HeldReportsPage({ searchParams }: { searchParams: 
             })}
           </ul>
         )}
-        <SourceLine>Oldest first · from patient reports (no names or phone numbers are stored), as of {whenText(now.toISOString(), now)}</SourceLine>
+        <SourceLine>Oldest first · patient reports · {whenText(now.toISOString(), now)}</SourceLine>
       </AdminBody>
     </>
   );

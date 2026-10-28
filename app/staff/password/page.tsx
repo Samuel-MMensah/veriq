@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { CentredCard } from "@/components/staff/CentredCard";
 import { NewPasswordForm } from "@/components/staff/SignInForm";
-import { StaffHeader } from "@/components/staff/StaffHeader";
-import { Card } from "@/components/ui/Card";
 import { currentStaff } from "@/lib/auth/session";
 import { safeNext } from "@/lib/auth/staff";
 import type { SearchParams } from "@/lib/view/catalog";
@@ -17,25 +16,9 @@ export default async function PasswordPage({ searchParams }: { searchParams: Pro
   if (staff?.kind !== "account") redirect("/staff/sign-in");
   const next = safeNext(first((await searchParams).next), staff.role);
   return (
-    <div className="min-h-dvh bg-page">
-      <StaffHeader
-        product="staff"
-        staff={staff}
-        title={staff.mustChangePassword ? "Set your own password" : "Change your password"}
-        subtitle={staff.email ?? undefined}
-        path="/staff/sign-in"
-        sample={false}
-      />
-      <main className="mx-auto max-w-md space-y-4 px-4 py-6">
-        {staff.mustChangePassword && (
-          <p className="px-1 text-muted">
-            The password you were given works once. Choose your own now. Only you will know it, not even Veriq admins.
-          </p>
-        )}
-        <Card>
-          <NewPasswordForm next={next} first={staff.mustChangePassword} />
-        </Card>
-      </main>
-    </div>
+    <CentredCard area="staff" title={staff.mustChangePassword ? "Set your own password" : "Change your password"}>
+      {staff.email && <p className="-mt-2 mb-4 text-small text-muted">{staff.email}</p>}
+      <NewPasswordForm next={next} first={staff.mustChangePassword} />
+    </CentredCard>
   );
 }

@@ -18,7 +18,7 @@ import { RenewalNotice } from "./RenewalNotice";
 
 const cardName = (slug: string) => CARD_TYPES.find((c) => c.slug === slug)?.name ?? slug;
 
-const INPUT = "mt-1 block min-h-12 w-full rounded-(--radius-control) border border-line-strong bg-surface px-4 text-base font-normal";
+const INPUT = "mt-1 block min-h-12 w-full rounded-(--radius-control) border border-line-strong bg-surface px-4 text-body font-normal";
 
 /** Screen 5. Everything here stays in this phone's IndexedDB (rule 2). */
 export function CardsManager() {
@@ -72,31 +72,29 @@ export function CardsManager() {
   return (
     <div className="mt-6 space-y-4">
       {storageBlocked && (
-        <p role="alert" className="rounded-(--radius-control) bg-emergency-bg p-4 text-emergency">
-          This browser won&apos;t let us save cards on the phone (private mode?). You can still search with any card.
+        <p role="alert" className="rounded-(--radius-control) bg-warn-bg p-4 text-small text-warn-ink">
+          This browser can&apos;t save cards (private mode?). You can still search with any card.
         </p>
       )}
 
       {cards.length === 0 && !storageBlocked && (
-        <p className="rounded-(--radius-card) bg-page p-4 text-muted">
-          No cards yet. Add your card so searches start with it. Only the last 4 digits are kept, on this phone.
-        </p>
+        <p className="text-muted">No cards yet.</p>
       )}
 
       <ul className="space-y-3">
         {cards.map((c) => (
           <li
             key={c.id}
-            className={`rounded-(--radius-card) p-5 ${c.isDefault ? "bg-brand text-white" : "border border-line-strong bg-surface"}`}
+            className={`rounded-(--radius-card) bg-surface p-4 ${c.isDefault ? "border-2 border-brand" : "shadow-card"}`}
           >
             <div className="flex items-start justify-between gap-3">
-              <h2 className="text-2xl font-extrabold">{cardName(c.insurerSlug)}</h2>
-              {c.isDefault && <span className="rounded-lg bg-surface px-3 py-1 text-sm font-bold text-brand">DEFAULT</span>}
+              <h2 className="text-title">{cardName(c.insurerSlug)}</h2>
+              {c.isDefault && <span className="rounded-full bg-brand-soft px-2.5 py-0.5 text-small font-semibold text-brand-strong">Default</span>}
             </div>
-            <p className="mt-3 text-xl font-bold tracking-widest" aria-label={`Card ending ${c.last4}`}>
+            <p className="mt-3 text-section tracking-widest" aria-label={`Card ending ${c.last4}`}>
               •••• •••• {c.last4}
             </p>
-            <div className={`mt-3 flex flex-wrap justify-between gap-2 ${c.isDefault ? "text-white/90" : "text-muted"}`}>
+            <div className="mt-3 flex flex-wrap justify-between gap-2 text-small text-muted">
               <span>
                 {c.nickname}
                 {c.dependants.length > 0 && ` + ${c.dependants.length} ${c.dependants.length === 1 ? "dependant" : "dependants"}`}
@@ -123,7 +121,7 @@ export function CardsManager() {
                   await removeCard(c.id);
                   await reload();
                 }}
-                className={`min-h-11 rounded-full px-4 font-semibold ${c.isDefault ? "text-white underline" : "text-muted underline"}`}
+                className="min-h-11 rounded-full px-4 font-semibold text-muted underline"
               >
                 Remove
               </button>
@@ -134,13 +132,13 @@ export function CardsManager() {
 
       {family.length > 0 && (
         <section aria-labelledby="family">
-          <h2 id="family" className="text-lg font-bold">
+          <h2 id="family" className="text-section">
             Family
           </h2>
           <ul className="mt-2 space-y-2">
             {family.map((f) => (
               <li key={f.name} className="rounded-(--radius-card) bg-page p-4">
-                <p className="font-bold">{f.name}</p>
+                <p className="font-semibold">{f.name}</p>
                 <p className="text-muted">{f.insurerSlugs.map(cardName).join(" · ")} dependant</p>
               </li>
             ))}
@@ -162,8 +160,8 @@ export function CardsManager() {
           className="space-y-4 rounded-(--radius-card) border border-line-strong p-4"
           noValidate
         >
-          <h2 className="text-lg font-bold">Add a card</h2>
-          <label className="block text-sm font-semibold">
+          <h2 className="text-section">Add a card</h2>
+          <label className="block text-small font-semibold">
             Card
             <select name="insurer" defaultValue="nhis" aria-label="Card type" className={INPUT}>
               {CARD_TYPES.map((t) => (
@@ -173,31 +171,31 @@ export function CardsManager() {
               ))}
             </select>
           </label>
-          <label className="block text-sm font-semibold">
+          <label className="block text-small font-semibold">
             Last 4 digits of the card number
             <input name="last4" inputMode="numeric" autoComplete="off" maxLength={4} pattern="\d{4}" className={INPUT} />
             <span className="mt-1 block font-normal text-muted">Only the last 4. We never ask for the full number.</span>
           </label>
-          <label className="block text-sm font-semibold">
+          <label className="block text-small font-semibold">
             Card holder&apos;s name
             <input name="nickname" autoComplete="off" maxLength={30} placeholder="For example, Ama" className={INPUT} />
           </label>
-          <label className="block text-sm font-semibold">
+          <label className="block text-small font-semibold">
             Expiry month (optional)
             <input name="expiresOn" type="month" className={INPUT} />
           </label>
-          <label className="block text-sm font-semibold">
+          <label className="block text-small font-semibold">
             Family on this card (optional)
             <input name="dependants" autoComplete="off" placeholder="For example, Kofi (son), Esi" className={INPUT} />
             <span className="mt-1 block font-normal text-muted">Separate names with commas.</span>
           </label>
           {error && (
-            <p role="alert" className="font-semibold text-emergency">
+            <p role="alert" className="font-semibold text-warn-ink">
               {error}
             </p>
           )}
           <div className="flex gap-3">
-            <button type="submit" className="min-h-12 flex-1 rounded-(--radius-control) bg-brand font-bold text-white">
+            <button type="submit" className="min-h-12 flex-1 rounded-(--radius-control) bg-brand font-semibold text-white">
               Save on this phone
             </button>
             <button
@@ -217,7 +215,7 @@ export function CardsManager() {
           <button
             type="button"
             onClick={() => setAdding(true)}
-            className="flex min-h-14 w-full items-center justify-center gap-2 rounded-(--radius-card) border-2 border-dashed border-brand/60 text-lg font-bold text-brand"
+            className="flex min-h-14 w-full items-center justify-center gap-2 rounded-(--radius-card) border border-dashed border-brand/60 font-semibold text-brand"
           >
             <Icon name="plus" className="h-5 w-5" /> Add a card
           </button>

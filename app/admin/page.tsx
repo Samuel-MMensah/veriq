@@ -51,7 +51,6 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
     <>
       <AdminPageHeader
         title={`Good ${greeting(now)}, ${staff.name.split(/[\s@]/)[0]}`}
-        description="What needs doing today. Each number opens its list."
         action={demo ? <SampleDataTag /> : undefined}
       />
       <AdminBody>
@@ -118,9 +117,9 @@ function Todo({ href, icon, count, label, source }: { href: string; icon: IconNa
           </span>
           <Icon name="chevron" className="h-5 w-5 text-brand" />
         </span>
-        <span className="mt-4 text-3xl font-extrabold tabular-nums">{count.toLocaleString("en-GB")}</span>
+        <span className="mt-4 text-title">{count.toLocaleString("en-GB")}</span>
         <span className="mt-0.5 font-semibold">{label}</span>
-        <span className="mt-2 text-sm text-muted">{source}</span>
+        <span className="mt-2 text-small text-muted">{source}</span>
       </Link>
     </li>
   );

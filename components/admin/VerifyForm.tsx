@@ -33,7 +33,7 @@ export function VerifyForm({
           <input type="checkbox" name="name_matches" className="mt-1 h-5 w-5 accent-brand" />
           <span>
             <span className="block font-semibold">The name matches the NHIA list</span>
-            <span className="text-sm break-all text-muted">
+            <span className="text-small break-all text-muted">
               {nhiaName}
               {nhiaRef && <> · {nhiaRef}</>}
             </span>
@@ -43,7 +43,7 @@ export function VerifyForm({
           <input type="checkbox" name="called_back" className="mt-1 h-5 w-5 accent-brand" />
           <span>
             <span className="block font-semibold">I called the hospital back</span>
-            <span className="text-sm text-muted">On a number I found myself, not one the person gave me, and they confirmed this person works there.</span>
+            <span className="text-small text-muted">On a number I found myself, not one the person gave me, and they confirmed this person works there.</span>
           </span>
         </label>
       </fieldset>

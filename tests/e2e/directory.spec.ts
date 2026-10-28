@@ -23,7 +23,7 @@ test("a search near Dansoman shows real NHIA facilities with the source line and
   // Rule D3: no real facility has services yet, so they show in the second group.
   const group = page.getByRole("region", { name: "Services not listed. Call to ask" });
   await expect(group).toBeVisible();
-  await expect(group.getByText("Sorted by distance only. Pharmacies are not shown.")).toBeVisible();
+  await expect(group.getByText("By distance")).toBeVisible(); // rule D3 sort, said briefly
   const cards = group.getByRole("listitem");
   expect(await cards.count()).toBeGreaterThan(0);
   expect(await cards.count()).toBeLessThanOrEqual(10);
@@ -35,7 +35,7 @@ test("a search near Dansoman shows real NHIA facilities with the source line and
     await expect(card).toContainText(SOURCE);
     await expect(card).toContainText("NHIS not confirmed yet");
     await expect(card).toContainText("On NHIA list, not checked yet. Call first");
-    await expect(card).toContainText("Type on the NHIA list:");
+    await expect(card).toContainText("NHIA type:");
     await expect(card).not.toContainText(/Pharmacy|Chemical Shop/i);
     // No fact without a source: no opening status, no top-up, no patient count.
     await expect(card).not.toContainText(/Open|Closed|top-up|patients confirmed/);
@@ -71,13 +71,13 @@ test("the hospital page of a real facility: source line, OpenStreetMap credit, n
   await page.getByRole("link", { name: /Dansoman Polyclinic/ }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Dansoman Polyclinic");
   await expect(page.getByText(SOURCE)).toBeVisible();
-  await expect(page.getByText("Map location from OpenStreetMap")).toBeVisible();
+  await expect(page.getByText("Map: OpenStreetMap")).toBeVisible();
   await expect(page.getByRole("link", { name: "© OpenStreetMap contributors" })).toHaveAttribute(
     "href",
     "https://www.openstreetmap.org/copyright",
   );
-  await expect(page.getByText("Not listed yet. Call the hospital to ask before you go.")).toBeVisible();
-  await expect(page.getByText("No phone number on the list yet")).toBeVisible();
+  await expect(page.getByText("Services not listed yet. Call to ask.")).toBeVisible();
+  await expect(page.getByText("No phone listed")).toBeVisible();
   await expect(page.getByText("SAMPLE DATA", { exact: true })).toHaveCount(0);
   // Rule R1: REPORTS_LIVE is off, so no report link on a real facility.
   await expect(page.getByText("Reporting opens soon. Call the hospital to check your card.")).toBeVisible();
@@ -115,7 +115,7 @@ test("emergency mode lists real hospitals as 'Emergency not checked. Call first'
   await expect(units.first()).toBeVisible();
   expect(await units.count()).toBeGreaterThan(0);
   await expect(units.first()).toContainText(SOURCE);
-  await expect(units.first()).toContainText(/Type on the NHIA list: (PRIMARY HOSPITAL|SECONDARY HOSPITAL|POLY2005)/);
+  await expect(units.first()).toContainText(/NHIA type: (PRIMARY HOSPITAL|SECONDARY HOSPITAL|POLY2005)/);
   await expect(page.getByText(/Pharmacy/)).toHaveCount(0);
   // Sorted by distance.
   const km = (await units.locator("span", { hasText: / km$/ }).allTextContents()).map((t) => Number(t.replace(" km", "")));

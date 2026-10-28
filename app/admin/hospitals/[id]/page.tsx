@@ -81,15 +81,15 @@ export default async function HospitalPage({ params, searchParams }: { params: P
               )}
               <dl className="mt-4 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
                 <div>
-                  <dt className="text-sm text-muted">Name on the list</dt>
+                  <dt className="text-small text-muted">Name on the list</dt>
                   <dd className="font-semibold">{facility.name}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm text-muted">Where in the NHIA file</dt>
+                  <dt className="text-small text-muted">Where in the NHIA file</dt>
                   <dd className="font-semibold break-all">{facility.source_ref ?? "Not in the file"}</dd>
                 </div>
                 <div>
-                  <dt className="text-sm text-muted">Phone on the list</dt>
+                  <dt className="text-small text-muted">Phone on the list</dt>
                   <dd className="font-semibold">{facility.phone ?? "None. Find one yourself."}</dd>
                 </div>
               </dl>
@@ -102,7 +102,7 @@ export default async function HospitalPage({ params, searchParams }: { params: P
                   <li key={p.user_id} className="flex min-h-14 items-center justify-between gap-3 py-3">
                     <Link href={`/admin/staff/${p.user_id}`} className="min-w-0 font-semibold text-brand hover:underline">
                       <span className="block truncate">{p.display_name ?? p.email}</span>
-                      <span className="block truncate text-sm font-normal text-muted">
+                      <span className="block truncate text-small font-normal text-muted">
                         {p.email} · made {whenText(p.created_at, now)}
                       </span>
                     </Link>
@@ -128,7 +128,7 @@ export default async function HospitalPage({ params, searchParams }: { params: P
                   title="Remove verification?"
                   body={<>{name}&apos;s staff can no longer publish a morning check or answers. What they published stays, with its time.</>}
                   confirmLabel="Remove verification"
-                  variant="danger"
+                  variant="primary"
                   reason={{ label: "Why?", hint: "Required, for the admin log.", required: true }}
                 />
               ) : (

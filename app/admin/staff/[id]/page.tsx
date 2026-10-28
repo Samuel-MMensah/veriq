@@ -84,7 +84,7 @@ export default async function StaffAccountPage({ params, searchParams }: { param
 function Fact({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <dt className="text-sm text-muted">{label}</dt>
+      <dt className="text-small text-muted">{label}</dt>
       <dd className="font-semibold break-words">{children}</dd>
     </div>
   );

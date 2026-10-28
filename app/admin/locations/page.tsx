@@ -51,7 +51,7 @@ export default async function LocationsPage({ searchParams }: { searchParams: Pr
     <>
       <AdminPageHeader
         title="Needs a location"
-        description="We found no sure match on OpenStreetMap for these, so patients can't find them by distance yet. Check the place, then paste its latitude and longitude."
+        description="Not on the map yet, so not in any distance search."
       />
       <AdminBody>
         {saved && <Toast>Location saved for {saved}. It now shows in searches near it.</Toast>}
@@ -70,7 +70,7 @@ export default async function LocationsPage({ searchParams }: { searchParams: Pr
         </SourceLine>
         {!canEdit && (
           <Card tone="warn">
-            <p>You are signed in with the demo login. It can look at real facilities but not change them. Sign in with your admin account to save locations.</p>
+            <p>Demo login: you can look, not save. Sign in with your admin account to save.</p>
           </Card>
         )}
 
@@ -86,14 +86,14 @@ export default async function LocationsPage({ searchParams }: { searchParams: Pr
               <details key={district} open={Boolean(q)} className="group rounded-(--radius-card) bg-surface shadow-card">
                 <summary className="flex min-h-14 cursor-pointer items-center justify-between gap-3 px-4 font-semibold">
                   {district}
-                  <span className="rounded-full bg-neutral-bg px-2.5 py-0.5 text-sm text-neutral-ink tabular-nums">{list.length}</span>
+                  <span className="rounded-full bg-neutral-bg px-2.5 py-0.5 text-small text-neutral-ink tabular-nums">{list.length}</span>
                 </summary>
                 <ul className="divide-y divide-line border-t border-line">
                   {list.map((f) => (
                     <li key={f.id} id={`f-${f.id}`} className="px-4 py-4">
                       <p className="font-semibold">{displayName(f.name)}</p>
-                      <p className="text-sm text-muted">{[f.nhia_type, displayPlace(f.area) ?? "No area in the file"].join(" · ")}</p>
-                      <p className="text-sm text-muted">
+                      <p className="text-small text-muted">{[f.nhia_type, displayPlace(f.area) ?? "No area in the file"].join(" · ")}</p>
+                      <p className="text-small text-muted">
                         {sourceLine(f)} · {f.source_ref}
                       </p>
                       {canEdit && <LocationForm facilityId={f.id} name={displayName(f.name)} query={q} action={setLocationAction} />}
@@ -105,7 +105,7 @@ export default async function LocationsPage({ searchParams }: { searchParams: Pr
           </div>
         )}
 
-        <p className="text-sm text-muted">
+        <p className="text-small text-muted">
           Map data and tiles ©{" "}
           <a href="https://www.openstreetmap.org/copyright" className="underline" target="_blank" rel="noopener noreferrer">
             OpenStreetMap contributors

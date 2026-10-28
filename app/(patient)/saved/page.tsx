@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LastSearch } from "@/components/find/LastSearch";
+import { buttonClass } from "@/components/ui/Button";
 
 export const metadata: Metadata = { title: "Saved" };
 
@@ -9,15 +10,11 @@ export const metadata: Metadata = { title: "Saved" };
 export default function Page() {
   return (
     <main className="px-4 pb-6 pt-6">
-      <h1 className="text-3xl font-extrabold">Saved</h1>
-      <p className="mt-1 text-muted">Saving hospitals and alerts come in the pilot.</p>
+      <h1 className="text-title">Saved</h1>
       <div className="mt-6 space-y-3">
         <LastSearch />
-        <Link
-          href="/find"
-          className="flex min-h-14 items-center justify-center rounded-(--radius-card) border-2 border-brand font-bold text-brand"
-        >
-          Start a new search
+        <Link href="/find" className={buttonClass({ variant: "secondary", full: true })}>
+          New search
         </Link>
       </div>
     </main>

@@ -47,7 +47,7 @@ test("first open, find antenatal with NHIS, 4 results in order, open Akoma", asy
   await expect(page.getByText("Mission · Kaneshie · 1.8 km")).toBeVisible();
   await expect(page.getByRole("link", { name: "Call" })).toHaveAttribute("href", /^tel:/);
   await expect(page.getByRole("link", { name: "Directions" })).toHaveAttribute("href", /google\.com\/maps\/dir/);
-  await expect(page.getByText(/^Updated by hospital \d{1,2}:\d{2} (am|pm)$/)).toBeVisible();
+  await expect(page.getByText(/^Hospital · \d{1,2}:\d{2} (am|pm)$/)).toBeVisible();
   await expect(page.getByText(/^Open(?: till \d{1,2}(?::\d{2})? (?:am|pm))?$/).first()).toBeVisible(); // rule F: the demo till time, if any
   await expect(page.getByText("From 2 pm")).toBeVisible();
   await expect(page.getByText(/^Scan top-up about GH¢ 80 \(\d patients, last 60 days\)$/)).toBeVisible();
@@ -76,9 +76,9 @@ test("No card/cash shows every antenatal facility nearby, without badges", async
   await expect(page.getByText(/Confirmed by hospital/)).toHaveCount(0);
 });
 
-test("results link to How Veriq checks", async ({ page }) => {
+test("results link to How we check", async ({ page }) => {
   await page.goto("/results?service=antenatal&card=nhis&lat=5.545&lng=-0.265&area=dansoman");
-  await page.getByRole("link", { name: "How Veriq checks" }).click();
+  await page.getByRole("link", { name: "How we check" }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Every badge tells you who said so, and when.");
   await expect(page.getByText("Hospitals can't pay to change a badge.", { exact: false })).toBeVisible();
 });

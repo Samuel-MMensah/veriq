@@ -2,6 +2,7 @@
 // works on the very first request, before proxy.ts's cookie comes back.
 import { cookies } from "next/headers";
 import { currentStaff } from "@/lib/auth/session";
+import { isDemoSite } from "@/lib/demo/site";
 import { demoModeFrom } from "@/lib/rules/directory";
 import type { SearchParams } from "@/lib/view/catalog";
 
@@ -15,9 +16,7 @@ const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v
  * The demo deployment (a separate Vercel project for pitches) sets VERIQ_DEMO_SITE=on: it opens in
  * demo mode with no ?demo=1. The real site never sets it (docs/DEPLOY.md).
  */
-export function isDemoSite(): boolean {
-  return process.env.VERIQ_DEMO_SITE === "on";
-}
+export { isDemoSite };
 
 export async function isDemoMode(searchParams?: SearchParams): Promise<boolean> {
   const param = first(searchParams?.demo);

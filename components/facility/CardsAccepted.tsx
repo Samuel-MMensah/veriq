@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { BadgeLine } from "@/components/badges/BadgeLine";
 import { HistoryTable } from "@/components/badges/HistoryTable";
-import { Icon } from "@/components/ui/Icon";
 import type { CardRow } from "@/lib/view/facility";
 
 const ANSWER_STYLE: Record<CardRow["answer"], string> = {
@@ -12,10 +11,10 @@ const ANSWER_STYLE: Record<CardRow["answer"], string> = {
   Unknown: "bg-neutral-bg text-neutral-ink",
 };
 
+/** Rule T top-ups, in the rule's own words, as a plain line. */
 function TopUps({ topUps }: { topUps: string[] }) {
   return topUps.map((t) => (
-    <p key={t} className="mt-2 flex items-start gap-2 rounded-(--radius-control) bg-page px-3 py-2 text-sm text-muted">
-      <Icon name="info" className="mt-0.5 h-4 w-4" />
+    <p key={t} className="mt-2 text-small text-ink">
       {t}
     </p>
   ));
@@ -25,11 +24,11 @@ function TopUps({ topUps }: { topUps: string[] }) {
 export function YourCard({ card }: { card: CardRow }) {
   return (
     <section aria-labelledby="your-card" className="rounded-(--radius-card) bg-surface p-4 shadow-card">
-      <div className="flex items-center justify-between gap-3">
-        <h2 id="your-card" className="text-lg font-bold">
+      <div className="flex min-h-11 items-center justify-between gap-3">
+        <h2 id="your-card" className="text-section">
           Your card here
         </h2>
-        <Link href="/how-we-check" className="inline-flex min-h-11 items-center font-semibold text-brand underline">
+        <Link href="/how-we-check" className="inline-flex min-h-11 items-center text-small font-semibold text-brand">
           How we check
         </Link>
       </div>
@@ -48,28 +47,28 @@ export function CardsAccepted({ cards, title, howWeCheck }: { cards: CardRow[]; 
   return (
     <section aria-labelledby="cards" className="rounded-(--radius-card) bg-surface p-4 shadow-card">
       <div className="flex min-h-11 items-center justify-between gap-3">
-        <h2 id="cards" className="text-lg font-bold">
+        <h2 id="cards" className="text-section">
           {title}
         </h2>
         {howWeCheck && (
-          <Link href="/how-we-check" className="inline-flex min-h-11 items-center font-semibold text-brand underline">
+          <Link href="/how-we-check" className="inline-flex min-h-11 items-center text-small font-semibold text-brand">
             How we check
           </Link>
         )}
       </div>
       {cards.length === 0 ? (
-        <p className="mt-2 text-sm text-muted">No card information yet. Call first.</p>
+        <p className="mt-2 text-small text-muted">No card information yet. Call first.</p>
       ) : (
         <ul className="divide-y divide-line">
           {cards.map((c) => (
             <li key={c.insurer.id} className="py-3">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h3 className="text-base font-bold">{c.insurer.name}</h3>
+                  <h3 className="font-semibold">{c.insurer.name}</h3>
                   {/* Rule 4: every fact says who said so and when. */}
-                  <p className="text-sm text-muted">{c.badge.text}</p>
+                  <p className="text-small text-muted">{c.badge.text}</p>
                 </div>
-                <span className={`shrink-0 rounded-full px-3 py-0.5 text-sm font-bold ${ANSWER_STYLE[c.answer]}`}>
+                <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-small font-semibold ${ANSWER_STYLE[c.answer]}`}>
                   {c.answer}
                 </span>
               </div>

@@ -54,7 +54,7 @@ export function LocationForm({
         <Button disabled={!parsed?.ok || pending}>{pending ? "Saving…" : "Save"}</Button>
       </div>
       {error && (
-        <p id={`${id}-error`} className="text-sm font-semibold text-danger-ink">
+        <p id={`${id}-error`} className="text-small font-semibold text-danger-ink">
           {error}
         </p>
       )}
@@ -80,7 +80,7 @@ function MapPreview({ lat, lng, name }: { lat: number; lng: number; name: string
           <Icon name="pin" className="h-9 w-9 fill-white" />
         </span>
       </div>
-      <figcaption className="flex flex-wrap justify-between gap-2 px-3 py-2 text-sm text-muted">
+      <figcaption className="flex flex-wrap justify-between gap-2 px-3 py-2 text-small text-muted">
         <span>
           {lat}, {lng}
         </span>
