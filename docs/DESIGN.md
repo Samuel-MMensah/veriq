@@ -1,6 +1,6 @@
 # Veriq design system
 
-Prompt 10 set this up; Prompt 10c tightened it. One set of tokens and a few shared components for all four sides: patients, hospital staff, insurers and admin.
+Prompt 10 set this up; Prompt 10c tightened it; session 2026-10-28-02 added the display size and fuller staff pages. One set of tokens and a few shared components for all four sides: patients, hospital staff, insurers and admin.
 
 **The goal:** calm, professional, minimal. A finished product from a serious health company. Standard patterns, nothing clever. Less text, more clarity. Rules 4, 7 and 9 always win over looks:
 
@@ -17,17 +17,18 @@ The sample above is a live page: sign in as an admin and open `/admin/design`. E
 | Meaning | Token (Tailwind class) | Value | Used for |
 | --- | --- | --- | --- |
 | Action, confirmed | `brand`, `brand-strong`, `brand-soft` | #0B6E4F, #08573F, #E8F2EE | The primary button; "hospital confirmed" and "patients confirmed" (told apart by icon); the selected state; good status words ("Open") |
-| Refusals and warnings | `warn-bg`, `warn-ink` (and `refused`) | #FDF0E6, #8F3D07 | Refused (B1), "Closed", "Full", waiting, needs attention |
+| Refusals and warnings | `warn-bg`, `warn-ink` (and `refused`) | #FDF0E6, #A64B0A | Refused (B1), waiting, needs attention, "Says full" in emergency mode |
 | Emergency | `emergency`, `danger-bg`, `danger-ink` | #8A1C12, #FDECEA | Emergency mode and the links to it. Nothing else is red. |
-| Neutrals | `ink`, `muted`, `surface`, `page`, `line`, `line-strong`, `neutral-bg`, `neutral-ink` | #16201C, #4F5D57, #FFFFFF, #F4F6F5, #E2E7E5, #C9D1CE, #EEF1F0, #3F4B46 | Everything else: text, cards, borders, "not checked", "From 2 pm", switched-off accounts |
+| Neutrals | `ink`, `muted`, `surface`, `page`, `line`, `line-strong`, `neutral-bg`, `neutral-ink` | #16201C, #4F5D57, #FFFFFF, #F4F6F5, #E2E7E5, #C9D1CE, #EEF1F0, #3F4B46 | Everything else: text, cards, borders, "not checked", "From 2 pm", switched-off accounts. Status words "Closed", "Full" and "Not working" are `neutral-ink`: a fact, not an alarm |
 
 There are no other colours and no gradients. The light "patient" green and red badges are gone (Prompt 10c). Every tone pair passes WCAG AA. Colour never carries meaning alone: there is always a word, and usually an icon.
 
-## Type: Plus Jakarta Sans, four sizes
+## Type: Plus Jakarta Sans, four sizes and one display size
 
 | Size | Class | Size / line | Weight | Used for |
 | --- | --- | --- | --- | --- |
-| Page title | `text-title` | 24 / 32 | 700 | One per screen; big figures (KPI tiles, 112 and 193, one-time passwords) |
+| Display | `text-display` | 40 / 44 | 700, tabular | Headline numbers only: insurer KPI tiles and admin overview counts. The label sits under it in `text-small` 600 |
+| Page title | `text-title` | 24 / 32 | 700 | One per screen; other big figures (112 and 193, one-time passwords) |
 | Section title | `text-section` | 18 / 26 | 700 | Card and section headings, hospital names in lists |
 | Body | (default) / `text-body` | 16 / 24 | 400; 600 for labels and buttons | Everything else. Inputs are never smaller (no zoom on phones) |
 | Small | `text-small` | 14 / 20 | 400 or 600 | Source lines, hints, meta, badges, the SAMPLE DATA tag, tab labels |
@@ -37,7 +38,7 @@ The weights are 400, 600 and 700. Figures are tabular everywhere (`font-variant-
 ## Spacing, shape, icons, motion
 
 - **Spacing:** an 8 px grid. 16 px side gutter on phones; 24 to 32 px on a laptop. Cards have 16 px padding. 8 to 16 px between cards, 24 px between sections. Desktop content is at most about 1200 px wide (form screens such as the morning check, about 670 px).
-- **Cards:** one style. White, a hairline border (`shadow-card` is a 1 px line, no shadow), 12 px corners (`--radius-card`). Only raised things (dialogs, toasts, the emergency call buttons) cast a shadow.
+- **Cards:** one style. White, a hairline border (`shadow-card` is a 1 px line, no shadow), 12 px corners (`--radius-card`). Only raised things (dialogs, toasts, the emergency call buttons) cast a shadow. On staff screens a card's heading sits on a hairline across the card (`<Card divided>`).
 - **Controls:** 12 px corners (`--radius-control`), 48 px tall; segmented controls and chips at least 44 px.
 - **Badges:** one style. A pill in `text-small` 600, in a tone from the table above (`Badge`, `components/ui/Badge.tsx`).
 - **Icons:** one set (`components/ui/Icon.tsx`), 24 px grid, 2 px stroke, round ends. Used sparingly: beside a badge answer, in navigation, on a call button, on empty states. Never decoration.
@@ -57,7 +58,7 @@ The weights are 400, 600 and 700. Figures are tabular everywhere (`font-variant-
 | `BadgeLine` (`components/badges`) | The rule B answer: answer first, then who said so and when, in the rule's own words. |
 | `StatusLine` (`components/facility`) | The rule F status of one service, with a compact source ("Hospital · 40 min ago"). |
 | `SourceLine` | Rule 4 under a list or fact, in one small line. |
-| `EmptyState` | An icon, one line, one action. Never a dead end. |
+| `EmptyState` | An icon, one line, one action. Never a dead end. Inside a staff card it is `compact`: icon and words on one row. |
 | `Toast` | The answer to what you just did. Good news is `role=status`; errors are `role=alert`. |
 | `ConfirmAction` (`Dialog.tsx`) | A secondary button that asks first, in a native `<dialog>`. It can ask why (for the admin log). |
 | `Field` + `inputClass` | A label, an optional one-line hint, and an error tied to the control. |
@@ -74,7 +75,7 @@ The weights are 400, 600 and 700. Figures are tabular everywhere (`font-variant-
   - **The hospital page:** in sections. Your card, Today, Other cards, Report.
   - **Explanations:** they live on `/how-we-check`, linked once as "How we check".
 - **Staff, insurers and admin (`StaffShell`):**
-  - **Laptop:** a dark side bar with the wordmark ("veriq hospitals", "veriq insurers", "veriq admin"), the navigation, and who is signed in with Sign out.
+  - **Laptop:** content up to 1200 px, used fully: cards side by side in two or three columns (held reports, demo data, the location districts) rather than one narrow column. A dark side bar with the wordmark ("veriq hospitals", "veriq insurers", "veriq admin"), the navigation, and who is signed in with Sign out.
   - **390 px:** a dark top bar with the same links as tabs.
   - **Every screen:** starts with `StaffPageHeader` (title, at most one short line, at most one action, the SAMPLE DATA tag).
   - **Insurers:** KPI tiles of equal height, the number first; tables with right-aligned numbers; no disabled placeholders.

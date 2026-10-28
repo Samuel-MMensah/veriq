@@ -54,6 +54,8 @@ test("the insurer sees rule K figures: 23 refusals at 6 hospitals, Pinecrest fir
   await expect(rows.nth(1)).toContainText("In network");
   await expect(rows.nth(1)).toContainText("9");
   await expect(page.getByRole("row", { name: /Akoma Mission Hospital/ })).toContainText("Not listed");
+  // Demo hospitals have placeholder numbers (+233 000 000 nnn), so no Call button opens a dead number.
+  await expect(page.getByRole("table").getByRole("link", { name: /^Call / })).toHaveCount(0);
   await expect(page.getByText("Coverage gaps")).toBeVisible();
 });
 

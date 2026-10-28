@@ -14,7 +14,7 @@ export function accountStatus(p: Pick<ProfileRow, "disabled_at" | "must_change_p
 
 /** The admin log for one hospital or account, newest first: who, what, when and why. */
 export function AdminHistory({ actions, now }: { actions: AdminActionRow[]; now: Date }) {
-  if (actions.length === 0) return <EmptyState icon="history" title="No admin actions yet" />;
+  if (actions.length === 0) return <EmptyState icon="history" title="No admin actions yet" compact />;
   return (
     <>
       <ol className="relative space-y-4 border-l-2 border-line pl-5" aria-label="History, newest first">

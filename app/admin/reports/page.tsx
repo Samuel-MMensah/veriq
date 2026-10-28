@@ -57,10 +57,10 @@ export default async function HeldReportsPage({ searchParams }: { searchParams: 
         {done === "rejected" && <Toast>Rejected. The report will never count.</Toast>}
         {held.length === 0 ? (
           <Card>
-            <EmptyState title="No held reports">Nothing is waiting. Reports are held only when a hospital gets more than 10 in an hour.</EmptyState>
+            <EmptyState title="No held reports" compact>Nothing is waiting. Reports are held only when a hospital gets more than 10 in an hour.</EmptyState>
           </Card>
         ) : (
-          <ul className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
+          <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:gap-4 xl:grid-cols-3">
             {held.map((r) => {
               const o = outcomeText(r);
               return (

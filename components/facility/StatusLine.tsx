@@ -1,11 +1,11 @@
 import type { StatusTone, StatusView } from "@/lib/view/status";
 
-// Prompt 10c: green for good, orange for warnings ("Closed", "Full"), ink for "From 2 pm". Red is
-// for emergency mode only.
+// Green for good, ink for "From 2 pm", neutral grey for "Closed", "Full" and "Not working" (a fact,
+// not an alarm). Red is for emergency mode only; emergency mode marks "Says full" in orange.
 export const TONE_TEXT: Record<StatusTone, string> = {
   good: "text-brand",
   later: "text-ink",
-  bad: "text-warn-ink",
+  bad: "text-neutral-ink",
   unknown: "text-muted",
 };
 

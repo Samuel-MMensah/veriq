@@ -30,6 +30,7 @@ const COLOURS: { name: string; token: string; use: string }[] = [
 ];
 
 const TYPE: { role: string; cls: string }[] = [
+  { role: "Display 40 / 700, headline numbers only", cls: "text-display" },
   { role: "Page title 24 / 700", cls: "text-title" },
   { role: "Section title 18 / 700", cls: "text-section" },
   { role: "Body 16 / 400 and 600", cls: "text-body" },
@@ -45,7 +46,7 @@ export default async function DesignPage() {
       <AdminPageHeader title="Design sample" description="Tokens and components. See docs/DESIGN.md." />
       <AdminBody>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
-          <Card title="Colour, for meaning" titleId="colour">
+          <Card title="Colour, for meaning" titleId="colour" divided>
             <ul className="grid grid-cols-2 gap-3">
               {COLOURS.map((c) => (
                 <li key={c.name} className="flex items-center gap-3">
@@ -59,28 +60,25 @@ export default async function DesignPage() {
             </ul>
           </Card>
 
-          <Card title="Type scale" titleId="type">
+          <Card title="Type scale" titleId="type" divided>
             <ul className="space-y-2">
               {TYPE.map((t) => (
                 <li key={t.role} className="flex items-baseline justify-between gap-3">
-                  <span className={t.cls}>Know before you go</span>
+                  <span className={t.cls}>{t.cls === "text-display" ? "693" : "Know before you go"}</span>
                   <span className="shrink-0 text-small text-muted">{t.role}</span>
                 </li>
               ))}
             </ul>
           </Card>
 
-          <Card title="Buttons" titleId="buttons">
+          <Card title="Buttons" titleId="buttons" divided>
             <div className="flex flex-wrap gap-2">
               <Button type="button">Primary</Button>
               <Button type="button" variant="secondary">
                 Secondary
               </Button>
               <Button type="button" variant="text">
-                Quiet
-              </Button>
-              <Button type="button" variant="primary">
-                Danger
+                Text
               </Button>
             </div>
             <Button type="button" size="lg" full className="mt-3">
@@ -88,7 +86,7 @@ export default async function DesignPage() {
             </Button>
           </Card>
 
-          <Card title="Badges and status" titleId="badges">
+          <Card title="Badges and status" titleId="badges" divided>
             <div className="flex flex-wrap gap-2">
               <Badge tone="good">Verified</Badge>
               <Badge tone="warn">Waiting</Badge>
@@ -102,7 +100,7 @@ export default async function DesignPage() {
             <SourceLine className="mt-3">From the NHIA list, October 2026</SourceLine>
           </Card>
 
-          <Card title="List rows" titleId="rows">
+          <Card title="List rows" titleId="rows" divided>
             <ul className="divide-y divide-line">
               <li>
                 <ListRow href="#rows" title="Dansoman Polyclinic" detail="Polyclinic · Dansoman" meta="Claimed today, 9:15 am" trailing={<Badge tone="warn">Waiting</Badge>} />
@@ -113,7 +111,7 @@ export default async function DesignPage() {
             </ul>
           </Card>
 
-          <Card title="Form field" titleId="field">
+          <Card title="Form field" titleId="field" divided>
             <Field id="sample-email" label="Work email" hint="The person's own work address." error="Type a work email address, e.g. name@hospital.org.">
               <input id="sample-email" defaultValue="ama@" aria-invalid className={inputClass(true)} aria-describedby="sample-email-hint sample-email-error" />
             </Field>

@@ -14,7 +14,7 @@
   --color-refused: #c2570c;
   --color-refused-bg: #fdf0e6;
   /* Darker text shades on the pale badge backgrounds, for readable contrast (WCAG AA). */
-  --color-refused-ink: #8f3d07;
+  --color-refused-ink: #a64b0a;
   --color-emergency-bg: #fdecea;
 
   /* Roles. Surfaces and lines */
@@ -30,7 +30,7 @@
   --color-good-bg: #e6f2ec;
   --color-good-ink: #1d5c43;
   --color-warn-bg: #fdf0e6;
-  --color-warn-ink: #8f3d07;
+  --color-warn-ink: #a64b0a;
   --color-danger-bg: #fdecea;
   --color-danger-ink: #8a1c12;
   --color-neutral-bg: #eef1f0;
@@ -79,6 +79,14 @@ body {
 }
 
 /* The four type sizes (docs/DESIGN.md). Weights: 400 body, 600 labels, 700 titles. */
+/* Headline numbers only: insurer KPI tiles and admin overview counts. */
+@utility text-display {
+  font-size: 2.5rem;
+  line-height: 2.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
 @utility text-title {
   font-size: 1.5rem;
   line-height: 2rem;

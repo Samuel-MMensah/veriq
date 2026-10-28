@@ -96,7 +96,7 @@ export default async function HospitalPage({ params, searchParams }: { params: P
               <SourceLine className="mt-3">{sourceLine(facility) ?? "Invented demo hospital (sample data)"}</SourceLine>
             </Card>
 
-            <Card title={`Staff accounts (${claimants.length})`} titleId="claimants">
+            <Card title={`Staff accounts (${claimants.length})`} titleId="claimants" divided>
               <ul className="divide-y divide-line">
                 {claimants.map((p) => (
                   <li key={p.user_id} className="flex min-h-14 items-center justify-between gap-3 py-3">
@@ -113,13 +113,13 @@ export default async function HospitalPage({ params, searchParams }: { params: P
               </ul>
             </Card>
 
-            <Card title="History" titleId="history">
+            <Card title="History" titleId="history" divided>
               <AdminHistory actions={history} now={now} />
             </Card>
           </div>
 
           {canEdit && (
-            <Card title={facility.verified ? "Verification" : "Verify this hospital"} titleId="verify">
+            <Card title={facility.verified ? "Verification" : "Verify this hospital"} titleId="verify" divided>
               {facility.verified ? (
                 <ConfirmAction
                   action={unverifyAction}

@@ -14,12 +14,26 @@ import { resetDemoAction } from "./actions";
 export const metadata: Metadata = { title: "Demo data" };
 
 const PATH = "/admin/demo";
-const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
+const first = (v: string | string[] | undefined) =>
+  Array.isArray(v) ? v[0] : v;
 
 // Admin: the demo reset (Prompt 8) for rehearsals. Everything here is sample data.
-export default async function DemoAdminPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
+export default async function DemoAdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
   const gate = await staffGate("admin", PATH);
-  if (!gate.ok) return <StaffGateScreen role="admin" staff={gate.staff} title="Demo data" subtitle="Before every rehearsal" path={PATH} />;
+  if (!gate.ok)
+    return (
+      <StaffGateScreen
+        role="admin"
+        staff={gate.staff}
+        title="Demo data"
+        subtitle="Before every rehearsal"
+        path={PATH}
+      />
+    );
 
   const sp = await searchParams;
   const resetAt = Number(first(sp.reset));
@@ -27,32 +41,47 @@ export default async function DemoAdminPage({ searchParams }: { searchParams: Pr
 
   return (
     <>
-      <AdminPageHeader title="Demo data" description="Rehearsals only. Real hospitals are never touched." action={<SampleDataTag />} />
-      <AdminBody className="max-w-3xl">
-        {resetAt > 0 && <Toast>Demo data reset at {accraClock(new Date(resetAt).toISOString())}. The demo story starts fresh.</Toast>}
+      <AdminPageHeader
+        title="Demo data"
+        description="Rehearsals only. Real hospitals are never touched."
+        action={<SampleDataTag />}
+      />
+      <AdminBody>
+        {resetAt > 0 && (
+          <Toast>
+            Demo data reset at {accraClock(new Date(resetAt).toISOString())}.
+            The demo story starts fresh.
+          </Toast>
+        )}
         {error && <Toast tone="error">Reset failed: {error}</Toast>}
 
-        <Card title="Reset demo data" titleId="reset">
-          <p className="text-muted">
-            Puts all 18 sample hospitals back as the demo script expects: Akoma confirmed 2 days ago and open, Pinecrest with 9
-            refusals, the GH¢ 80 scan top-up, and fresh times. It removes every report, morning check and search made since. Real
-            hospitals from the NHIA list, staff accounts and the admin log are never touched.
-          </p>
-          <form action={resetDemoAction} className="mt-4">
-            <Button full size="lg">
-              Reset demo data
+        <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-2 lg:gap-5">
+          <Card title="Reset demo data" titleId="reset" divided>
+            <p className="text-muted">
+              Puts all 18 sample hospitals back as the demo script expects:
+              Akoma confirmed 2 days ago and open, Pinecrest with 9 refusals,
+              the GH¢ 80 scan top-up, and fresh times. It removes every report,
+              morning check and search made since. Real hospitals from the NHIA
+              list, staff accounts and the admin log are never touched.
+            </p>
+            <form action={resetDemoAction} className="mt-4">
+              <Button full size="lg">
+                Reset demo data
+              </Button>
+            </form>
+          </Card>
+
+          <Card title="This phone" titleId="phone" divided>
+            <p className="mb-4 text-muted">
+              Saved cards and first open live on the phone, not in the data
+              above.
+            </p>
+            <FreshPhone />
+            <Button href="/?demo=1" variant="text" full className="mt-2">
+              Open the app in demo mode
             </Button>
-          </form>
-        </Card>
-
-        <Card title="This phone" titleId="phone">
-          <p className="mb-4 text-muted">Saved cards and first open live on the phone, not in the data above.</p>
-          <FreshPhone />
-        </Card>
-
-        <Button href="/?demo=1" variant="text" full>
-          Open the app in demo mode
-        </Button>
+          </Card>
+        </div>
       </AdminBody>
     </>
   );

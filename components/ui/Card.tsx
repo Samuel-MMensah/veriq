@@ -9,6 +9,7 @@ export function Card({
   className,
   children,
   as: Tag = "section",
+  divided = false,
 }: {
   title?: React.ReactNode;
   /** Names the section for screen readers when there is a title. */
@@ -18,6 +19,8 @@ export function Card({
   className?: string;
   children: React.ReactNode;
   as?: "section" | "div" | "li" | "article";
+  /** Staff screens: the heading sits on a hairline that runs the card's full width. */
+  divided?: boolean;
 }) {
   return (
     <Tag
@@ -31,7 +34,12 @@ export function Card({
       )}
     >
       {(title || aside) && (
-        <div className="mb-3 flex items-baseline justify-between gap-3">
+        <div
+          className={cx(
+            "flex items-baseline justify-between gap-3",
+            divided ? "-mx-4 mb-4 border-b border-line px-4 pb-3 sm:-mx-5 sm:px-5" : "mb-3",
+          )}
+        >
           {title && (
             <h2 id={titleId} className="text-section">
               {title}

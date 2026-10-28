@@ -98,7 +98,7 @@ export function StaffPageHeader({
   narrow?: boolean;
 }) {
   return (
-    <div className={`mx-auto flex ${narrow ? "max-w-2xl" : "max-w-[1200px]"} flex-wrap items-start justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-8 lg:pt-10`}>
+    <div className={`mx-auto flex ${narrow ? "max-w-2xl" : "max-w-[1200px]"} flex-wrap items-start justify-between gap-3 px-4 pt-6 pb-4 sm:px-6 lg:px-8 lg:pt-8 lg:pb-5`}>
       <div className="min-w-0">
         <h1 className="text-title">{title}</h1>
         {description && <p className="mt-1 max-w-2xl text-muted">{description}</p>}
@@ -114,7 +114,7 @@ export function StaffPageHeader({
 /** The body of a staff screen: the same side padding as the header, content up to about 1200 px. */
 export function StaffBody({ children, className = "", narrow = false }: { children: React.ReactNode; className?: string; narrow?: boolean }) {
   return (
-    <main className={`mx-auto min-w-0 ${narrow ? "max-w-2xl" : "max-w-[1200px]"} space-y-4 px-4 pb-10 break-words sm:px-6 lg:space-y-6 lg:px-8 ${className}`}>
+    <main className={`mx-auto min-w-0 ${narrow ? "max-w-2xl" : "max-w-[1200px]"} space-y-4 px-4 pb-10 break-words sm:px-6 lg:space-y-5 lg:px-8 ${className}`}>
       {children}
     </main>
   );

@@ -73,9 +73,9 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
           <Todo href="/admin/locations" icon="pin" count={needs.length} label="Facilities needing a location" source={`${listSource} · ${counted}`} />
         </ul>
 
-        <Card title="Recent admin actions" titleId="recent" aside="Last 30 days">
+        <Card title="Recent admin actions" titleId="recent" aside="Last 30 days" divided>
           {recent.length === 0 ? (
-            <EmptyState icon="history" title="Nothing yet">
+            <EmptyState icon="history" title="Nothing yet" compact>
               Every admin action is logged here: who, what, when and why.
             </EmptyState>
           ) : (
@@ -117,8 +117,8 @@ function Todo({ href, icon, count, label, source }: { href: string; icon: IconNa
           </span>
           <Icon name="chevron" className="h-5 w-5 text-brand" />
         </span>
-        <span className="mt-4 text-title">{count.toLocaleString("en-GB")}</span>
-        <span className="mt-0.5 font-semibold">{label}</span>
+        <span className="mt-4 text-display">{count.toLocaleString("en-GB")}</span>
+        <span className="mt-1 text-small font-semibold">{label}</span>
         <span className="mt-2 text-small text-muted">{source}</span>
       </Link>
     </li>

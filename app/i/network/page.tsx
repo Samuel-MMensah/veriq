@@ -8,6 +8,7 @@ import { getInsurerNetwork } from "@/lib/db/queries";
 import { serviceDb } from "@/lib/db/server";
 import { countsNhiaList, insurerFigures } from "@/lib/rules/kpi";
 import { agoText, ageMs } from "@/lib/rules/time";
+import { telHref } from "@/lib/view/phone";
 
 export const metadata: Metadata = { title: "Insurer network health" };
 
@@ -62,8 +63,8 @@ export default async function NetworkPage() {
         </ul>
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <section aria-labelledby="turned-away" className="min-w-0 rounded-(--radius-card) bg-surface p-4 shadow-card lg:col-span-2">
-            <h2 id="turned-away" className="text-section">
+          <section aria-labelledby="turned-away" className="min-w-0 rounded-(--radius-card) bg-surface p-4 shadow-card sm:p-5 lg:col-span-2">
+            <h2 id="turned-away" className="-mx-4 border-b border-line px-4 pb-3 text-section sm:-mx-5 sm:px-5">
               Where members were turned away
             </h2>
             {k.turnedAway.length === 0 ? (
@@ -82,7 +83,7 @@ export default async function NetworkPage() {
                   </thead>
                   <tbody className="max-sm:block">
                     {k.turnedAway.map((row) => {
-                      const phone = phoneOf.get(row.facilityId);
+                      const tel = telHref(phoneOf.get(row.facilityId));
                       return (
                         <tr key={row.facilityId} className="border-b border-line last:border-0 max-sm:block max-sm:py-3">
                           <th scope="row" className="py-3 pr-2 font-semibold max-sm:block max-sm:py-0">{row.name}</th>
@@ -96,10 +97,11 @@ export default async function NetworkPage() {
                                 : "–"}
                           </td>
                           <td className="py-3 text-right max-sm:block max-sm:pb-0 max-sm:pt-2 max-sm:text-left">
-                            {/* Prompt 10c: no disabled placeholders ("Add to list" waits for screen 19). */}
-                            {row.listed && phone ? (
+                            {/* Prompt 10c: no disabled placeholders ("Add to list" waits for screen 19). Call shows
+                                only for a number that can really be called, never a demo placeholder. */}
+                            {row.listed && tel ? (
                               <a
-                                href={`tel:${phone.replace(/\s/g, "")}`}
+                                href={tel}
                                 aria-label={`Call ${row.name}`}
                                 className={buttonClass({ variant: "secondary" })}
                               >
@@ -116,11 +118,11 @@ export default async function NetworkPage() {
             )}
           </section>
 
-          <section aria-labelledby="gaps" className="rounded-(--radius-card) bg-surface p-4 shadow-card">
-            <h2 id="gaps" className="text-section">
+          <section aria-labelledby="gaps" className="rounded-(--radius-card) bg-surface p-4 shadow-card sm:p-5">
+            <h2 id="gaps" className="-mx-4 border-b border-line px-4 pb-3 text-section sm:-mx-5 sm:px-5">
               Coverage gaps
             </h2>
-            <p className="mt-1 text-small text-muted">No confirmed hospital within 5 km of the search.</p>
+            <p className="mt-3 text-small text-muted">No confirmed hospital within 5 km of the search.</p>
             {k.gaps.length === 0 ? (
               <p className="mt-3 text-muted">None in the last 30 days.</p>
             ) : (
@@ -152,9 +154,9 @@ function Tile({ label, value, note, tone }: { label: string; value: string; note
   const color = tone === "brand" ? "text-brand" : tone === "refused" ? "text-warn-ink" : "text-ink";
   return (
     <li className="flex h-full flex-col rounded-(--radius-card) bg-surface p-4 shadow-card">
-      <p className={`text-title ${color}`}>{value}</p>
-      <p className="mt-1 font-semibold">{label}</p>
-      {note && <p className="mt-auto pt-1 text-small text-muted">{note}</p>}
+      <p className={`text-display ${color}`}>{value}</p>
+      <p className="mt-1 text-small font-semibold">{label}</p>
+      {note && <p className="mt-auto pt-2 text-small text-muted">{note}</p>}
     </li>
   );
 }

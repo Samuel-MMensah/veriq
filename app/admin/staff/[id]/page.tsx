@@ -53,7 +53,7 @@ export default async function StaffAccountPage({ params, searchParams }: { param
         {done === "on" && <Toast>The account is switched back on.</Toast>}
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_24rem] lg:items-start lg:gap-6">
           <div className="space-y-4">
-            <Card title="Account" titleId="account" aside={accountStatus(account)}>
+            <Card title="Account" titleId="account" aside={accountStatus(account)} divided>
               <dl className="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
                 <Fact label="Email">{account.email}</Fact>
                 <Fact label="Role">{ROLE[account.role]}</Fact>
@@ -62,16 +62,16 @@ export default async function StaffAccountPage({ params, searchParams }: { param
               </dl>
             </Card>
             {canEdit && (account.role === "hospital" || account.role === "insurer") && (
-              <Card title="Link" titleId="link-title">
+              <Card title="Link" titleId="link-title" divided>
                 <LinkForm action={linkAccountAction} userId={id} role={account.role} current={account.facility_id ?? account.insurer_id} options={options} />
               </Card>
             )}
-            <Card title="History" titleId="history">
+            <Card title="History" titleId="history" divided>
               <AdminHistory actions={history} now={now} />
             </Card>
           </div>
           {canEdit && (
-            <Card title="Actions" titleId="actions">
+            <Card title="Actions" titleId="actions" divided>
               <AccountActions userId={id} email={account.email ?? ""} disabled={Boolean(account.disabled_at)} isSelf={isSelf} />
             </Card>
           )}

@@ -76,12 +76,12 @@ export default async function LocationsPage({ searchParams }: { searchParams: Pr
 
         {shown.length === 0 ? (
           <Card>
-            <EmptyState icon={q ? "search" : "check"} title={q ? "No facility matches" : "Every facility has a location"}>
+            <EmptyState icon={q ? "search" : "check"} title={q ? "No facility matches" : "Every facility has a location"} compact>
               {q ? "Try part of the name, or the district." : "Nothing to do here."}
             </EmptyState>
           </Card>
         ) : (
-          <div className="space-y-2">
+          <div className={q ? "space-y-2" : "grid grid-cols-1 items-start gap-2 lg:grid-cols-2"}>
             {districts.map(([district, list]) => (
               <details key={district} open={Boolean(q)} className="group rounded-(--radius-card) bg-surface shadow-card">
                 <summary className="flex min-h-14 cursor-pointer items-center justify-between gap-3 px-4 font-semibold">

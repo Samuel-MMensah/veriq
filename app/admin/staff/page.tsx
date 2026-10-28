@@ -36,9 +36,9 @@ export default async function StaffPage() {
       <AdminPageHeader title="Staff accounts" />
       <AdminBody>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_24rem] lg:items-start lg:gap-6">
-          <Card title={`Accounts (${list.length})`} titleId="accounts">
+          <Card title={`Accounts (${list.length})`} titleId="accounts" divided>
             {list.length === 0 ? (
-              <EmptyState icon="people" title="No staff accounts yet" />
+              <EmptyState icon="people" title="No staff accounts yet" compact />
             ) : (
               <>
                 <ul className="divide-y divide-line lg:hidden">
@@ -86,7 +86,7 @@ export default async function StaffPage() {
             <SourceLine className="mt-3">From Veriq&apos;s staff profiles, as of {whenText(now.toISOString(), now)}</SourceLine>
           </Card>
 
-          <Card title="New account" titleId="new-account">
+          <Card title="New account" titleId="new-account" divided>
             {canEdit ? (
               <CreateAccountForm
                 action={createAccountAction}

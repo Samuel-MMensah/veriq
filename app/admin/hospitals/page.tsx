@@ -53,16 +53,16 @@ export default async function HospitalsPage({ searchParams }: { searchParams: Pr
       />
       <AdminBody>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-start lg:gap-6">
-          <Card title={`Waiting for verification (${waiting.length})`} titleId="waiting">
+          <Card title={`Waiting for verification (${waiting.length})`} titleId="waiting" divided>
             {waiting.length === 0 ? (
-              <EmptyState title="Nothing waiting">New hospital accounts show here.</EmptyState>
+              <EmptyState title="Nothing waiting" compact>New hospital accounts show here.</EmptyState>
             ) : (
               <ul className="divide-y divide-line">{waiting.map(row)}</ul>
             )}
             <SourceLine className="mt-3">Oldest claim first · from staff accounts, as of {whenText(now.toISOString(), now)}</SourceLine>
           </Card>
-          <Card title={`Verified (${verified.length})`} titleId="verified">
-            {verified.length === 0 ? <EmptyState icon="shield" title="None yet" /> : <ul className="divide-y divide-line">{verified.map(row)}</ul>}
+          <Card title={`Verified (${verified.length})`} titleId="verified" divided>
+            {verified.length === 0 ? <EmptyState icon="shield" title="None yet" compact /> : <ul className="divide-y divide-line">{verified.map(row)}</ul>}
           </Card>
         </div>
       </AdminBody>
