@@ -56,10 +56,9 @@ Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-w
 - none open. Live 3G after Prompt 10c is still to be measured after the deploy.
 
 ## Open questions for the team
-- Make SPEC's Find button a verb ("Search")? SPEC sections 2 and 9 fix "Show hospitals that take {card}".
-- Show SAMPLE DATA on screens with no hospital (Find, Cards, Help) in demo mode? Rule 1 says no today.
+- On the real site, `?demo=1` still turns on demo mode (rule D2), which shows demo hospitals with SAMPLE DATA (no Demo strip). Keep it for pitches from the real URL, or switch it off there? "The real site shows neither" suggests off; that changes rule D2, so it needs a SPEC change.
 - The review's questions still open: docs/REVIEW-2026-10-27.md, section 14 (Supabase sign-ups off? who places the 360 locations? NHIA permission? DPC registration date? pilot insurer?)
 - Who asks NHIA for permission to republish the provider list, and for a dated copy with NHIA codes and phone numbers?
 
 ## Next prompt
-Commit and push Prompt 10c (no migration), then run the live 3G check on both sites. Then Prompt 11: hospital onboarding (screen 15) and morning-check reminders; write it in full in SPEC section 8 first. Before every pitch: https://veriq-demo-snowy.vercel.app/admin/demo, then Demo login, then Reset demo data.
+Commit and push Prompt 10c and the Demo strip (no migration), then run the live 3G check on both sites. Then Prompt 11: hospital onboarding (screen 15) and morning-check reminders; write it in full in SPEC section 8 first. Before every pitch: https://veriq-demo-snowy.vercel.app/admin/demo, then Demo login, then Reset demo data.

@@ -63,6 +63,7 @@ The weights are 400, 600 and 700. Figures are tabular everywhere (`font-variant-
 | `Field` + `inputClass` | A label, an optional one-line hint, and an error tied to the control. |
 | `LoadingCards` | Grey blocks while a page loads on 3G. No facts. |
 | `SampleDataTag` | Rule 1. One per screen, always at the top right of the page header, in one style. |
+| `DemoSiteBar` | The demo site only (VERIQ_DEMO_SITE=on): a 28 px grey strip reading "Demo" above every screen, on all four sides. The real site never shows it. |
 | `StaffShell`, `StaffPageHeader`, `StaffBody` | The one frame for hospital staff, insurers and admin. See below. |
 | `CentredCard` | Staff sign-in and gate screens: wordmark, title, the form. The demo login (rehearsal sites only) sits below. |
 
