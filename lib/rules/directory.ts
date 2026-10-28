@@ -110,14 +110,24 @@ export function reportsOpen(f: { source: FacilitySource }, live: boolean): boole
 export const REPORTS_CLOSED_TEXT = "Reporting opens soon. Call the hospital to check your card.";
 
 /**
- * rule D2: is demo mode on? ?demo=1 turns it on and ?demo=0 off, for this page and (through the
- * veriq_demo cookie that proxy.ts sets) the screens after it. A demo login cookie also turns it on.
+ * rule D2: ?demo=1 works only on the demo site, in local data mode (tests) and in development, never
+ * on the real site (team decision 2026-10-28).
+ */
+export function demoParamAllowed({ demoSite, localData, development }: { demoSite: boolean; localData: boolean; development: boolean }): boolean {
+  return demoSite || localData || development;
+}
+
+/**
+ * rule D2: is demo mode on? Where the parameter is allowed (demoParamAllowed), ?demo=1 turns it on and
+ * ?demo=0 off, for this page and (through the veriq_demo cookie that proxy.ts sets) the screens after
+ * it. A demo login cookie also turns it on (the demo login is off on the real site, DEMO_LOGIN=off).
  */
 export function demoModeFrom({
   param,
   demoCookie,
   staffSignedIn,
   demoSite,
+  paramAllowed,
 }: {
   /** The ?demo= value on this request. */
   param: string | undefined;
@@ -127,10 +137,15 @@ export function demoModeFrom({
   staffSignedIn: boolean;
   /** The demo deployment (VERIQ_DEMO_SITE=on): demo mode unless someone turned it off. */
   demoSite?: boolean;
+  /** demoParamAllowed: false on the real site, where ?demo=1 and its cookie change nothing. */
+  paramAllowed: boolean;
 }): boolean {
-  if (param === "1") return true;
-  if (param === "0") return false;
-  if (demoCookie === "1" || staffSignedIn) return true;
+  if (paramAllowed) {
+    if (param === "1") return true;
+    if (param === "0") return false;
+    if (demoCookie === "1") return true;
+  }
+  if (staffSignedIn) return true;
   // On the demo deployment, ?demo=0 leaves a "0" cookie so later screens stay real.
   return Boolean(demoSite) && demoCookie !== "0";
 }

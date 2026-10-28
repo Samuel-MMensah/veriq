@@ -2,7 +2,7 @@
 // works on the very first request, before proxy.ts's cookie comes back.
 import { cookies } from "next/headers";
 import { currentStaff } from "@/lib/auth/session";
-import { isDemoSite } from "@/lib/demo/site";
+import { demoParamAllowedHere, isDemoSite } from "@/lib/demo/site";
 import { demoModeFrom } from "@/lib/rules/directory";
 import type { SearchParams } from "@/lib/view/catalog";
 
@@ -20,10 +20,11 @@ export { isDemoSite };
 
 export async function isDemoMode(searchParams?: SearchParams): Promise<boolean> {
   const param = first(searchParams?.demo);
-  // Only read the cookies when the parameter doesn't decide it.
-  if (param === "1" || param === "0") return param === "1";
+  const paramAllowed = demoParamAllowedHere();
+  // Only read the cookies when the parameter doesn't decide it (rule D2: only where it is allowed).
+  if (paramAllowed && (param === "1" || param === "0")) return param === "1";
   const demoCookie = (await cookies()).get(DEMO_COOKIE)?.value;
-  if (demoCookie === "1") return true;
+  if (paramAllowed && demoCookie === "1") return true;
   if (demoCookie !== "0" && isDemoSite()) return true;
   // Only the demo login turns demo mode on; a real account sees real facilities (rule D2).
   return demoModeFrom({
@@ -31,5 +32,6 @@ export async function isDemoMode(searchParams?: SearchParams): Promise<boolean> 
     demoCookie,
     staffSignedIn: (await currentStaff())?.kind === "demo",
     demoSite: isDemoSite(),
+    paramAllowed,
   });
 }

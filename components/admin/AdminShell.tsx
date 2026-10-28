@@ -6,6 +6,7 @@ import type { Staff } from "@/lib/auth/staff";
 export const ADMIN_NAV: NavItem[] = [
   { href: "/admin", label: "Overview", icon: "home" },
   { href: "/admin/hospitals", label: "Hospitals", icon: "shield" },
+  { href: "/admin/calls", label: "Calls", icon: "phone" },
   { href: "/admin/reports", label: "Held reports", icon: "flag" },
   { href: "/admin/locations", label: "Locations", icon: "pin" },
   { href: "/admin/staff", label: "Staff accounts", icon: "people" },

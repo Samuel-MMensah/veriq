@@ -135,14 +135,15 @@ const join = (names: string[]) =>
 export function cardNote(cardBadges: Record<string, BadgeId>, savedSlugs: string[], names: Record<string, string>): string | null {
   if (savedSlugs.length === 0) return null;
   const name = (slug: string) => names[slug] ?? slug;
-  const takes = savedSlugs.filter((s) => cardBadges[s] === "B2" || cardBadges[s] === "B3");
+  // Rule B-V: a Veriq call counts as "takes" (BV) or "not accepted" (BVx), like the hospital's own answer.
+  const takes = savedSlugs.filter((s) => cardBadges[s] === "B2" || cardBadges[s] === "BV" || cardBadges[s] === "B3");
   const rest = savedSlugs.filter((s) => !takes.includes(s));
   const parts: string[] = [];
   if (takes.length) parts.push(`Takes your ${join(takes.map(name))} ${takes.length === 1 ? "card" : "cards"}`);
   for (const s of rest) {
     const b = cardBadges[s];
     parts.push(
-      b === "B1" ? `${name(s)} reported refused` : b === "B2x" ? `${name(s)} not accepted` : `${name(s)} not checked`,
+      b === "B1" ? `${name(s)} reported refused` : b === "B2x" || b === "BVx" ? `${name(s)} not accepted` : `${name(s)} not checked`,
     );
   }
   return parts.join(" · ");

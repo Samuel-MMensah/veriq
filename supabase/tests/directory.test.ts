@@ -3,6 +3,9 @@
 // any real facility has an invented report, status, service, top-up or hospital answer, a private
 // insurer row, or a fact that isn't in the NHIA file. It runs the real migrations, the generated
 // directory migration and the demo seed in PGlite.
+// Prompt 10b, item 3: a real facility may now also hold facts from a Veriq verification call (card
+// answers, phone, services, hours, location), each backed by a saved call. Still no invented status,
+// report or top-up.
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { PGlite } from "@electric-sql/pglite";
@@ -44,12 +47,32 @@ async function expectNoInventedFacts() {
   expect(await count(`select count(*)::int n from public.status_updates where facility_id in (${real})`)).toBe(0);
   expect(await count(`select count(*)::int n from public.card_reports where facility_id in (${real})`)).toBe(0);
   expect(await count(`select count(*)::int n from public.hospital_responses where facility_id in (${real})`)).toBe(0);
-  expect(await count(`select count(*)::int n from public.facility_services where facility_id in (${real})`)).toBe(0);
+  // Services only from a Veriq call that named them (Prompt 10b).
+  expect(
+    await count(`select count(*)::int n from public.facility_services s where facility_id in (${real})
+                 and not (s.source = 'veriq_call' and exists (select 1 from public.verification_calls c
+                          where c.facility_id = s.facility_id and s.service_id = any (c.services) and c.called_at = s.checked_at))`),
+  ).toBe(0);
+  // A phone only when the file has one or a Veriq call reached it.
+  expect(
+    await count(`select count(*)::int n from public.facilities f where source = 'nhia' and phone is not null
+                 and not (phone_source = 'veriq_call' and exists (select 1 from public.verification_calls c
+                          where c.facility_id = f.id and c.phone_reached = f.phone and c.called_at = f.phone_checked_at))`),
+  ).toBe(0);
   expect(await count(`select count(*)::int n from public.reach_daily where facility_id in (${real})`)).toBe(0);
-  // Rule B4 only: one NHIS row each, listed by NHIA, with no hospital answer. Nothing for private insurers (B5).
+  // Rule B4: one NHIS row each, listed by NHIA, with no hospital answer. Any other row (a private card,
+  // listed_by = none) exists only for a Veriq call's answer (rule B-V). Never a hospital answer.
   expect(
     await count(`select count(*)::int n from public.facility_insurers where facility_id in (${real})
-                 and (insurer_id <> '${NHIS}' or listed_by <> 'nhia' or hospital_says is not null or hospital_confirmed_at is not null)`),
+                 and (hospital_says is not null or hospital_confirmed_at is not null
+                      or not ((insurer_id = '${NHIS}' and listed_by = 'nhia') or (listed_by = 'none' and call_says is not null)))`),
+  ).toBe(0);
+  // Every call answer on a card row is a saved call's answer, at that call's time.
+  expect(
+    await count(`select count(*)::int n from public.facility_insurers l where facility_id in (${real}) and call_says is not null
+                 and not exists (select 1 from public.verification_calls c join public.verification_call_answers a on a.call_id = c.id
+                                 where c.facility_id = l.facility_id and a.insurer_id = l.insurer_id
+                                   and a.answer = l.call_says and c.called_at = l.call_at)`),
   ).toBe(0);
   expect(await count(`select count(*)::int n from public.facilities f where source = 'nhia'
                       and not exists (select 1 from public.facility_insurers l where l.facility_id = f.id and l.insurer_id = '${NHIS}')`)).toBe(0);
@@ -140,6 +163,53 @@ describe("the NHIA directory (Prompt 9, rules D1 and D2)", () => {
       await expect(expectNoInventedFacts()).rejects.toThrow();
     } finally {
       await db.exec("rollback");
+    }
+  });
+
+  it("a Veriq call's facts are allowed, and nothing else is (Prompt 10b, item 3)", async () => {
+    const [f] = await rows<{ id: string }>("select id from public.facilities where source = 'nhia' and location_source = 'none' limit 1");
+    await db.exec("begin");
+    try {
+      await db.query("select public.record_verification_call($1)", [
+        {
+          facility_id: f!.id,
+          called_at: "2026-10-28T09:00:00Z",
+          caller_label: "ama@veriq.org",
+          answered_role: "Front desk",
+          phone_reached: "0302221234",
+          services: ["gp"],
+          usual_hours: "8 am to 5 pm",
+          lat: 5.56,
+          lng: -0.25,
+          answers: [
+            { insurer_id: NHIS, answer: "accepts", note: null },
+            { insurer_id: "a0000000-0000-4000-8000-000000000002", answer: "partial", note: "top-up for scans" },
+          ],
+          actor_label: "ama@veriq.org",
+        },
+      ]);
+      await expectNoInventedFacts();
+      // A service no call named is still caught.
+      await db.query("insert into public.facility_services (facility_id, service_id, source, checked_at) values ($1, 'lab', 'veriq_call', now())", [f!.id]);
+      await expect(expectNoInventedFacts()).rejects.toThrow();
+    } finally {
+      await db.exec("rollback");
+    }
+  });
+
+  it("the check catches a hospital answer, or a card answer with no call behind it", async () => {
+    const [f] = await rows<{ id: string }>("select id from public.facilities where source = 'nhia' limit 1");
+    for (const sql of [
+      "update public.facility_insurers set hospital_says = 'accepts', hospital_confirmed_at = now() where facility_id = $1",
+      "update public.facility_insurers set call_says = 'accepts', call_at = now() where facility_id = $1",
+    ]) {
+      await db.exec("begin");
+      try {
+        await db.query(sql, [f!.id]);
+        await expect(expectNoInventedFacts()).rejects.toThrow();
+      } finally {
+        await db.exec("rollback");
+      }
     }
   });
 

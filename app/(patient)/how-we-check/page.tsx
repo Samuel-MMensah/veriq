@@ -5,9 +5,11 @@ import { Icon, type IconName } from "@/components/ui/Icon";
 export const metadata: Metadata = { title: "How Veriq checks" };
 
 // Screen 14: the one place that explains (Prompt 10c moves the explanations here). The words follow
-// rules B, F, S1, S2 and D3 in lib/rules and the team decisions in docs/DECISIONS.md.
+// rules B (with B-V), F, S1, S2 and D3 in lib/rules and the team decisions in docs/DECISIONS.md.
 const BADGES: { title: string; text: string; icon: IconName; tone: string }[] = [
   { title: "Hospital confirmed", text: "Their front desk confirmed it in the last 14 days.", icon: "check", tone: "bg-brand-soft text-brand-strong" },
+  // rule B-V (Prompt 10b): one line, below the hospital's own answer and above patients.
+  { title: "Veriq called", text: "Our team phoned them in the last 30 days and asked. A newer answer from the hospital wins.", icon: "phone", tone: "bg-brand-soft text-brand-strong" },
   {
     title: "Patients confirmed",
     text: "At least 3 patients said it worked in the last 30 days, and more said yes than no.",

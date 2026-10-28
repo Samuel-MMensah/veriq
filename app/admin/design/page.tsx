@@ -22,7 +22,7 @@ const COLOURS: { name: string; token: string; use: string }[] = [
   { name: "Green", token: "bg-brand", use: "Primary action, confirmed" },
   { name: "Green, soft", token: "bg-brand-soft", use: "Confirmed badges, selected" },
   { name: "Orange", token: "bg-warn-bg", use: "Refusals and warnings" },
-  { name: "Red", token: "bg-emergency", use: "Emergency only" },
+  { name: "Red", token: "bg-emergency", use: "Emergency and errors" },
   { name: "Ink", token: "bg-ink", use: "Text, staff side bar" },
   { name: "Muted", token: "bg-muted", use: "Secondary text, source lines" },
   { name: "Page", token: "bg-page", use: "Page background" },

@@ -78,7 +78,7 @@ If a session runs out of room mid-prompt, type **"Wrap up now: write the session
 | 15 | Hospital: claim your page | `/h/onboard` | 2 | Three steps: details, services and cards, hours; names the morning-check contact; "verified" only after admin approval |
 | 19 | Insurer list upload | `/i/upload` | 2 | Upload CSV/XLSX, match to facilities, show conflicts with reports, publish |
 | 17 | Link to national bed system | `/h/national` | 3 | Consent toggle, what is and isn't shared, bed counts; disabled until an agreement exists |
-| – | Admin | `/admin` | 2 | Verify hospitals, review held reports, edit insurers. Phase 1 only needs the demo reset (Prompt 8). |
+| – | Admin | `/admin` | 2 | Verify hospitals, review held reports, edit insurers. Phase 1 only needs the demo reset (Prompt 8). Verification calls at `/admin/calls`, `/admin/calls/summary` and `/admin/calls/import` (Prompt 10b) |
 
 ### Screen images
 
@@ -104,12 +104,14 @@ If a session runs out of room mid-prompt, type **"Wrap up now: write the session
 
 | Table | Key fields | Notes |
 | --- | --- | --- |
-| `facilities` | name, type (`public`, `mission`, `private`, `quasi`), region, district, area, lat, lng, phone, verified (bool), verified\_at, nhia\_listed (bool), is\_sample (bool), source (`nhia`, `demo`), source\_ref (the row or code in the source file), source\_date, nhia\_type (the facility type as the file writes it), location\_source (`osm`, `admin`, `none`), location\_checked\_at | Demo: 15–20 invented Greater Accra facilities, `source = demo`, `is_sample = true`. Real: imported from the NHIA list (Prompt 9), `source = nhia` (rules D1–D3) |
+| `facilities` | name, type (`public`, `mission`, `private`, `quasi`), region, district, area, lat, lng, phone, verified (bool), verified\_at, nhia\_listed (bool), is\_sample (bool), source (`nhia`, `demo`), source\_ref (the row or code in the source file), source\_date, nhia\_type (the facility type as the file writes it), location\_source (`osm`, `admin`, `none`), location\_checked\_at, phone\_source (`nhia`, `veriq_call`), phone\_checked\_at | Demo: 15–20 invented Greater Accra facilities, `source = demo`, `is_sample = true`. Real: imported from the NHIA list (Prompt 9), `source = nhia` (rules D1–D3) |
 | `services` | id (slug, e.g. `antenatal`), name, category | Seed: antenatal, delivery, c\_section, emergency, ultrasound, xray, ct, lab, gp, paediatrics, dental, obstetrician |
-| `facility_services` | facility\_id, service\_id, offered (bool), usual\_hours (text) | What a facility offers at all |
+| `facility_services` | facility\_id, service\_id, offered (bool), usual\_hours (text), source (`hospital`, `admin`, `veriq_call`), checked\_at | What a facility offers at all, and who said so |
 | `status_updates` | facility\_id, service\_id, status (`open`, `closed`, `accepting`, `full`, `working`, `down`, `from_time`), from\_time, until\_time (nullable), note, source (`hospital`, `admin`), created\_by | Append-only. Current status = newest row per facility and service, until its `until_time` passes (rule F). |
 | `insurers` | name, kind (`public`, `private`) | Seed: NHIS, Cosmopolitan Health, Prudential, plus two invented private insurers |
-| `facility_insurers` | facility\_id, insurer\_id, listed\_by (`nhia`, `insurer`, `none`), hospital\_says (`accepts`, `does_not`, `partial`, null), hospital\_confirmed\_at | One row per pair. The hospital's own answer and the lists live here. |
+| `facility_insurers` | facility\_id, insurer\_id, listed\_by (`nhia`, `insurer`, `none`), hospital\_says (`accepts`, `does_not`, `partial`, null), hospital\_confirmed\_at, call\_says (`accepts`, `does_not`, `partial`, null), call\_at, call\_note | One row per pair. The hospital's own answer, the newest Veriq call's answer (rule B-V) and the lists live here. |
+| `verification_calls` (Prompt 10b) | facility\_id, called\_at, called\_by, caller\_label, answered\_role (a role only), phone\_reached, services, usual\_hours, lat, lng, entered\_via (`form`, `csv`) | Source `veriq_call`. Real facilities only; append-only; one per facility and moment. No patient data |
+| `verification_call_answers` (Prompt 10b) | call\_id, insurer\_id, answer (`accepts`, `does_not`, `partial`, `not_asked`), note | One row per card asked about; `partial` needs a note |
 | `card_reports` | facility\_id, insurer\_id, service\_id (nullable), outcome (`covered`, `topup`, `refused`), amount\_ghs (nullable), item (`scan`, `drugs`, `lab`, `registration`, nullable), device\_hash, state (`live`, `held`, `rejected`) | No names, no card numbers, no IP addresses stored |
 | `hospital_responses` | facility\_id, insurer\_id, kind (`confirm_topup`, `correct_topup`, `dispute_refusals`), amount\_ghs, note | Shown on the hospital page beside the patient reports |
 | `profiles` | user\_id (Supabase auth), role (`hospital`, `insurer`, `admin`), facility\_id, insurer\_id, phone | Staff only. Patients have no profile. |
@@ -131,6 +133,7 @@ If a session runs out of room mid-prompt, type **"Wrap up now: write the session
 1. **B1 Reported refused:** at least 3 `refused` reports newer than `hospital_confirmed_at`, and more refused than accepted (`covered` + `topup`). Orange. Text: "Listed, but {n} patients were refused in the last 30 days" ({n} counts every refusal in the last 30 days).
 2. **B2 Hospital confirmed:** `hospital_says` is `accepts` or `partial`, confirmed within 14 days. Dark green. Text: "Confirmed by hospital {age} ago" (add "with top-ups" when `partial`).
 3. **B2x Hospital says no:** `hospital_says = does_not` within 14 days. Leave out of card searches; show "Not accepted (hospital)" on the detail page.
+   **B-V Confirmed by Veriq call** (Prompt 10b): the newest Veriq verification call's answer for the card (`call_says`), made within 30 days and with no hospital answer at or after it (a newer hospital answer always wins). Checked after B2 and B2x and before B3. `accepts` or `partial`: dark green, text "Veriq call · {age}" (add " · with top-ups" when `partial`), answer "Takes {card}". `does_not`: works like B2x for 30 days, left out of card searches, "Not accepted (Veriq call)", answer "Does not take {card}". In code: badge ids `BV` and `BVx`.
 4. **B3 Patients confirmed:** at least 3 accepted reports and more accepted than refused. Light green. Text: "{n} patients confirmed in the last 30 days".
 5. **B4 On a list, not checked:** `listed_by` is `nhia` or `insurer`. Grey. Text: "On {NHIA/insurer} list, not checked yet. Call first".
 6. **B5 Unknown:** none of the above. Leave out of card searches; show under "No card/cash".
@@ -141,7 +144,7 @@ If a session runs out of room mid-prompt, type **"Wrap up now: write the session
 
 **T. Top-ups.** With at least 2 `topup` reports in 60 days for the same facility, insurer and item, show "{item} top-up about GH¢ {median} ({n} patients, last 60 days)", rounded to the nearest 5. A newer hospital `confirm_topup` shows "confirmed by hospital"; a newer `correct_topup` replaces the amount until at least 2 newer patient reports disagree.
 
-**S1. Results order.** Keep facilities within the radius that offer the service and whose badge is B1–B4. Sort by badge (B2, B3, B4, then B1 last), then today's status for that service (open or accepting, then unknown, then closed or full), then distance. Distance is straight-line (haversine) in km, one decimal place.
+**S1. Results order.** Keep facilities within the radius that offer the service and whose badge is B1–B4. Sort by badge (B2, B-V, B3, B4, then B1 last), then today's status for that service (open or accepting, then unknown, then closed or full), then distance. Distance is straight-line (haversine) in km, one decimal place.
 
 **S2. Emergency order.** Facilities offering `emergency` within 15 km, sorted by emergency status (accepting, then unknown or stale, then full), then distance. **Never filter or reorder by card.** Show the user's cards' badges as information only. After the units with an emergency status, list real facilities whose NHIA type is a hospital or polyclinic, with no emergency status, as "Emergency not checked. Call first", sorted by distance, within 15 km. Pharmacies, clinics and facilities with no location are not listed in emergency mode. The card still never filters or reorders anything (rule 3).
 
@@ -153,8 +156,8 @@ If a session runs out of room mid-prompt, type **"Wrap up now: write the session
 
 **D. Directory (real facilities).**
 
-1. **D1 Directory facts:** A real facility carries only what its source file says, plus a location from OpenStreetMap or an admin. Every directory fact shows its source and month: "From the NHIA list, October 2026". A facility with `location_source = none` is left out of every distance search and emergency mode, and listed on /admin under "Needs a location".
-2. **D2 Demo separation:** Demo facilities show only with the demo login cookie or `?demo=1`. Real facilities never get demo reports, statuses, top-ups or hospital answers.
+1. **D1 Directory facts:** A real facility carries only what its source file says, plus a location from OpenStreetMap or an admin, plus facts from a Veriq verification call (card answers, phone, services, hours, location; Prompt 10b), each shown with "Veriq call" and its date. Every directory fact shows its source and month: "From the NHIA list, October 2026". A facility with `location_source = none` is left out of every distance search and emergency mode, and listed on /admin under "Needs a location".
+2. **D2 Demo separation:** Demo facilities show only with the demo login cookie or `?demo=1`. `?demo=1` (and the cookie it leaves) works only on the demo site (`VERIQ_DEMO_SITE=on`) and in local tests and development, never on the real site (team decision 2026-10-28). Real facilities never get demo reports, statuses, top-ups or hospital answers.
 3. **D3 Services not listed:** For a service search with NHIS or No card / cash, real facilities with no confirmed services appear in a second group after the rule S1 results, headed "Services not listed. Call to ask". The group is sorted by distance only and shows the 10 nearest, then "Show more". Each card shows the NHIA type as written in the file and, for NHIS, its rule B badge (B4). Pharmacies never appear in this group. A service is never guessed from the facility type. Searches with a private card don't show this group.
 
 **R. Reports on real facilities.**
@@ -405,6 +408,7 @@ End-of-session protocol.
 | --- | --- |
 | 9 | Real NHIA directory for Greater Accra (written in full below) |
 | 10 | Real staff sign-in (email and password, accounts made by an admin), admin side, design pass on admin and patient screens |
+| 10b | Verification calls by the Veriq team (written in full below) |
 | 10c | Look and copy polish across patients, hospital staff, insurers and admin (written in full below) |
 | 11 | Screen 15, hospital onboarding, plus SMS morning-check reminders |
 | 12 | Screen 8, map view with Leaflet and OpenStreetMap |
@@ -498,6 +502,47 @@ win over looks: every fact keeps its source, targets stay at least 44 px, words 
 Do not touch USSD going live, SMS or email sending, insurer list upload or the map view: those are
 later prompts.
 End-of-session protocol.
+```
+
+**Prompt 10b: verification calls by the Veriq team**
+
+```text
+Prompt 10b: verification calls by the Veriq team. No patient data is involved.
+
+1. New source "veriq_call". An admin screen at /admin/calls where a team member records a call to a
+   REAL facility:
+   - date and time, who called (staff account), who answered (role only, e.g. "front desk"), the
+     phone number reached;
+   - for each card (NHIS plus every private insurer in the insurers table): accepts / does not
+     accept / partial (with a short note, e.g. "top-up for scans") / not asked;
+   - optional: services offered, usual opening hours, and a map location (reuse the "Needs a
+     location" tool).
+   The phone number reached is saved on the facility, so patients can call it.
+2. Badge rule B-V "Confirmed by Veriq call":
+   - ranked below B2 (hospital confirmed) and above B3 (patients confirmed);
+   - valid for 30 days; text "Veriq call · {age}";
+   - a "does not accept" call works like B2x for 30 days;
+   - a newer hospital answer always wins.
+   Add it to SPEC section 4 and lib/rules, with tests at every threshold, and explain it in one line
+   on /how-we-check.
+3. Update the real-data guard test: real facilities may now hold veriq_call facts (card answers,
+   phone, services, hours, location), but still no invented status, report or top-up.
+4. /admin/calls/summary: for all calls so far, per card:
+   - facilities called;
+   - how many matched the official list;
+   - how many didn't, and which way (listed but refuses / not listed but accepts).
+   Show the date range. Export as CSV. This number goes on our pitch slide, so it must be exact.
+5. A CSV import for calls recorded on paper, with a dry-run preview before anything is saved.
+6. In docs/calls/:
+   - a one-page call script in plain English: greeting, who we are, the questions per card, a
+     polite close;
+   - a blank CSV template matching the import;
+   - a suggested list of 30 real Greater Accra facilities from our NHIA data to call first: a mix
+     of hospitals, polyclinics and clinics; public, private and mission; spread across Dansoman,
+     Kaneshie, Madina, Tema, Kasoa and Osu. Prefer facilities that already have a map location.
+
+Tests must all pass; 3G first content must stay under 1 s. Don't apply migrations or push; give me
+the commands. End-of-session protocol.
 ```
 
 **Prompt 10c: look and copy polish**

@@ -25,7 +25,8 @@ export type EmergencyItem = LatLng & {
 
 export type Sorted<T> = T & { distanceKm: number; statusRank: number };
 
-const BADGE_ORDER: Partial<Record<BadgeId, number>> = { B2: 0, B3: 1, B4: 2, B1: 3 };
+// rule S1: B2, then B-V (a Veriq call), B3, B4, and B1 last. B2x, BVx and B5 never reach here.
+const BADGE_ORDER: Partial<Record<BadgeId, number>> = { B2: 0, BV: 1, B3: 2, B4: 3, B1: 4 };
 const GOOD: ServiceStatus[] = ["open", "accepting", "working", "from_time"];
 const BAD: ServiceStatus[] = ["closed", "full", "down"];
 

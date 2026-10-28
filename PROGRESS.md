@@ -1,5 +1,5 @@
 # Veriq Health progress
-Last updated: 2026-10-28, session 2026-10-28-02 (Prompt 10c follow-up: live 3G, display numbers, grey statuses, fuller staff pages, pitch screens)
+Last updated: 2026-10-28, session 2026-10-28-03 (Prompt 10b: verification calls; rule D2 tightened; red = emergency and errors)
 Current phase: 2 (pilot). Phase 1 gate met on 2026-10-24. Phase 2 gate: not yet. Built and live: real logins, admin verification (0 hospitals verified so far). Still needed: Data Protection Commission registration, real patient reports under rule A, USSD through an aggregator
 Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-west-1). Demo site for pitches: https://veriq-demo-snowy.vercel.app (`VERIQ_DEMO_SITE=on`, same database)
 
@@ -18,7 +18,8 @@ Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-w
 ### Phase 2: pilot (each prompt written in full in SPEC section 8 before it runs)
 - [x] Prompt 9: Real NHIA directory for Greater Accra (2026-10-26-01; live and checked on the live site 2026-10-26)
 - [x] Prompt 10: Real staff sign-in, admin side, design pass (2026-10-26-02; deployed, migration 8 applied, an admin account exists; checked in the 2026-10-27 review)
-- [x] Prompt 10c: Look and copy polish, all four sides (2026-10-28-01; deployed 04dfbe0, live 3G under 1 s warm; follow-up 2026-10-28-02 not yet pushed; docs/DESIGN.md, docs/polish/)
+- [x] Prompt 10b: Verification calls by the Veriq team, rule B-V, call summary and CSV import (2026-10-28-03; built and tested locally, migration 11 not yet applied; docs/calls/)
+- [x] Prompt 10c: Look and copy polish, all four sides (2026-10-28-01; follow-up 2026-10-28-02; deployed 7400669, live 3G under 1 s warm; docs/DESIGN.md, docs/polish/)
 - [ ] Prompt 11: Hospital onboarding (screen 15), SMS morning-check reminders
 - [ ] Prompt 12: Map view with Leaflet and OpenStreetMap (screen 8)
 - [ ] Prompt 13: Saved hospitals, alerts, sharing (screens 9 and 10)
@@ -49,17 +50,17 @@ Live: https://veriqhealth.vercel.app (Vercel, functions in Dublin; Supabase eu-w
 | 17 | Link to national bed system | `/h/national` | 3 | not started | Only after a signed agreement |
 | 18 | Insurer network health | `/i/network` | 1 (read-only) | done | real insurer accounts see real facilities; demo login (NHIS) sees the demo; "Add to list" waits for screen 19; "Call" only for a callable number |
 | 19 | Insurer list upload | `/i/upload` | 2 | not started | |
-| – | Admin | `/admin` | 2 | done | overview, staff accounts, hospital verification, held reports, locations (search and map preview), admin log, demo data, design sample (`/admin/design`) |
+| – | Admin | `/admin` | 2 | done | overview, staff accounts, hospital verification, held reports, locations (search and map preview), admin log, demo data, design sample (`/admin/design`), verification calls (`/admin/calls`, summary with CSV, paper import; Prompt 10b) |
 | – | Staff sign-in | `/staff/sign-in`, `/staff/password` | 2 | done | email and password, accounts made by an admin, nothing emailed |
 
 ## Known bugs
 - none open. One cold-start reading of 3.4 s on the demo site's /emergency (3G); warm runs are 0.65 to 0.9 s.
 
 ## Open questions for the team
-- Error messages (forms, failed actions) are still red. Move them to orange so red is emergency-only?
-- On the real site, `?demo=1` still turns on demo mode (rule D2), which shows demo hospitals with SAMPLE DATA (no Demo strip). Keep it for pitches from the real URL, or switch it off there? "The real site shows neither" suggests off; that changes rule D2, so it needs a SPEC change.
+- Sika Health and Adom Care are invented insurers (demo seed), yet the call form asks about every insurer in the table. Remove them from real calls, or keep them as "not asked"?
+- Should insurer figures (rule K) and the "found a confirmed hospital" search count include Veriq-call confirmations (B-V)? Today they use B2 and B3 only, as SPEC says.
 - The review's questions still open: docs/REVIEW-2026-10-27.md, section 14 (Supabase sign-ups off? who places the 360 locations? NHIA permission? DPC registration date? pilot insurer?)
 - Who asks NHIA for permission to republish the provider list, and for a dated copy with NHIA codes and phone numbers?
 
 ## Next prompt
-Commit and push session 2026-10-28-02 (no migration). When both sites are Ready, retake the pitch screens with `node scripts/pitch-shots.mjs` and re-zip. Then Prompt 11: hospital onboarding (screen 15) and morning-check reminders; write it in full in SPEC section 8 first. Before every pitch: https://veriq-demo-snowy.vercel.app/admin/demo, then Demo login, then Reset demo data.
+Apply migration 11 (`supabase db push`), then commit and push session 2026-10-28-03. Run the live 3G check on both sites. Then start the first 30 calls (docs/calls/README.md) and record them at /admin/calls. Then Prompt 11: hospital onboarding (screen 15) and morning-check reminders; write it in full in SPEC section 8 first. Before every pitch: https://veriq-demo-snowy.vercel.app/admin/demo, then Demo login, then Reset demo data.

@@ -1,14 +1,16 @@
 import { Icon, type IconName } from "@/components/ui/Icon";
 import { verdict, type Badge, type BadgeTone } from "@/lib/rules/badge";
 
-// Prompt 10c colours: green for "confirmed" (hospital or patients, told apart by the icon), orange only
-// for refusals, neutral for the rest.
+// Prompt 10c colours: green for "confirmed" (hospital, Veriq call or patients, told apart by the icon),
+// orange only for refusals, neutral for the rest.
 const STYLE: Record<BadgeTone, { box: string; icon: IconName }> = {
   hospital: { box: "bg-brand-soft text-brand-strong", icon: "check" },
+  veriq: { box: "bg-brand-soft text-brand-strong", icon: "phone" }, // rule B-V
   patients: { box: "bg-brand-soft text-brand-strong", icon: "person" },
   unchecked: { box: "bg-neutral-bg text-neutral-ink", icon: "info" },
   refused: { box: "bg-warn-bg text-warn-ink", icon: "cross" },
   hospital_no: { box: "bg-neutral-bg text-neutral-ink", icon: "cross" },
+  veriq_no: { box: "bg-neutral-bg text-neutral-ink", icon: "cross" }, // rule B-V
   unknown: { box: "bg-neutral-bg text-neutral-ink", icon: "info" },
 };
 
@@ -31,6 +33,7 @@ export function BadgeLine({ badge, cardName }: { badge: Pick<Badge, "id" | "tone
 
 const LEGEND: { label: string; icon: IconName; tone: string }[] = [
   { label: "Hospital confirmed", icon: "check", tone: "text-brand" },
+  { label: "Veriq called", icon: "phone", tone: "text-brand" },
   { label: "Patients confirmed", icon: "person", tone: "text-brand" },
   { label: "Not checked yet", icon: "info", tone: "text-neutral-ink" },
   { label: "Reported refused", icon: "cross", tone: "text-warn-ink" },

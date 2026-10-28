@@ -14,6 +14,10 @@ export type ReportItem = "scan" | "drugs" | "lab" | "registration";
 export type ReportState = "live" | "held" | "rejected";
 export type HospitalResponseKind = "confirm_topup" | "correct_topup" | "dispute_refusals";
 export type StaffRole = "hospital" | "insurer" | "admin";
+/** Prompt 10b: what a facility said about a card on a Veriq call. */
+export type CallAnswer = "accepts" | "does_not" | "partial" | "not_asked";
+export type PhoneSource = "nhia" | "veriq_call";
+export type ServiceSource = "hospital" | "admin" | "veriq_call";
 
 export type FacilityRow = {
   id: string;
@@ -28,6 +32,9 @@ export type FacilityRow = {
   lat: number | null;
   lng: number | null;
   phone: string | null;
+  /** Where the phone came from (rule 4): the source file or a Veriq call (Prompt 10b). null for demo rows. */
+  phone_source: PhoneSource | null;
+  phone_checked_at: string | null;
   verified: boolean;
   verified_at: string | null;
   /** The admin who verified the hospital (Prompt 10). */
@@ -59,6 +66,9 @@ export type FacilityServiceRow = {
   service_id: string;
   offered: boolean;
   usual_hours: string | null;
+  /** Who said it is offered: null for the demo seed, "veriq_call" for a Veriq call (Prompt 10b). */
+  source: ServiceSource | null;
+  checked_at: string | null;
   created_at: string;
 };
 
@@ -94,6 +104,10 @@ export type FacilityInsurerRow = {
   listed_by: ListedBy;
   hospital_says: HospitalSays | null;
   hospital_confirmed_at: string | null;
+  /** rule B-V: the newest Veriq call's answer for this card, and when. */
+  call_says: HospitalSays | null;
+  call_at: string | null;
+  call_note: string | null;
   created_at: string;
 };
 
@@ -153,7 +167,8 @@ export type AdminActionKind =
   | "unverify_hospital"
   | "release_report"
   | "reject_report"
-  | "set_location";
+  | "set_location"
+  | "record_call";
 
 /** Append-only admin log (Prompt 10): who did what, when and why. */
 export type AdminActionRow = {
@@ -166,6 +181,32 @@ export type AdminActionRow = {
   report_id: string | null;
   reason: string | null;
   details: Record<string, unknown>;
+  created_at: string;
+};
+
+/** Prompt 10b: one verification call to a real facility. Append-only. */
+export type VerificationCallRow = {
+  id: string;
+  facility_id: string;
+  called_at: string;
+  called_by: string | null;
+  caller_label: string;
+  /** A role only, e.g. "front desk". */
+  answered_role: string;
+  phone_reached: string;
+  services: string[];
+  usual_hours: string | null;
+  lat: number | null;
+  lng: number | null;
+  entered_via: "form" | "csv";
+  created_at: string;
+};
+
+export type VerificationCallAnswerRow = {
+  call_id: string;
+  insurer_id: string;
+  answer: CallAnswer;
+  note: string | null;
   created_at: string;
 };
 
@@ -212,6 +253,8 @@ export type Database = {
       reach_daily: Table<ReachDailyRow, "facility_id" | "day">;
       search_daily: Table<SearchDailyRow, "day" | "area_cell" | "had_confirmed_result">;
       admin_actions: Table<AdminActionRow, "actor_label" | "action">;
+      verification_calls: Table<VerificationCallRow, "facility_id" | "called_at" | "caller_label" | "answered_role" | "phone_reached">;
+      verification_call_answers: Table<VerificationCallAnswerRow, "call_id" | "insurer_id" | "answer">;
     };
     Views: {
       current_status: View<CurrentStatusRow>;
@@ -224,6 +267,7 @@ export type Database = {
       staff_insurer_id: { Args: Record<string, never>; Returns: string | null };
       staff_verified_facility_id: { Args: Record<string, never>; Returns: string | null };
       reset_demo: { Args: Record<string, never>; Returns: undefined };
+      record_verification_call: { Args: { p: Record<string, unknown> }; Returns: string };
       demo_facility_id: { Args: { code: string }; Returns: string };
       log_search: {
         Args: { p_insurer_id: string | null; p_area_cell: string; p_had_confirmed: boolean };

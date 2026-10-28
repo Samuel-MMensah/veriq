@@ -38,6 +38,8 @@ export type FacilityView = {
   sourceLine: string | null;
   /** Where the location came from, for a real facility (rule 4), or null for a demo one. */
   locationNote: string | null;
+  /** Prompt 10b, rule 4: "Phone and services: Veriq call, 28 Oct 2026", or null. */
+  callNote: string | null;
   /** A real facility: no service or status is known yet unless a row says so. */
   real: boolean;
   /** "Updated by hospital 7:40 am", or null when no service has an update. */
@@ -46,7 +48,36 @@ export type FacilityView = {
   cards: CardRow[];
 };
 
-const STRENGTH: Record<BadgeId, number> = { B2: 0, B3: 1, B4: 2, B1: 3, B2x: 4, B5: 5 };
+// Rule S1 order, with rule B-V between B2 and B3.
+const STRENGTH: Record<BadgeId, number> = { B2: 0, BV: 1, B3: 2, B4: 3, B1: 4, B2x: 5, BVx: 6, B5: 7 };
+
+const CALL_DAY = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "Africa/Accra" });
+
+/**
+ * Prompt 10b (rule 4): the facts a Veriq call gave a real facility, with the day of the call.
+ * "Phone and services: Veriq call, 28 Oct 2026"; the phone from the source file says so instead.
+ */
+export function callNote(
+  f: { phone: string | null; phone_source: string | null; phone_checked_at: string | null },
+  services: { source: string | null; checked_at: string | null }[],
+): string | null {
+  const day = (iso: string) => CALL_DAY.format(new Date(iso));
+  const phoneDay = f.phone && f.phone_source === "veriq_call" && f.phone_checked_at ? day(f.phone_checked_at) : null;
+  const newest = services
+    .filter((s) => s.source === "veriq_call" && s.checked_at)
+    .map((s) => s.checked_at!)
+    .sort()
+    .at(-1);
+  const servicesDay = newest ? day(newest) : null;
+  const parts: string[] = [];
+  if (f.phone && f.phone_source === "nhia") parts.push("Phone: NHIA list");
+  if (phoneDay && phoneDay === servicesDay) parts.push(`Phone and services: Veriq call, ${phoneDay}`);
+  else {
+    if (phoneDay) parts.push(`Phone: Veriq call, ${phoneDay}`);
+    if (servicesDay) parts.push(`Services: Veriq call, ${servicesDay}`);
+  }
+  return parts.length ? parts.join(" · ") : null;
+}
 
 export function directionsUrl(to: LatLng): string {
   return `https://www.google.com/maps/dir/?api=1&destination=${to.lat},${to.lng}`;
@@ -124,6 +155,7 @@ export function buildFacilityView({
         : f.location_source === "admin"
           ? "Map: Veriq"
           : "Map: not checked yet",
+    callNote: real ? callNote(f, detail.services) : null,
     real,
     todayUpdated,
     today,

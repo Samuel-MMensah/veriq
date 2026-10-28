@@ -4,7 +4,7 @@
 // starting "CON " or "END ". Rule 2: the phone number is never logged or stored.
 import { isLocalData, readDb, serviceDb } from "@/lib/db/server";
 import { getMessenger } from "@/lib/messaging";
-import { isDemoSite } from "@/lib/demo/mode";
+import { demoParamAllowedHere, isDemoSite } from "@/lib/demo/site";
 import { demoModeFrom, reportsLive } from "@/lib/rules/directory";
 import { handleUssd } from "@/lib/ussd/menu";
 
@@ -24,11 +24,17 @@ export async function POST(request: Request) {
   const phone = (fields.get("phoneNumber") ?? "").replace(/[^\d+]/g, "").slice(0, 20);
 
   const secret = process.env.REPORT_HASH_SECRET || (isLocalData() ? LOCAL_ONLY_SECRET : "");
-  // Rule D2: /api/ussd?demo=1 is the demo line (tests and rehearsals); the plain route is real,
-  // except on the demo deployment, where it is the demo line too.
+  // Rule D2: /api/ussd?demo=1 is the demo line (tests and the demo site only; never on the real
+  // site); the plain route is real, except on the demo deployment, where it is the demo line too.
   // An aggregator sends no cookies, so only the parameter counts.
   const param = new URL(request.url).searchParams.get("demo") ?? undefined;
-  const demoMode = demoModeFrom({ param, demoCookie: undefined, staffSignedIn: false, demoSite: isDemoSite() });
+  const demoMode = demoModeFrom({
+    param,
+    demoCookie: undefined,
+    staffSignedIn: false,
+    demoSite: isDemoSite(),
+    paramAllowed: demoParamAllowedHere(),
+  });
   try {
     const answer = await handleUssd(
       { text, phone },

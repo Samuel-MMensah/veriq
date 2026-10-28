@@ -4,14 +4,18 @@ import type { HospitalSays, ListedBy, ReportOutcome, ReportState } from "@/lib/d
 import { reportHistory, type ReportHistory } from "./history";
 import { DAY_MS, agoText, ageMs, withinDays } from "./time";
 
-export type BadgeId = "B1" | "B2" | "B2x" | "B3" | "B4" | "B5";
-/** Colour family: B1 orange, B2 dark green, B3 light green, B4 grey. */
-export type BadgeTone = "refused" | "hospital" | "hospital_no" | "patients" | "unchecked" | "unknown";
+/** BV and BVx: rule B-V, a Veriq verification call (Prompt 10b). */
+export type BadgeId = "B1" | "B2" | "B2x" | "BV" | "BVx" | "B3" | "B4" | "B5";
+/** Colour family: B1 orange, B2 and BV dark green, B3 light green, B4 grey. */
+export type BadgeTone = "refused" | "hospital" | "hospital_no" | "veriq" | "veriq_no" | "patients" | "unchecked" | "unknown";
 
 export type BadgeLink = {
   listed_by: ListedBy;
   hospital_says: HospitalSays | null;
   hospital_confirmed_at: string | null;
+  /** rule B-V: the newest Veriq call's answer for this card, and when the call was made. */
+  call_says?: HospitalSays | null;
+  call_at?: string | null;
 };
 
 export type BadgeReport = {
@@ -45,6 +49,7 @@ export type Verdict = {
 export function verdict(id: BadgeId, cardName: string): Verdict {
   switch (id) {
     case "B2": // rule B2: the hospital says yes
+    case "BV": // rule B-V: a Veriq call says yes
     case "B3": // rule B3: patients say yes
       return { short: "Yes", headline: `Takes ${cardName}` };
     case "B4": // rule B4: only a list says so
@@ -52,6 +57,7 @@ export function verdict(id: BadgeId, cardName: string): Verdict {
     case "B1": // rule B1: patients were refused
       return { short: "Refused", headline: `Patients report ${cardName} refusals` };
     case "B2x": // rule B2x: the hospital says no
+    case "BVx": // rule B-V: a Veriq call says no
       return { short: "No", headline: `Does not take ${cardName}` };
     case "B5": // rule B5: nothing known
       return { short: "Unknown", headline: `No ${cardName} information` };
@@ -60,6 +66,7 @@ export function verdict(id: BadgeId, cardName: string): Verdict {
 
 const REPORT_WINDOW_DAYS = 30;
 const HOSPITAL_ANSWER_DAYS = 14;
+const CALL_DAYS = 30;
 const MIN_REPORTS = 3;
 
 const isAccepted = (r: BadgeReport) => r.outcome === "covered" || r.outcome === "topup";
@@ -110,6 +117,21 @@ function classify({ link, reports, now }: BadgeInput): Omit<Badge, "history"> {
   // rule B2x: the hospital says no, within 14 days.
   if (freshAnswerAgeMs !== null && link?.hospital_says === "does_not") {
     return { id: "B2x", tone: "hospital_no", text: "Not accepted (hospital)", inCardSearch: false };
+  }
+
+  // rule B-V: a Veriq call counts for 30 days, boundary included, below B2 and above B3. A hospital
+  // answer at or after the call always wins, even once that answer is too old for B2.
+  if (link?.call_says && link.call_at) {
+    const callAgeMs = ageMs(link.call_at, now);
+    const hospitalNewer = confirmedAt !== null && confirmedAt >= new Date(link.call_at).getTime();
+    if (callAgeMs <= CALL_DAYS * DAY_MS && !hospitalNewer) {
+      if (link.call_says === "does_not") {
+        // Works like B2x: left out of card searches.
+        return { id: "BVx", tone: "veriq_no", text: "Not accepted (Veriq call)", inCardSearch: false };
+      }
+      const withTopUps = link.call_says === "partial" ? " · with top-ups" : "";
+      return { id: "BV", tone: "veriq", text: `Veriq call · ${agoText(callAgeMs)}${withTopUps}`, inCardSearch: true };
+    }
   }
 
   // rule B3: at least 3 accepted reports, and more accepted than refused (last 30 days).

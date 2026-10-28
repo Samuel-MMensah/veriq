@@ -16,9 +16,9 @@ The sample above is a live page: sign in as an admin and open `/admin/design`. E
 
 | Meaning | Token (Tailwind class) | Value | Used for |
 | --- | --- | --- | --- |
-| Action, confirmed | `brand`, `brand-strong`, `brand-soft` | #0B6E4F, #08573F, #E8F2EE | The primary button; "hospital confirmed" and "patients confirmed" (told apart by icon); the selected state; good status words ("Open") |
+| Action, confirmed | `brand`, `brand-strong`, `brand-soft` | #0B6E4F, #08573F, #E8F2EE | The primary button; "hospital confirmed", "Veriq call" and "patients confirmed" (told apart by icon: check, phone, person); the selected state; good status words ("Open") |
 | Refusals and warnings | `warn-bg`, `warn-ink` (and `refused`) | #FDF0E6, #A64B0A | Refused (B1), waiting, needs attention, "Says full" in emergency mode |
-| Emergency | `emergency`, `danger-bg`, `danger-ink` | #8A1C12, #FDECEA | Emergency mode and the links to it. Nothing else is red. |
+| Emergency and errors | `emergency`, `danger-bg`, `danger-ink` | #8A1C12, #FDECEA | Emergency mode and the links to it, and error messages (a form field, a failed action, a report that could not send). Nothing else is red: never a status or a badge. |
 | Neutrals | `ink`, `muted`, `surface`, `page`, `line`, `line-strong`, `neutral-bg`, `neutral-ink` | #16201C, #4F5D57, #FFFFFF, #F4F6F5, #E2E7E5, #C9D1CE, #EEF1F0, #3F4B46 | Everything else: text, cards, borders, "not checked", "From 2 pm", switched-off accounts. Status words "Closed", "Full" and "Not working" are `neutral-ink`: a fact, not an alarm |
 
 There are no other colours and no gradients. The light "patient" green and red badges are gone (Prompt 10c). Every tone pair passes WCAG AA. Colour never carries meaning alone: there is always a word, and usually an icon.

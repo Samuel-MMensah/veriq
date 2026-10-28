@@ -60,7 +60,7 @@ export default async function FacilityPage({
             {/* Rule D1: where each directory fact comes from, in one quiet line. */}
             {(view.sourceLine || view.locationNote) && (
               <p className="mt-1 text-small text-muted">
-                {[view.sourceLine, view.locationNote].filter(Boolean).join(" · ")}
+                {[view.sourceLine, view.locationNote, view.callNote].filter(Boolean).join(" · ")}
                 {view.locationNote?.includes("OpenStreetMap") && (
                   <>
                     {" · "}

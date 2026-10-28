@@ -1,5 +1,6 @@
 import {
   demoModeFrom,
+  demoParamAllowed,
   hasLocation,
   isPharmacy,
   reportsLive,
@@ -164,24 +165,24 @@ describe("rule R1: reports on real facilities", () => {
 
 describe("rule D2: demo mode", () => {
   it("is off for a member of the public", () => {
-    expect(demoModeFrom({ param: undefined, demoCookie: undefined, staffSignedIn: false })).toBe(false);
+    expect(demoModeFrom({ param: undefined, demoCookie: undefined, staffSignedIn: false, paramAllowed: true })).toBe(false);
   });
 
   it("?demo=1 turns it on, and its cookie keeps it on", () => {
-    expect(demoModeFrom({ param: "1", demoCookie: undefined, staffSignedIn: false })).toBe(true);
-    expect(demoModeFrom({ param: undefined, demoCookie: "1", staffSignedIn: false })).toBe(true);
+    expect(demoModeFrom({ param: "1", demoCookie: undefined, staffSignedIn: false, paramAllowed: true })).toBe(true);
+    expect(demoModeFrom({ param: undefined, demoCookie: "1", staffSignedIn: false, paramAllowed: true })).toBe(true);
   });
 
   it("the demo login cookie turns it on", () => {
-    expect(demoModeFrom({ param: undefined, demoCookie: undefined, staffSignedIn: true })).toBe(true);
+    expect(demoModeFrom({ param: undefined, demoCookie: undefined, staffSignedIn: true, paramAllowed: true })).toBe(true);
   });
 
   it("?demo=0 turns it off, even with a cookie", () => {
-    expect(demoModeFrom({ param: "0", demoCookie: "1", staffSignedIn: true })).toBe(false);
+    expect(demoModeFrom({ param: "0", demoCookie: "1", staffSignedIn: true, paramAllowed: true })).toBe(false);
   });
 
   it("any other value of the cookie or the parameter changes nothing", () => {
-    expect(demoModeFrom({ param: "yes", demoCookie: "true", staffSignedIn: false })).toBe(false);
+    expect(demoModeFrom({ param: "yes", demoCookie: "true", staffSignedIn: false, paramAllowed: true })).toBe(false);
   });
 });
 
@@ -189,20 +190,37 @@ describe("rule D2: the demo deployment (VERIQ_DEMO_SITE=on)", () => {
   const site = { demoSite: true };
 
   it("opens in demo mode with no parameter, cookie or login", () => {
-    expect(demoModeFrom({ param: undefined, demoCookie: undefined, staffSignedIn: false, ...site })).toBe(true);
+    expect(demoModeFrom({ param: undefined, demoCookie: undefined, staffSignedIn: false, paramAllowed: true, ...site })).toBe(true);
   });
 
   it("?demo=0 still turns it off, and its cookie ('0') keeps it off on later screens", () => {
-    expect(demoModeFrom({ param: "0", demoCookie: undefined, staffSignedIn: false, ...site })).toBe(false);
-    expect(demoModeFrom({ param: undefined, demoCookie: "0", staffSignedIn: false, ...site })).toBe(false);
+    expect(demoModeFrom({ param: "0", demoCookie: undefined, staffSignedIn: false, paramAllowed: true, ...site })).toBe(false);
+    expect(demoModeFrom({ param: undefined, demoCookie: "0", staffSignedIn: false, paramAllowed: true, ...site })).toBe(false);
   });
 
   it("?demo=1 after ?demo=0 turns it back on", () => {
-    expect(demoModeFrom({ param: "1", demoCookie: "0", staffSignedIn: false, ...site })).toBe(true);
+    expect(demoModeFrom({ param: "1", demoCookie: "0", staffSignedIn: false, paramAllowed: true, ...site })).toBe(true);
   });
 
   it("the real site never opens in demo mode by itself, and an 'off' cookie changes nothing there", () => {
-    expect(demoModeFrom({ param: undefined, demoCookie: undefined, staffSignedIn: false, demoSite: false })).toBe(false);
-    expect(demoModeFrom({ param: undefined, demoCookie: "0", staffSignedIn: false })).toBe(false);
+    expect(demoModeFrom({ param: undefined, demoCookie: undefined, staffSignedIn: false, paramAllowed: true, demoSite: false })).toBe(false);
+    expect(demoModeFrom({ param: undefined, demoCookie: "0", staffSignedIn: false, paramAllowed: true })).toBe(false);
+  });
+});
+
+describe("rule D2: ?demo=1 never works on the real site (team decision 2026-10-28)", () => {
+  const real = { staffSignedIn: false, demoSite: false, paramAllowed: false };
+
+  it("is allowed only on the demo site, in local data mode and in development", () => {
+    expect(demoParamAllowed({ demoSite: true, localData: false, development: false })).toBe(true);
+    expect(demoParamAllowed({ demoSite: false, localData: true, development: false })).toBe(true);
+    expect(demoParamAllowed({ demoSite: false, localData: false, development: true })).toBe(true);
+    expect(demoParamAllowed({ demoSite: false, localData: false, development: false })).toBe(false);
+  });
+
+  it("on the real site, ?demo=1 and a '1' cookie change nothing", () => {
+    expect(demoModeFrom({ param: "1", demoCookie: undefined, ...real })).toBe(false);
+    expect(demoModeFrom({ param: undefined, demoCookie: "1", ...real })).toBe(false);
+    expect(demoModeFrom({ param: "1", demoCookie: "1", ...real })).toBe(false);
   });
 });

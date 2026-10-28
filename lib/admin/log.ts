@@ -60,6 +60,7 @@ const WHAT: Record<AdminActionKind, string> = {
   release_report: "Released a held report",
   reject_report: "Rejected a held report",
   set_location: "Set the map location",
+  record_call: "Recorded a verification call",
 };
 
 /** "Verified the hospital", in plain words. */

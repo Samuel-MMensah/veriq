@@ -1,12 +1,15 @@
 // Rule D2: ?demo=1 turns demo mode on for the screens that follow (a cookie, as long as a demo
 // login), and ?demo=0 turns it off (also on the demo deployment, which otherwise opens in demo mode).
-// Nothing else happens here.
+// Rule D2: only where ?demo=1 is allowed (the demo site, local tests, development); on the real site
+// this sets no cookie. Nothing else happens here.
 import { NextResponse, type NextRequest } from "next/server";
 import { DEMO_COOKIE, DEMO_COOKIE_HOURS } from "@/lib/demo/mode";
+import { demoParamAllowedHere } from "@/lib/demo/site";
 
 export function proxy(request: NextRequest) {
   const demo = request.nextUrl.searchParams.get("demo");
   const response = NextResponse.next();
+  if (!demoParamAllowedHere()) return response;
   if (demo === "1") {
     response.cookies.set(DEMO_COOKIE, "1", {
       httpOnly: true,

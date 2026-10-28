@@ -218,3 +218,68 @@ describe("rule B worded as an answer (verdict)", () => {
     );
   });
 });
+
+describe("rule B-V: confirmed by a Veriq call", () => {
+  const call = (says: "accepts" | "does_not" | "partial", days: number, hospital?: { says: "accepts" | "does_not" | "partial"; days: number }): BadgeLink => ({
+    listed_by: "nhia",
+    hospital_says: hospital?.says ?? null,
+    hospital_confirmed_at: hospital ? daysAgo(hospital.days) : null,
+    call_says: says,
+    call_at: daysAgo(days),
+  });
+
+  it("an 'accepts' call within 30 days: 'Veriq call · {age}', shown in card searches, answer 'Takes NHIS'", () => {
+    const result = badge({ link: call("accepts", 3), reports: [], now });
+    expect(result).toMatchObject({ id: "BV", tone: "veriq", text: "Veriq call · 3 days ago", inCardSearch: true });
+    expect(verdict("BV", "NHIS")).toEqual({ short: "Yes", headline: "Takes NHIS" });
+  });
+
+  it("a 'partial' call adds 'with top-ups'", () => {
+    expect(badge({ link: call("partial", 1), reports: [], now }).text).toBe("Veriq call · 1 day ago · with top-ups");
+  });
+
+  it("is valid for 30 days, boundary included; at 30 days and a minute it falls back to the list (B4)", () => {
+    expect(badge({ link: call("accepts", 30), reports: [], now }).id).toBe("BV");
+    const late: BadgeLink = { ...call("accepts", 30), call_at: new Date(now.getTime() - 30 * DAY_MS - 60_000).toISOString() };
+    expect(badge({ link: late, reports: [], now }).id).toBe("B4");
+  });
+
+  it("a 'does not accept' call works like B2x for 30 days: left out of card searches, 'Does not take NHIS'", () => {
+    const result = badge({ link: call("does_not", 29), reports: [], now });
+    expect(result).toMatchObject({ id: "BVx", tone: "veriq_no", text: "Not accepted (Veriq call)", inCardSearch: false });
+    expect(verdict("BVx", "NHIS")).toEqual({ short: "No", headline: "Does not take NHIS" });
+    const late: BadgeLink = { ...call("does_not", 30), call_at: new Date(now.getTime() - 30 * DAY_MS - 60_000).toISOString() };
+    expect(badge({ link: late, reports: [], now }).id).toBe("B4");
+  });
+
+  it("ranks below B2: a fresh hospital 'accepts' wins over a newer Veriq call", () => {
+    expect(badge({ link: call("does_not", 1, { says: "accepts", days: 10 }), reports: [], now }).id).toBe("B2");
+  });
+
+  it("ranks below B2x: a fresh hospital 'no' wins over a Veriq 'accepts' call", () => {
+    expect(badge({ link: call("accepts", 1, { says: "does_not", days: 5 }), reports: [], now }).id).toBe("B2x");
+  });
+
+  it("ranks above B3: a Veriq call wins over patient confirmations", () => {
+    expect(badge({ link: call("accepts", 2), reports: reports("covered", 1, 2, 3, 4), now }).id).toBe("BV");
+  });
+
+  it("B1 still wins: 3 refusals and more refused than accepted", () => {
+    expect(badge({ link: call("accepts", 20), reports: reports("refused", 1, 2, 3), now }).id).toBe("B1");
+  });
+
+  it("a newer hospital answer always wins, even once it is older than 14 days", () => {
+    // Call 25 days ago says no; the hospital said yes 20 days ago (stale for B2): the call no longer counts.
+    expect(badge({ link: call("does_not", 25, { says: "accepts", days: 20 }), reports: [], now }).id).toBe("B4");
+    // A same-moment hospital answer also wins.
+    expect(badge({ link: call("accepts", 20, { says: "does_not", days: 20 }), reports: [], now }).id).toBe("B4");
+  });
+
+  it("an older stale hospital answer doesn't hide a newer call", () => {
+    expect(badge({ link: call("accepts", 5, { says: "does_not", days: 40 }), reports: [], now }).id).toBe("BV");
+  });
+
+  it("no call, or a call with no answer, changes nothing", () => {
+    expect(badge({ link: { ...listed, call_says: null, call_at: null }, reports: [], now }).id).toBe("B4");
+  });
+});

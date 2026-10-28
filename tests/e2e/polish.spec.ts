@@ -36,6 +36,11 @@ const SCREENS: { name: string; path: string; staff?: string; openFirst?: string;
   { name: "admin, held reports", path: "/admin/reports", staff: "admin", wide: true },
   { name: "admin, staff accounts", path: "/admin/staff", staff: "admin", wide: true },
   { name: "admin, design sample", path: "/admin/design", staff: "admin", wide: true },
+  // Prompt 10b: verification calls (the demo admin can look, not save).
+  { name: "admin, calls", path: "/admin/calls", staff: "admin", wide: true },
+  { name: "admin, record a call: search", path: "/admin/calls/new?q=madina", staff: "admin", wide: true },
+  { name: "admin, calls summary", path: "/admin/calls/summary", staff: "admin", wide: true },
+  { name: "admin, import paper calls", path: "/admin/calls/import", staff: "admin", wide: true },
 ];
 
 test.beforeAll(async ({ browser }) => {

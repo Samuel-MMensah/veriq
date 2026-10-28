@@ -64,7 +64,7 @@ export function LocationForm({
 }
 
 /** Nine OpenStreetMap tiles around the point, with a pin at the centre. No map library needed. */
-function MapPreview({ lat, lng, name }: { lat: number; lng: number; name: string }) {
+export function MapPreview({ lat, lng, name }: { lat: number; lng: number; name: string }) {
   const t = tileFor(lat, lng, ZOOM);
   const tiles = [-1, 0, 1].flatMap((dy) => [-1, 0, 1].map((dx) => ({ dx, dy })));
   return (

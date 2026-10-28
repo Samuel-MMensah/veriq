@@ -21,6 +21,20 @@ describe("rule S1: results order", () => {
     expect(sorted.map((r) => r.id)).toEqual(["akoma", "lakeside", "gbawe", "pinecrest"]);
   });
 
+  it("rule B-V: a Veriq call (BV) sorts after B2 and before B3", () => {
+    const sorted = sortResults([item("b3", 1, "B3"), item("bv", 2, "BV"), item("b2", 3, "B2"), item("b4", 1, "B4")], {
+      origin: DANSOMAN,
+      radiusKm: 5,
+      now,
+    });
+    expect(sorted.map((r) => r.id)).toEqual(["b2", "bv", "b3", "b4"]);
+  });
+
+  it("rule B-V: a 'does not accept' call (BVx) is left out, like B2x", () => {
+    const sorted = sortResults([item("x", 1, "BVx"), item("c", 1, "B4")], { origin: DANSOMAN, radiusKm: 5, now });
+    expect(sorted.map((r) => r.id)).toEqual(["c"]);
+  });
+
   it("leaves out B2x and B5", () => {
     const sorted = sortResults([item("a", 1, "B2x"), item("b", 1, "B5"), item("c", 1, "B4")], {
       origin: DANSOMAN,
